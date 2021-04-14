@@ -1,8 +1,11 @@
 import * as React from 'react';
+
+import './App.css';
+
 const App = (): JSX.Element => {
   return (
     <div className="App">
-      <div>Hello, worlds</div>
+      <h2>Hello dev1 market</h2>
     </div>
   );
 };
