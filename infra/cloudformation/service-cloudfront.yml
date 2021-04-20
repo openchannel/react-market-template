@@ -145,7 +145,8 @@ Resources:
           AcmCertificateArn: !Ref CertificateArn
           SslSupportMethod: sni-only
           MinimumProtocolVersion: TLSv1.1_2016
-    SiteDNS:
+    
+  SiteDNS:
     DependsOn: CfnDistribution
     Type: AWS::Route53::RecordSetGroup
     Properties:
