@@ -67,20 +67,20 @@ Resources:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
       PublicAccessBlockConfiguration:
-        BlockPublicAcls: 'true'	
-        BlockPublicPolicy: 'true'	
-        IgnorePublicAcls: 'true'	
+        BlockPublicAcls: 'true'
+        BlockPublicPolicy: 'true'
+        IgnorePublicAcls: 'true'
         RestrictPublicBuckets: 'true'
       WebsiteConfiguration:
         ErrorDocument: 'index.html'
         IndexDocument: 'index.html'
       VersioningConfiguration:
         Status: 'Enabled'
-      LoggingConfiguration:	
-        !If	
-          - OutUs1	
-          - DestinationBucketName: !Sub "${PrefixName}-access"	
-            LogFilePrefix: !Sub "/${AppName}"	
+      LoggingConfiguration:
+        !If
+          - OutUs1
+          - DestinationBucketName: !Sub "${PrefixName}-access"
+            LogFilePrefix: !Sub "/${AppName}"
           - !Ref "AWS::NoValue"
 #==========================================================================================
   cloudfrontoriginaccessidentity:
@@ -145,16 +145,16 @@ Resources:
           AcmCertificateArn: !Ref CertificateArn
           SslSupportMethod: sni-only
           MinimumProtocolVersion: TLSv1.1_2016
-    SiteDNS:	
-    DependsOn: CfnDistribution	
-    Type: AWS::Route53::RecordSetGroup	
-    Properties:	
-      HostedZoneName: !Sub ${HostedZoneName}	
-      RecordSets:	
-        - Name: !Ref CNAME	
-          Type: CNAME	
-          TTL: 60	
-          ResourceRecords:	
+    SiteDNS:
+    DependsOn: CfnDistribution
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneName: !Sub ${HostedZoneName}
+      RecordSets:
+        - Name: !Ref CNAME
+          Type: CNAME
+          TTL: 60
+          ResourceRecords:
             - !Sub ${CfnDistribution.DomainName}
             
   DNS:
