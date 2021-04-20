@@ -17,7 +17,8 @@ Parameters:
     Type: String
 
 Conditions:
-  OutUs1: !Not [!Equals [!Ref "AWS::Region", "us-east-1"]]  
+  OutUs1: !Not [!Equals [!Ref "AWS::Region", "us-east-1"]]
+
 Resources:
   EncryptedS3Bucket:
     Type: AWS::S3::Bucket
@@ -65,7 +66,7 @@ Resources:
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
+            SSEAlgorithm: AES256
       PublicAccessBlockConfiguration:
         BlockPublicAcls: 'true'
         BlockPublicPolicy: 'true'
