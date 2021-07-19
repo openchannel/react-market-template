@@ -15,6 +15,13 @@ const App = (): JSX.Element => {
             <Route key={key} path={route.path} component={route.component} />
           ))
         }
+        <Route path="/env">
+          <div>
+            {Object.entries(process.env).map(([key,value]) => (
+              <p key={key}>{key}: {value}</p>
+            ))}
+          </div>
+        </Route>
         <Redirect to="/login" />
       </Switch>
     </BrowserRouter>
