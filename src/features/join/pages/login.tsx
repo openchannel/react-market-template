@@ -5,6 +5,7 @@ import companyLogo from '../../../assets/img/company-logo-2x.png';
 
 import './styles.scss';
 
+// eslint-disable-next-line
 export const LoginPage: React.FC<any> = () => {
 	const onSubmit = React.useCallback(() => {
 
