@@ -12,8 +12,14 @@
     "typescript": "^4.2.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts start .env",
+    "start:stage1": "react-scripts start .env.stage1",
+    "start:dev1": "react-scripts start .env.dev1",
+    "start:us1": "react-scripts start .env.prod",
+    "build": "react-scripts build .env",
+    "build:stage1": "react-scripts build .env.stage1",
+    "build:dev1": "react-scripts build .env.dev1",
+    "build:us1": "react-scripts build .env.prod",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
