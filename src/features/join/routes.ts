@@ -1,4 +1,7 @@
-import { LoginPage } from './pages/login';
+import React from 'react';
+
+const LoginPage = React.lazy(()=>import('./pages/login/login'));
+const ChartPage = React.lazy(()=>import('./pages/chart/chart'));
 
 export const joinRoutes = [
 	{
@@ -6,4 +9,9 @@ export const joinRoutes = [
 		exact: true,
 		component: LoginPage,
 	},
+	{
+		path: '/chart',
+		exact: true,
+		component: ChartPage,
+	}
 ];
