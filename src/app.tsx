@@ -1,31 +1,19 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { instance } from '@openchannel/react-common-services';
+
+import { CsrfWrapper } from './features/common/pages';
+
+import { Routes } from './routes';
 
 import './theme.scss';
 import './styles.scss';
 
-import { routes } from './routes';
+instance.init({ url: process.env.REACT_APP_API_URL || '', headerName: 'X-CSRF-TOKEN' });
 
-const App = (): JSX.Element => {
+export const App = (): JSX.Element => {
   return (
-    <BrowserRouter>
-      <Switch>
-        {
-          routes.map((route, key) => (
-            <Route key={key} path={route.path} component={route.component} />
-          ))
-        }
-        <Route path="/env">
-          <div>
-            {Object.entries(process.env).map(([key,value]) => (
-              <p key={key}>{key}: {value}</p>
-            ))}
-          </div>
-        </Route>
-        <Redirect to="/login" />
-      </Switch>
-    </BrowserRouter>
+    <CsrfWrapper>
+      <Routes />
+    </CsrfWrapper>
   );
 };
-
-export default App;
