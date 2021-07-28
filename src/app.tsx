@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { instance } from '@openchannel/react-common-services';
 
 import { CsrfWrapper } from './features/common/pages';
@@ -13,7 +13,9 @@ instance.init({ url: process.env.REACT_APP_API_URL || '', headerName: 'X-CSRF-TO
 export const App = (): JSX.Element => {
   return (
     <CsrfWrapper>
-      <Routes />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes />
+      </Suspense>
     </CsrfWrapper>
   );
 };
