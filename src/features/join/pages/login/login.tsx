@@ -18,13 +18,11 @@ export const LoginPage = (): JSX.Element => {
   const [serverErrorValidation, setServerErrorValidation] = React.useState(false);
 
   React.useEffect(() => {
-    if (storage.isUserLoggedIn()) {
-      history.replace('/');
-    }
-
-    if (!isLoaded) {
+    // if (storage.isUserLoggedIn()) {
+    //   history.replace('/env');
+    // } else {
       dispatch(fetchAuthConfig())
-    }
+    // }
   }, []);
 
   // React.useEffect(() => {
@@ -44,8 +42,8 @@ export const LoginPage = (): JSX.Element => {
         if (res.code === 'VALIDATION') {
           setServerErrorValidation(true);
         } else {
-          storage.persist(res.accessToken, res.refreshToken);
-          history.push('/env');
+          // storage.persist(res.accessToken, res.refreshToken);
+          // history.push('/env');
         }
       } catch (error) {
         console.error('error', error);
