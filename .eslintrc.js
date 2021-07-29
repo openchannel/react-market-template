@@ -28,7 +28,7 @@ module.exports = {
     'plugin:jsx-a11y/strict',
   ],
   rules: {
-    'react-hooks/exhaustive-deps': 'error',
+    'react-hooks/exhaustive-deps': 'off',
     'no-var': 'error',
     'brace-style': 'error',
     'prefer-template': 'error',
@@ -39,6 +39,7 @@ module.exports = {
     'react/jsx-uses-react': 'off',
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
   },
   overrides: [
     {
