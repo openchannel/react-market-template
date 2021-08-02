@@ -40,6 +40,7 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    'react/prop-types': 'off',
   },
   overrides: [
     {
