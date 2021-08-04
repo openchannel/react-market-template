@@ -8,7 +8,7 @@ import { useTypedSelector } from '../hooks';
 import { loginWithSSOTokens, tryLoginByRefreshToken } from '../store/session';
 
 export const AuthWrapper: React.FC = ({ children }) => {
-	const [isRefreshLoading, setRefreshLoading] = React.useState(false);
+	const [isAuthWithOidcLoading, setAuthWithOidcLoading] = React.useState(false);
 	const history = useHistory();
 	const location = useLocation();
 	const dispatch = useDispatch();
@@ -21,22 +21,19 @@ export const AuthWrapper: React.FC = ({ children }) => {
 			history.replace('/');
 		} catch (e) {
 			console.error('e', e);
-			setRefreshLoading(false);
+			setAuthWithOidcLoading(false);
 		}
 	};
 
-	const refreshByOidc = async () => {
-		if (!userManager || !isSsoLogin) {
-			setRefreshLoading(false);
-			return;
-		}
+	const authWithOidc = async () => {
+		if (!userManager) return;
 
 		const signInByOidc = async () => {
 			try {
 				await userManager.signinRedirect();
 			} catch (e) {
 				console.error('e', e);
-				setRefreshLoading(false);
+				setAuthWithOidcLoading(false);
 			}
 		};
 
@@ -58,13 +55,13 @@ export const AuthWrapper: React.FC = ({ children }) => {
 	}
 
 	const checkAuthType = async () => {
-		if (!isSsoLogin) {
+		if (!userManager || !isSsoLogin) {
 			history.replace('/login');
 			return;
 		}
 
-		setRefreshLoading(true);
-		await refreshByOidc();
+		setAuthWithOidcLoading(true)
+		await authWithOidc();
 	}
 
 	React.useEffect(() => {
@@ -84,7 +81,7 @@ export const AuthWrapper: React.FC = ({ children }) => {
 		checkSession();
 	}, []);
 
-	if (isSessionLoading || isOidcLoading || isRefreshLoading) {
+	if (isSessionLoading || isOidcLoading || isAuthWithOidcLoading) {
 		return (
 			<div>Authentication...</div>
 		);
