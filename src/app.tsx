@@ -1,8 +1,9 @@
-import React, { Suspense } from 'react';
+import * as React  from 'react';
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 import { instance } from '@openchannel/react-common-services';
 
-import { CsrfWrapper } from './features/common/pages';
+import { CsrfWrapper } from './features/common/hocs';
 import { Routes } from './routes';
 import { store } from './store';
 
@@ -11,14 +12,12 @@ import './styles.scss';
 
 instance.init({ url: process.env.REACT_APP_API_URL || '', headerName: 'X-CSRF-TOKEN' });
 
-export const App = (): JSX.Element => {
-  return (
-    <Provider store={store}>
-      <CsrfWrapper>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Routes />
-        </Suspense>
-      </CsrfWrapper>
-    </Provider>
-  );
-};
+export const App = (): JSX.Element => (
+  <CsrfWrapper>
+    <BrowserRouter>
+      <Provider store={store}>
+        <Routes />
+      </Provider>
+    </BrowserRouter>
+  </CsrfWrapper>
+);

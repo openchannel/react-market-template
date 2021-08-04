@@ -203,15 +203,13 @@ export const ChartPage: React.FC<any> = (props: ChartProps) => {
 
   return (
     <div className="bg-container pt-sm-5">
-      <div className="login-position">
-        <OcChartComponent
-          {...props}
-          chartData={chartData}
-          count={count}
-          countText={countText}
-          changeChartOptions={changeChartOptions}
-        />
-      </div>
+      <OcChartComponent
+        {...props}
+        chartData={chartData}
+        count={count}
+        countText={countText}
+        changeChartOptions={changeChartOptions}
+      />
     </div>
   );
 };

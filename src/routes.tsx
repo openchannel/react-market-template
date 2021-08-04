@@ -1,32 +1,27 @@
-import React from 'react';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import * as React from 'react';
+import { Switch, Route } from 'react-router-dom';
 
-import { joinRoutes } from './features/join'
+import { joinRoutes } from './features/join';
+import { commonRoutes } from './features/common';
+import { OidcWrapper } from './features/common/hocs';
 
 const routes = [
 	...joinRoutes,
-	{
-		path: '/env',
-		exact: true,
-		component: () => (
-			<div>
-				{['NODE_ENV', 'REACT_APP_PRODUCTION', 'REACT_APP_API_URL', 'REACT_APP_MARKETPLACE_NAME'].map((key) => (
-					<p key={key}>{key}: {process.env[key]}</p>
-				))}
-			</div>
-		),
-	}
+	...commonRoutes,
 ];
 
 export const Routes = (): JSX.Element => (
-	<BrowserRouter>
+	<React.Suspense fallback={<div className="bg-container">Loading...</div>}>
 		<Switch>
 			{
-				routes.map((route, key) => (
-					<Route key={key} path={route.path} component={route.component} />
+				routes.map(({ Component, ...route }, key) => (
+					<Route
+						key={key}
+						path={route.path}
+						render={() => route.protected ? <OidcWrapper><Component /></OidcWrapper> : <Component />}
+					/>
 				))
 			}
-			<Redirect to="/login" />
 		</Switch>
-	</BrowserRouter>
+	</React.Suspense>
 );

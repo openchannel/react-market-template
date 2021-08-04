@@ -2,51 +2,34 @@ import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { OcLoginComponent } from '@openchannel/react-common-components';
-import { nativeLogin, storage } from '@openchannel/react-common-services';
 
+import { nativeLogin } from '../../../common/store/session';
 import companyLogo from '../../../../assets/img/company-logo-2x.png';
-import { useTypedSelector } from '../../../common/hooks';
-import { fetchAuthConfig } from '../../../common/store';
 
 import './styles.scss';
 
 export const LoginPage = (): JSX.Element => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { isLoaded, isLoading, isSsoLogin } = useTypedSelector(state => state.config);
 
   const [serverErrorValidation, setServerErrorValidation] = React.useState(false);
 
-  React.useEffect(() => {
-    // if (storage.isUserLoggedIn()) {
-    //   history.replace('/env');
-    // } else {
-      dispatch(fetchAuthConfig())
-    // }
-  }, []);
-
-  // React.useEffect(() => {
-  //   if (!isLoading && isLoaded && isSsoLogin) {
-  //   }
-  // }, [isLoading, isLoaded, isSsoLogin]);
-
   const onSubmit = React.useCallback(
-    async ({ email, password }) => {
+    async ({ email, password }: { email: string, password: string }) => {
       if (serverErrorValidation) {
         setServerErrorValidation(false);
       }
 
       try {
-        const res = await nativeLogin.signIn({ email, password, isChecked: false });
+        await dispatch(nativeLogin({ email, password, isChecked: false }));
+        history.push('/env');
 
-        if (res.code === 'VALIDATION') {
-          setServerErrorValidation(true);
-        } else {
-          // storage.persist(res.accessToken, res.refreshToken);
-          // history.push('/env');
-        }
       } catch (error) {
         console.error('error', error);
+
+        if (error.code === 'VALIDATION') {
+          setServerErrorValidation(true);
+        }
       }
     },
     [history, serverErrorValidation],
