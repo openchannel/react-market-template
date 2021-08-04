@@ -12,7 +12,6 @@ const setSession = (payload: { accessToken: string, refreshToken: string }) => {
 	return { type: ActionTypes.SET, payload };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const removeSession = () => {
 	storage.removeTokens();
 
@@ -66,6 +65,7 @@ export const tryLoginByRefreshToken = () => async (dispatch: Dispatch) => {
 		dispatch(finishLoading());
 
 	} catch (e) {
+		dispatch(removeSession());
 		dispatch(finishLoading());
 		console.error('Refresh token error.', e);
 		throw e;
