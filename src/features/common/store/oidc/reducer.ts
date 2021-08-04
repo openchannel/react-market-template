@@ -1,14 +1,14 @@
 import { ActionTypes } from './action-types';
-import { Action, Config } from './types';
+import { Action, Oidc } from './types';
 
 const initialState = {
 	isLoading: false,
 	isLoaded: false,
-	config: null,
 	isSsoLogin: true,
+	userManager: null,
 };
 
-export const configReducer = (state: Config = initialState, action: Action) => {
+export const oidcReducer = (state: Oidc = initialState, action: Action): Oidc => {
 	switch (action.type) {
 		case ActionTypes.START_LOADING: {
 			return {
@@ -26,10 +26,10 @@ export const configReducer = (state: Config = initialState, action: Action) => {
 			};
 		}
 
-		case ActionTypes.SET_CONFIG: {
+		case ActionTypes.SET_USER_MANAGER: {
 			return {
 				...state,
-				config: action.payload.config,
+				userManager: action.payload.userManager,
 				isSsoLogin: action.payload.isSsoLogin,
 			};
 		}

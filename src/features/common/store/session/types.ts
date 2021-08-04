@@ -1,11 +1,22 @@
 import { ActionTypes } from './action-types';
 
 export type Session = {
-	isExist: boolean;
+	isLoading: boolean,
+	isExist: boolean,
+	accessToken: string,
+	refreshToken: string,
 };
 
 export type Action = {
-	type: ActionTypes.SET;
+	type: ActionTypes.START_LOADING,
 } | {
-	type: ActionTypes.REMOVE;
-}
+	type: ActionTypes.FINISH_LOADING,
+} | {
+	type: ActionTypes.SET,
+	payload: {
+		accessToken: string,
+		refreshToken: string,
+	},
+} | {
+	type: ActionTypes.REMOVE,
+};
