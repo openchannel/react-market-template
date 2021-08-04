@@ -1,10 +1,10 @@
 import * as React  from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 import { instance } from '@openchannel/react-common-services';
 
 import { CsrfWrapper } from './features/common/hocs';
+import { Helmet } from './features/common/libs';
 import { Routes } from './routes';
 import { store } from './store';
 
@@ -15,9 +15,7 @@ instance.init({ url: process.env.REACT_APP_API_URL || '', headerName: 'X-CSRF-TO
 
 export const App = (): JSX.Element => (
   <>
-    <Helmet>
-
-    </Helmet>
+    <Helmet />
     <CsrfWrapper>
       <BrowserRouter>
         <Provider store={store}>
