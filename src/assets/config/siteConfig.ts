@@ -1,28 +1,27 @@
-interface MetaTag {
-	name: string;
-	content: string;
-}
+import { HelmetProps } from 'react-helmet';
 
-interface SiteConfig {
+type MetaTag = {
+	name: string,
+	content: string,
+};
+
+interface SiteConfig extends HelmetProps {
 	title: string;
 	tagline?: string;
-	metaTags?: MetaTag[];
-	favicon?: {
-		href: string;
-		type?: string;
-	};
+	meta?: MetaTag[];
 }
 
 export const siteConfig: SiteConfig = {
 	title: 'App Marketplace',
+	// Allow to combine title and tagline that will be set in title. ({site.title} | {site.tagline}
 	tagline: 'All the apps and integrations that you need',
-	metaTags: [
+	meta: [
 		{ name: 'author', content: 'OpenChannel' },
 		{ name: 'description', content: 'OpenChannel' },
 		{ name: 'generator', content: 'OpenChannel' },
 	],
-	favicon: {
-		href: 'assets/img/favicon.png',
-		type: 'image/x-icon'
-	},
+	link: [
+		// 'id' attr is required for the @openchannel/react-common-components
+		{ id: 'custom-favicon', rel: 'icon', type: 'image/x-icon', href: 'favicon.png' },
+	],
 };

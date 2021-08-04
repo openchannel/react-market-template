@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { instance } from '@openchannel/react-common-services';
 
 import { CsrfWrapper } from './features/common/hocs';
+import { Helmet } from './features/common/libs';
 import { Routes } from './routes';
 import { store } from './store';
 
@@ -13,11 +14,14 @@ import './styles.scss';
 instance.init({ url: process.env.REACT_APP_API_URL || '', headerName: 'X-CSRF-TOKEN' });
 
 export const App = (): JSX.Element => (
-  <CsrfWrapper>
-    <BrowserRouter>
-      <Provider store={store}>
-        <Routes />
-      </Provider>
-    </BrowserRouter>
-  </CsrfWrapper>
+  <>
+    <Helmet />
+    <CsrfWrapper>
+      <BrowserRouter>
+        <Provider store={store}>
+          <Routes />
+        </Provider>
+      </BrowserRouter>
+    </CsrfWrapper>
+  </>
 );
