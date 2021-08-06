@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { instance } from '@openchannel/react-common-services';
 
 import { CsrfWrapper } from './features/common/hocs';
-import { Helmet } from './features/common/libs';
+import { Helmet } from './features/common/molecules';
 import { Routes } from './routes';
 import { store } from './store';
 
