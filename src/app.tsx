@@ -1,4 +1,6 @@
-import * as React  from 'react';
+import * as React from 'react';
+import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { instance } from '@openchannel/react-common-services';
@@ -16,6 +18,17 @@ instance.init({ url: process.env.REACT_APP_API_URL || '', headerName: 'X-CSRF-TO
 export const App = (): JSX.Element => (
   <>
     <Helmet />
+    <ToastContainer
+      position="top-right"
+      hideProgressBar
+      autoClose={false}
+      closeButton={false}
+      newestOnTop={false}
+      closeOnClick={false}
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+    />
     <CsrfWrapper>
       <BrowserRouter>
         <Provider store={store}>
