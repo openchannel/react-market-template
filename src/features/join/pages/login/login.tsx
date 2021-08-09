@@ -5,7 +5,6 @@ import { OcLoginComponent } from '@openchannel/react-common-components';
 
 import { nativeLogin } from '../../../common/store/session';
 import companyLogo from '../../../../assets/img/company-logo-2x.png';
-import { notify } from '../../../common/components/toast-notify/toast';
 import './styles.scss';
 
 export const LoginPage = (): JSX.Element => {
