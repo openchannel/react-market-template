@@ -21,7 +21,7 @@ export const App = (): JSX.Element => (
     <ToastContainer
       position="top-right"
       hideProgressBar
-      autoClose={false}
+      autoClose={5000}
       closeButton={false}
       newestOnTop={false}
       closeOnClick={true}
