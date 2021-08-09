@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
+import { ToastContainer } from 'react-toastify';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { instance } from '@openchannel/react-common-services';
@@ -10,6 +9,7 @@ import { Helmet } from './features/common/libs';
 import { Routes } from './routes';
 import { store } from './store';
 
+import 'react-toastify/dist/ReactToastify.min.css';
 import './theme.scss';
 import './styles.scss';
 
@@ -24,7 +24,7 @@ export const App = (): JSX.Element => (
       autoClose={false}
       closeButton={false}
       newestOnTop={false}
-      closeOnClick={false}
+      closeOnClick={true}
       rtl={false}
       pauseOnFocusLoss
       draggable

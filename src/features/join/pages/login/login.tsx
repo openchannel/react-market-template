@@ -5,7 +5,7 @@ import { OcLoginComponent } from '@openchannel/react-common-components';
 
 import { nativeLogin } from '../../../common/store/session';
 import companyLogo from '../../../../assets/img/company-logo-2x.png';
-
+import { notify } from '../../../common/components/toast-notify/toast';
 import './styles.scss';
 
 export const LoginPage = (): JSX.Element => {
@@ -15,7 +15,7 @@ export const LoginPage = (): JSX.Element => {
   const [serverErrorValidation, setServerErrorValidation] = React.useState(false);
 
   const onSubmit = React.useCallback(
-    async ({ email, password }: { email: string, password: string }) => {
+    async ({ email, password }: { email: string; password: string }) => {
       if (serverErrorValidation) {
         setServerErrorValidation(false);
       }
@@ -23,7 +23,6 @@ export const LoginPage = (): JSX.Element => {
       try {
         await dispatch(nativeLogin({ email, password, isChecked: false }));
         history.push('/env');
-
       } catch (error) {
         console.error('error', error);
 
