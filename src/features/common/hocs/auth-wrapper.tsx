@@ -15,7 +15,7 @@ export const AuthWrapper: React.FC = ({ children }) => {
 	const { isLoading: isSessionLoading } = useTypedSelector(state => state.session);
 	const { isLoading: isOidcLoading, userManager, isSsoLogin } = useTypedSelector(state => state.oidc);
 
-	const loginWithOidcTokens = async ({ id_token, access_token }: User) => {
+	const loginWithOidcTokens = React.useCallback(async ({ id_token, access_token }: User) => {
 		try {
 			await dispatch(loginWithSSOTokens(id_token, access_token));
 			history.replace('/');
@@ -23,36 +23,28 @@ export const AuthWrapper: React.FC = ({ children }) => {
 			console.error('e', e);
 			setAuthWithOidcLoading(false);
 		}
-	};
+	}, [dispatch, history.replace]);
 
 	const authWithOidc = async () => {
 		if (!userManager) return;
 
-		const signInByOidc = async () => {
-			try {
-				await userManager.signinRedirect();
-			} catch (e) {
-				console.error('e', e);
-				setAuthWithOidcLoading(false);
-			}
-		};
-
 		const processResponse = async () => {
-			try {
-				const response = await userManager.signinRedirectCallback(location.hash);
-
-				await loginWithOidcTokens(response);
-			} catch {
-				history.replace('/login');
-			}
+			const response = await userManager.signinRedirectCallback(location.hash);
+			await loginWithOidcTokens(response);
 		};
 
-		if (!location.hash) {
-			await signInByOidc();
-		} else {
-			await processResponse()
+		try {
+			if (!location.hash) {
+				await userManager.signinRedirect();
+			} else {
+				await processResponse();
+			}
+		} catch (e) {
+			console.error('authWithOidc Error: ', e);
+			setAuthWithOidcLoading(false);
+			history.replace('/login');
 		}
-	}
+	};
 
 	const checkAuthType = async () => {
 		if (!userManager || !isSsoLogin) {
@@ -62,7 +54,7 @@ export const AuthWrapper: React.FC = ({ children }) => {
 
 		setAuthWithOidcLoading(true)
 		await authWithOidc();
-	}
+	};
 
 	React.useEffect(() => {
 		const checkSession = async () => {
