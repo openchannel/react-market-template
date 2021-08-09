@@ -5,7 +5,6 @@ import { OcLoginComponent } from '@openchannel/react-common-components';
 
 import { nativeLogin } from '../../../common/store/session';
 import companyLogo from '../../../../assets/img/company-logo-2x.png';
-
 import './styles.scss';
 
 export const LoginPage = (): JSX.Element => {
@@ -23,7 +22,6 @@ export const LoginPage = (): JSX.Element => {
       try {
         await dispatch(nativeLogin({ email, password, isChecked: false }));
         history.push('/env');
-
       } catch (error) {
         if (error.response.data.code === 'VALIDATION') {
           setServerErrorValidation(true);
