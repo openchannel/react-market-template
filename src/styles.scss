@@ -34,7 +34,6 @@ $category-color-mix2: #ffffff;
 /** Froala Editor **/
 
 .fr-box {
-
   .second-toolbar {
     border-bottom: 0;
   }
@@ -114,7 +113,6 @@ $category-color-mix2: #ffffff;
 }
 
 .oc-dropdown-toggle {
-
   .dropdown-toggle.btn-secondary {
     border-radius: 4px;
     color: #333333 !important;
@@ -126,7 +124,7 @@ $category-color-mix2: #ffffff;
     padding-left: 16px;
   }
 
-  .dropdown-toggle.btn-secondary[aria-expanded="true"] {
+  .dropdown-toggle.btn-secondary[aria-expanded='true'] {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
   }
@@ -135,7 +133,7 @@ $category-color-mix2: #ffffff;
     display: none;
   }
 
-  .dropdown-toggle[aria-expanded="true"]::before {
+  .dropdown-toggle[aria-expanded='true']::before {
     content: url(./assets/img/select-up.svg);
     height: 6px;
     width: 10px;
@@ -143,7 +141,7 @@ $category-color-mix2: #ffffff;
     float: right;
   }
 
-  .dropdown-toggle[aria-expanded="false"]::before {
+  .dropdown-toggle[aria-expanded='false']::before {
     content: url(./assets/img/select-down.svg);
     height: 6px;
     width: 10px;
@@ -174,7 +172,8 @@ button:focus {
   outline: none !important;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -203,7 +202,6 @@ body {
 }
 
 .get-dev {
-
   &__container {
     background-color: $light;
     height: 298px;
@@ -234,10 +232,26 @@ body {
 
 /** Toast styles */
 
+//React toast styles
+.rc-toast-container {
+  display: flex;
+  align-items: center;
+  svg {
+    margin-right: 12px;
+    width: 12px;
+    height: 12px;
+  }
+}
+.rc-toast-message {
+  font-size: 12px;
+  padding: 10px;
+  width: 80%;
+}
+
+// Angular toast styles
 .toast-message {
   font-size: 12px;
 }
-
 .toast-container div.ngx-toastr {
   padding: 16px 24px 16px 48px;
   background-position: 24px center;
@@ -271,7 +285,6 @@ body {
 }
 
 .custom-loader {
-
   .ngx-bar {
     background-color: $primary !important;
   }
@@ -334,7 +347,7 @@ body {
 .skip-link {
   position: absolute;
   left: -999px;
-  width:1px;
+  width: 1px;
   height: 1px;
   top: auto;
 
