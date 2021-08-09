@@ -19,36 +19,23 @@ const removeSession = () => {
 };
 
 export const nativeLogin = (body: UserLoginModel) => async (dispatch: Dispatch) => {
-	try {
-		const response = await native.signIn(body);
+	const response = await native.signIn(body);
+	dispatch(setSession(response.data));
 
-		if (response.code === 'VALIDATION') {
-			throw response;
-		}
-
-		dispatch(setSession(response));
-		return response;
-
-	} catch (error) {
-		console.log('error', error)
-		throw error;
-	}
+	return response.data;
 };
 
 export const loginWithSSOTokens = (idToken: string, accessToken: string) => async (dispatch: Dispatch) => {
 	dispatch(startLoading());
 
-	try {
-		const response = await auth.login({ idToken, accessToken });
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	const { data } = await auth.login({ idToken, accessToken });
 
-		dispatch(setSession(response));
-		dispatch(finishLoading());
-		return response;
+	dispatch(setSession(data));
+	dispatch(finishLoading());
 
-	} catch (e) {
-		dispatch(finishLoading());
-		console.log('e', e);
-	}
+	return data;
 };
 
 export const tryLoginByRefreshToken = () => async (dispatch: Dispatch) => {
@@ -68,6 +55,7 @@ export const tryLoginByRefreshToken = () => async (dispatch: Dispatch) => {
 		dispatch(removeSession());
 		dispatch(finishLoading());
 		console.error('Refresh token error.', e);
+
 		throw e;
 	}
 };

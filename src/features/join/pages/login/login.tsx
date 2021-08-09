@@ -15,7 +15,7 @@ export const LoginPage = (): JSX.Element => {
   const [serverErrorValidation, setServerErrorValidation] = React.useState(false);
 
   const onSubmit = React.useCallback(
-    async ({ email, password }: { email: string, password: string }) => {
+    async ({ email, password }: { email: string; password: string }) => {
       if (serverErrorValidation) {
         setServerErrorValidation(false);
       }
@@ -25,9 +25,7 @@ export const LoginPage = (): JSX.Element => {
         history.push('/env');
 
       } catch (error) {
-        console.error('error', error);
-
-        if (error.code === 'VALIDATION') {
+        if (error.response.data.code === 'VALIDATION') {
           setServerErrorValidation(true);
         }
       }

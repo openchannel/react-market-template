@@ -29,17 +29,14 @@ export const fetchAuthConfig = () => async (dispatch: Dispatch) => {
 	dispatch(startLoading());
 
 	try {
-		const response = await auth.getAuthConfig();
+		const { data } = await auth.getAuthConfig();
 
-		if (response instanceof Response) {
-			dispatch(setUserManager());
-		} else {
-			dispatch(setUserManager((response as ConfigObject)));
-		}
+		dispatch(setUserManager(data as ConfigObject));
+		dispatch(finishLoading());
 	} catch (error) {
 		dispatch(setUserManager());
-		console.error('error', error);
-	} finally {
 		dispatch(finishLoading());
+
+		throw error;
 	}
 };
