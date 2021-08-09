@@ -8,6 +8,8 @@ import { Helmet } from './features/common/molecules';
 import { Routes } from './routes';
 import { store } from './store';
 
+import './features/common/libs/interceptors';
+
 import './theme.scss';
 import './styles.scss';
 
