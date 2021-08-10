@@ -6,6 +6,8 @@ import {
 	InterceptorError,
 } from '@openchannel/react-common-services';
 
+import { notify } from '../../components';
+
 let isRefreshing = false;
 let skipByErrorCode: number[] = [];
 
@@ -56,7 +58,7 @@ const processError = (response: InterceptorError['response']) => {
 
 	skipByErrorCode = [];
 
-	alert(errorMessage);
+	notify.error(errorMessage);
 };
 
 const errorHandler = (error: InterceptorError): Promise<any> | InterceptorError => {
@@ -68,7 +70,7 @@ const errorHandler = (error: InterceptorError): Promise<any> | InterceptorError 
 		return process401Error(error?.request);
 	}
 
-	if (data['validation-errors'] || (data?.errors?.length >= 1 && data?.errors[0]?.field)) {
+	if (data?.['validation-errors'] || (data?.errors?.length >= 1 && data?.errors[0]?.field)) {
 		throw error;
 	}
 
