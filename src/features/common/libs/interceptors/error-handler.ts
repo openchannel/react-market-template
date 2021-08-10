@@ -11,6 +11,7 @@ import { notify } from '../../components';
 let isRefreshing = false;
 let skipByErrorCode: number[] = [];
 
+// eslint-disable-next-line
 const process401Error = async (request: any) => {
 	console.log('process401Error')
 	if (!isRefreshing) {
@@ -61,6 +62,7 @@ const processError = (response: InterceptorError['response']) => {
 	notify.error(errorMessage);
 };
 
+// eslint-disable-next-line
 const errorHandler = (error: InterceptorError): Promise<any> | InterceptorError => {
 	const data = error.response?.data;
 	const config = error.response?.config;
