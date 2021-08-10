@@ -6,9 +6,13 @@ import { rootReducer } from './reducers';
 
 const composeEnhancers = composeWithDevTools({});
 
+const middleware = [
+	thunk,
+];
+
 export const store = createStore(
 	rootReducer,
 	composeEnhancers(
-		applyMiddleware(thunk),
+		applyMiddleware(...middleware),
 	),
 );

@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { OcLoginComponent } from '@openchannel/react-common-components';
 
+import { notify } from '../../../common/components';
 import { nativeLogin } from '../../../common/store/session';
 import companyLogo from '../../../../assets/img/company-logo-2x.png';
 import './styles.scss';
@@ -21,11 +22,11 @@ export const LoginPage = (): JSX.Element => {
 
       try {
         await dispatch(nativeLogin({ email, password, isChecked: false }));
+        notify.success('You are successfully logged in');
         history.push('/env');
       } catch (error) {
-        console.error('error', error);
-
-        if (error.code === 'VALIDATION') {
+        notify.error(error.response.data.message);
+        if (error.response.data.code === 'VALIDATION') {
           setServerErrorValidation(true);
         }
       }

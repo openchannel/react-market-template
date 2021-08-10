@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Helmet as ReactHelmet } from 'react-helmet';
+import ReactHelmet from 'react-helmet';
 
 import { siteConfig } from '../../../assets/config';
 
