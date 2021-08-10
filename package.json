@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@openchannel/react-common-components": "^0.1.6-alpha.0",
-    "@openchannel/react-common-services": "^0.1.5",
+    "@openchannel/react-common-components": "^0.1.6",
+    "@openchannel/react-common-services": "^0.1.6",
     "@types/react-redux": "^7.1.18",
     "http-proxy-middleware": "^2.0.1",
     "oidc-client": "^1.11.5",
