@@ -31,7 +31,7 @@ const icons: IIcon = {
 
 const Msg = ({ message, icon }: INotifyMessage) => {
   return (
-    <div className="rc-toast-container">
+    <div className="rc-toast-presentation">
       {icons[icon]}
       <div className="rc-toast-message">{message}</div>
     </div>
