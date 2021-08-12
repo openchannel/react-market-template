@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   OcChartComponent,
   ChartLayoutTypeModel,
-  ChartProps,
   ChartOptionsChange,
 } from '@openchannel/react-common-components';
 
@@ -173,7 +172,7 @@ const defaultProps = {
 };
 
 // eslint-disable-next-line
-export const ChartPage: React.FC<any> = (props: ChartProps) => {
+export const ChartPage: React.FC<any> = (props) => {
   const [chartData, setChartData] = React.useState(defaultProps.chartData);
   const [count, setCount] = React.useState(props.count);
   const [countText, setCountText] = React.useState(props.countText);
