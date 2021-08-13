@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { OcLoginComponent } from '@openchannel/react-common-components/dist/auth/organisms';
-
 import { notify } from '../../../common/components';
 import { nativeLogin } from '../../../common/store/session';
 import companyLogo from '../../../../assets/img/company-logo-2x.png';
