@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { OcLoginComponent } from '@openchannel/react-common-components';
 
-import { notify } from '../../../common/components';
+import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { nativeLogin } from '../../../common/store/session';
 import companyLogo from '../../../../assets/img/company-logo-2x.png';
 import './styles.scss';

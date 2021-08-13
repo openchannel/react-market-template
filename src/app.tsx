@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { ToastContainer } from 'react-toastify';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { instance } from '@openchannel/react-common-services';
-
+import { OcNotificationContainer } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { CsrfWrapper } from './features/common/hocs';
 import { Helmet } from './features/common/molecules';
 import { Routes } from './routes';
@@ -20,17 +19,7 @@ instance.init({ url: process.env.REACT_APP_API_URL || '', headerName: 'X-CSRF-TO
 export const App = (): JSX.Element => (
   <>
     <Helmet />
-    <ToastContainer
-      position="top-right"
-      hideProgressBar
-      autoClose={5000}
-      closeButton={false}
-      newestOnTop={false}
-      closeOnClick={true}
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-    />
+    <OcNotificationContainer />
     <CsrfWrapper>
       <BrowserRouter>
         <Provider store={store}>
