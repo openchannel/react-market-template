@@ -2,10 +2,10 @@ import * as React from 'react';
 import Hero from '../../components/hero/hero';
 import { data } from '../../components/hero/dummy-data';
 
-export const MainPage = () => {
+export const HomePage = () => {
   return (
     <div>
-      <Hero data={data} customClass="" mainRouterLink="details" />
+      <Hero data={data} customClass="" mainRouterLink="/details" />
       {/* <Search /> */}
       {/* <GetStarted /> */}
       {/* <Footer /> */}
@@ -13,4 +13,4 @@ export const MainPage = () => {
   );
 };
 
-export default MainPage;
+export default HomePage;

@@ -1,7 +1,7 @@
 import React from 'react';
 
 const LoginPage = React.lazy(() => import('./pages/login/login'));
-const MainPage = React.lazy(() => import('../common/pages/main/main'));
+const HomePage = React.lazy(() => import('../common/pages/home/home'));
 
 export const joinRoutes = [
 	{
@@ -13,7 +13,7 @@ export const joinRoutes = [
 {
 		path: '/',
 		exact: true,
-		protected: true,
-		Component: MainPage,
+		protected: false,
+		Component: HomePage,
 	},
 ];
