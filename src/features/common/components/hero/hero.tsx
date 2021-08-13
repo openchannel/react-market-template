@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { OcFeaturedAppsComponent, FeaturedAppsProps } from '@openchannel/react-common-components';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { OcFeaturedAppsComponent, FeaturedAppsProps } from '@openchannel/react-common-components/dist/common/organisms';
 
 import './style.scss';
 
@@ -24,7 +26,7 @@ export const Hero = ({ data = [], customClass, mainRouterLink }: FeaturedAppsPro
             // navigationParam="safeName[0]"
             label="Featured"
             customClass={customClass}
-          ></OcFeaturedAppsComponent>
+          />
         )}
       </div>
     </div>

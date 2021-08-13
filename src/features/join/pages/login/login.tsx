@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { OcLoginComponent } from '@openchannel/react-common-components';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { OcLoginComponent } from '@openchannel/react-common-components/dist/auth/organisms';
 
 import { notify } from '../../../common/components';
 import { nativeLogin } from '../../../common/store/session';
@@ -23,7 +25,7 @@ export const LoginPage = (): JSX.Element => {
       try {
         await dispatch(nativeLogin({ email, password, isChecked: false }));
         notify.success('You are successfully logged in');
-        history.push('/env');
+        history.push('/');
       } catch (error) {
         notify.error(error.response.data.message);
         if (error.response.data.code === 'VALIDATION') {

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 
 const ChartPage = React.lazy(() => import('../common/pages/chart'));
+const HomePage = React.lazy(() => import('../common/pages/home/home'));
 
 export const commonRoutes = [
   {
@@ -23,5 +23,10 @@ export const commonRoutes = [
         ))}
       </div>
     ),
+  },
+  {
+    path: '/',
+    exact: true,
+    Component: HomePage,
   },
 ];
