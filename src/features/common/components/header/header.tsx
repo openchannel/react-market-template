@@ -1,28 +1,26 @@
 import * as React from 'react';
-import { OcProfileNavbar, DropdownModel } from '@openchannel/react-common-components';
-import { PermissionType, AccessLevel } from '@openchannel/react-common-services';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { OcProfileNavbar, DropdownModel } from '@openchannel/react-common-components/dist/common/molecules';
 import { Link } from 'react-router-dom';
-import { storage } from '@openchannel/react-common-services';
+// import { useHistory } from 'react-router-dom';
+// import { notify } from '../toast-notify/toast';
+import { hasCompanyPermission, isSSO, isUserLoggedIn, logout } from './utils';
 
 import logo from '../../../../assets/img/logo-company.png';
 import './style.scss';
-// !!Redo all links to divs with onclick with history.push(router link)
-const hasCompanyPermission = storage.hasAnyPermission([
-  { type: PermissionType.ORGANIZATIONS, access: [AccessLevel.READ, AccessLevel.MODIFY, AccessLevel.DELETE] },
-]);
-const isSSO = storage.getUserDetails()?.isSSO;
 
 const options = [
-  !isSSO ? { label: 'My Profile', value: '/management/profile' } : undefined,
-  hasCompanyPermission ? [{ label: 'My company', value: 'management/company' }] : undefined,
+  !isSSO() ? { label: 'My Profile', value: '/management/profile' } : undefined,
+  hasCompanyPermission() ? [{ label: 'My company', value: 'management/company' }] : undefined,
   { label: 'Logout', value: 'logout' },
 ].filter(Boolean) as DropdownModel<string>[];
 
-export const Header = () => {
+export const Header = (): JSX.Element => {
+  // const history = useHistory();
+  // notify.success('Notify');
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [isMenuCollapsed, setIsMenuCollapsed] = React.useState(false);
-
-  const isUserLoggedIn = storage.isUserLoggedIn();
 
   const closedMenu = (): void => {
     setIsMenuCollapsed(true);
@@ -59,14 +57,18 @@ export const Header = () => {
                   Browse
                 </Link>
               </li>
-              {isUserLoggedIn && (
+              {isUserLoggedIn() && (
                 <li className="nav-item">
-                  <Link to="/management/apps" onClick={closedMenu} className="nav-link cursor-pointer">
+                  <Link
+                    to="/management/apps"
+                    onClick={() => setIsMenuCollapsed(true)}
+                    className="nav-link cursor-pointer"
+                  >
                     My apps
                   </Link>
                 </li>
               )}
-              {isUserLoggedIn && (
+              {isUserLoggedIn() && (
                 <li className="nav-item">
                   <div className="options-wrapper">
                     <OcProfileNavbar username="More" options={options} initials="" />
@@ -75,34 +77,35 @@ export const Header = () => {
               )}
             </ul>
 
-            {isUserLoggedIn && (
+            {isUserLoggedIn() && (
               <div className="collaps-items">
                 {isMenuCollapsed && (
                   <div id="collapsMoreContent" className="collapse">
                     <ul className="navbar-nav ml-5">
                       <li className="nav-item">
-                        {
-                          /* !isSSO &&  */ <Link
+                        {!isSSO() && (
+                          <Link
                             className="nav-link cursor-pointer"
                             to="/management/profile"
                             onClick={() => setIsMenuCollapsed(true)}
                           >
                             My Profile
                           </Link>
-                        }
+                        )}
                       </li>
+                      {hasCompanyPermission() && (
+                        <li className="nav-item">
+                          <Link
+                            className="nav-link cursor-pointer"
+                            to="/management/company"
+                            onClick={() => setIsMenuCollapsed(true)}
+                          >
+                            My Company
+                          </Link>
+                        </li>
+                      )}
                       <li className="nav-item">
-                        <Link
-                          className="nav-link cursor-pointer"
-                          to="/management/company"
-                          onClick={() => setIsMenuCollapsed(true)}
-                          // [appPermissions]="companyPermissions"
-                        >
-                          My Company
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link className="nav-link cursor-pointer" to="/" /* (click)="logout()" */>
+                        <Link className="nav-link cursor-pointer" to="/" onClick={() => logout()}>
                           Logout
                         </Link>
                       </li>
@@ -112,7 +115,7 @@ export const Header = () => {
               </div>
             )}
 
-            {!isUserLoggedIn && (
+            {!isUserLoggedIn() && (
               <div className="d-flex my-2 my-lg-0 ml-0 ml-md-6 auth-button">
                 <Link
                   className="btn header-login-btn header-btn"
@@ -134,32 +137,3 @@ export const Header = () => {
 };
 
 export default Header;
-
-{
-  /* {false && (
-  // eslint-disable-next-line
-  <li
-  className="nav-item justify-content-between align-items-center"
-  [class.active]="checkIncludesUrl('/management/profile', '/management/company')"
-  onClick={() => setIsMenuCollapsed(!isMenuCollapsed)}
-  data-target="#collapsMoreContent"
-  aria-controls="collapsMoreContent"
-  >
-  
-  <div
-  className="dropdown-item cursor-pointer" ngIf="!isSSO"
-  routerLink="/management/profile"
-  >
-  My Profile
-  </div>
-  <div
-  [appPermissions]="companyPermissions" className="dropdown-item cursor-pointer"
-  routerLink="/management/company"
-  >
-  My Company
-  </div>
-  <div className="dropdown-item cursor-pointer" (click)="logout()">Logout</div>
-  
-  </li>
-)} */
-}
