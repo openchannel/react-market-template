@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import Hero from '../../components/hero/hero';
 import { data } from '../../components/hero/dummy-data';
 
