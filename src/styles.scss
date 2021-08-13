@@ -233,19 +233,37 @@ body {
 /** Toast styles */
 
 //React toast styles
-.rc-toast-container {
-  display: flex;
-  align-items: center;
+.Toastify__toast-container {
   svg {
     margin-right: 12px;
     width: 12px;
     height: 12px;
   }
 }
-.rc-toast-message {
-  font-size: 12px;
-  padding: 10px;
-  width: 80%;
+.Toastify__toast--error {
+  @include react-toast();
+  background-color: #ff6262;
+}
+.Toastify__toast--warning {
+  @include react-toast();
+  background-color: #eea30e;
+}
+.Toastify__toast--info {
+  @include react-toast();
+  background-color: #537cfd;
+}
+.Toastify__toast--success {
+  @include react-toast();
+  background-color: #74b675;
+}
+.rc-toast-presentation {
+  display: flex;
+  align-items: center;
+  .rc-toast-message {
+    font-size: 12px;
+    padding: 10px;
+    width: 80%;
+  }
 }
 
 // Angular toast styles
