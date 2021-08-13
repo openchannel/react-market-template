@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import MainPage from './pages/main/main';
 
 const ChartPage = React.lazy(() => import('../common/pages/chart'));
+const HomePage = React.lazy(() => import('../common/pages/home/home'));
 
 export const commonRoutes = [
   {
@@ -28,17 +27,6 @@ export const commonRoutes = [
   {
     path: '/',
     exact: true,
-    Component: MainPage /* () => (
-			<>
-				<div>Home page</div>
-				<nav>
-					<ul>
-						<li><Link to="/login">Login page</Link></li>
-						<li><Link to="/chart">Chart page</Link></li>
-						<li><Link to="/env">Env page</Link></li>
-					</ul>
-				</nav>
-			</>
-		), */,
+    Component: HomePage,
   },
 ];
