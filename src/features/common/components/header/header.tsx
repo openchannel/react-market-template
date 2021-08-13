@@ -1,16 +1,22 @@
 import * as React from 'react';
-import { OcProfileNavbar } from '@openchannel/react-common-components';
+import { OcProfileNavbar, DropdownModel } from '@openchannel/react-common-components';
+import { PermissionType, AccessLevel } from '@openchannel/react-common-services';
 import { Link } from 'react-router-dom';
 import { storage } from '@openchannel/react-common-services';
 
 import logo from '../../../../assets/img/logo-company.png';
 import './style.scss';
 // !!Redo all links to divs with onclick with history.push(router link)
+const hasCompanyPermission = storage.hasAnyPermission([
+  { type: PermissionType.ORGANIZATIONS, access: [AccessLevel.READ, AccessLevel.MODIFY, AccessLevel.DELETE] },
+]);
+const isSSO = storage.getUserDetails()?.isSSO;
+
 const options = [
-  { label: 'My Profile', value: '/management/profile' },
-  { label: 'My company', value: 'management/company' },
+  !isSSO ? { label: 'My Profile', value: '/management/profile' } : undefined,
+  hasCompanyPermission ? [{ label: 'My company', value: 'management/company' }] : undefined,
   { label: 'Logout', value: 'logout' },
-];
+].filter(Boolean) as DropdownModel<string>[];
 
 export const Header = () => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
