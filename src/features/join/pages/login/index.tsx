@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { OcLoginComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
+import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
-import { notify } from '../../../common/molecules';
 import { nativeLogin } from '../../../common/store/session';
 import companyLogo from '../../../../assets/img/company-logo-2x.png';
 import './styles.scss';
@@ -24,12 +24,12 @@ const LoginPage = (): JSX.Element => {
 
       try {
         await dispatch(nativeLogin({ email, password, isChecked: false }));
-        notify.success('You are successfully logged in');
         history.push('/');
       } catch (error) {
-        notify.error(error.response.data.message);
         if (error.response.data.code === 'VALIDATION') {
           setServerErrorValidation(true);
+        } else {
+          notify.error(error.response.data.message);
         }
       }
     },
