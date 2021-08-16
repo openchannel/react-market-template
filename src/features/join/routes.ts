@@ -1,6 +1,6 @@
 import React from 'react';
 
-const LoginPage = React.lazy(() => import('./pages/login/login'));
+const LoginPage = React.lazy(() => import('./pages/login'));
 
 export const joinRoutes = [
 	{

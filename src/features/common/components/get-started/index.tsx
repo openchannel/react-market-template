@@ -1,10 +1,9 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { OcGetStartedComponent } from '@openchannel/react-common-components/dist/common/molecules';
+import { OcGetStartedComponent } from '@openchannel/react-common-components/dist/ui/common/molecules';
+
 import getStartedImg from '../../../../assets/img/get-started.svg';
 
-export const GetStarted = () => {
+const GetStarted = () => {
   return (
     <div className="bg-container mt-5 py-8 min-height-auto">
       <div className="container">

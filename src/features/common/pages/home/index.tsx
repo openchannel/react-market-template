@@ -1,17 +1,15 @@
 import * as React from 'react';
 
-import Hero from '../../components/hero/hero';
-import GetStarted from '../../components/get-started/get-started';
-import { data } from '../../components/hero/dummy-data';
+import { Hero, GetStarted } from '../../components';
+import { data } from '../../../../mocks/app-list';
+
 import './style.scss';
 
 export const HomePage = () => {
   return (
     <>
       <Hero data={data} customClass="" mainRouterLink="/details" />
-      {/* <Search /> */}
       <GetStarted />
-      {/* <Footer /> */}
     </>
   );
 };
