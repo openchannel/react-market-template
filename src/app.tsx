@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { instance } from '@openchannel/react-common-services';
 import { OcNotificationContainer } from '@openchannel/react-common-components/dist/ui/common/atoms';
+
 import { CsrfWrapper } from './features/common/hocs';
 import { Helmet } from './features/common/molecules';
 import { Routes } from './routes';
@@ -11,7 +12,6 @@ import { store } from './store';
 import './features/common/libs/interceptors';
 
 import '@openchannel/react-common-components';// it's styles
-import 'react-toastify/dist/ReactToastify.min.css';
 import './theme.scss';
 import './styles.scss';
 
