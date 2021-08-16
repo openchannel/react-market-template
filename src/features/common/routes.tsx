@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-const ChartPage = React.lazy(() => import('../common/pages/chart'));
-const HomePage = React.lazy(() => import('../common/pages/home/home'));
+const ChartPage = React.lazy(() => import('./pages/chart'));
+const HomePage = React.lazy(() => import('./pages/home'));
 
 export const commonRoutes = [
   {

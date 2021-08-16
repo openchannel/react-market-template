@@ -6,7 +6,7 @@ import {
 	InterceptorError,
 } from '@openchannel/react-common-services';
 
-import { notify } from '../../components';
+import { notify } from '../../molecules';
 
 let isRefreshing = false;
 let skipByErrorCode: number[] = [];
