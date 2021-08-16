@@ -1,10 +1,7 @@
 import * as React from 'react';
-import {
-  OcChartComponent,
-  ChartLayoutTypeModel,
-  ChartProps,
-  ChartOptionsChange,
-} from '@openchannel/react-common-components';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { OcChartComponent } from '@openchannel/react-common-components/dist/portal/organisms';
 
 import './styles.scss';
 
@@ -129,7 +126,7 @@ const day = {
 
 const defaultProps = {
   chartData: {
-    layout: ChartLayoutTypeModel.standard,
+    layout: 'standard',
     data: month,
     periods: [
       {
@@ -173,12 +170,14 @@ const defaultProps = {
 };
 
 // eslint-disable-next-line
-export const ChartPage: React.FC<any> = (props: ChartProps) => {
+export const ChartPage: React.FC<any> = (props) => {
   const [chartData, setChartData] = React.useState(defaultProps.chartData);
   const [count, setCount] = React.useState(props.count);
   const [countText, setCountText] = React.useState(props.countText);
 
-  const changeChartOptions = ({ period, field }: ChartOptionsChange) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const changeChartOptions = ({ period, field }) => {
     const newChartDat = { ...chartData };
 
     if (period.id === 'day') {
