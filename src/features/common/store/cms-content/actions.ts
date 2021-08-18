@@ -38,8 +38,6 @@ const setCmsContent = (cmsData?: any) => {
 		columnsDFA: 'default-footer.menu.items',
 	});
 
-	console.log('footer', footer)
-
 	return {
 		type: ActionTypes.SET_CMS_CONTENT,
 		payload: {
