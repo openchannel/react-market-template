@@ -1,9 +1,13 @@
 import { combineReducers } from 'redux';
 
-import { sessionReducer as session } from './features/common/store/session';
-import { oidcReducer as oidc } from './features/common/store/oidc';
+import {
+	cmsContentReducer as cmsContent,
+	sessionReducer as session,
+	oidcReducer as oidc,
+} from './features/common/store';
 
 export const rootReducer = combineReducers({
+	cmsContent,
 	oidc,
 	session,
 });
