@@ -1,6 +1,6 @@
 import { FullAppData } from '@openchannel/react-common-components';
 
-import AppIcon from '../assets/img/app-icon.svg';
+import AppIcon from '../../public/assets/img/app-icon.svg';
 
 export const data: FullAppData[] = [
 	{

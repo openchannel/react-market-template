@@ -5,7 +5,7 @@ import { OcLoginComponent } from '@openchannel/react-common-components/dist/ui/a
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
 import { nativeLogin } from '../../../common/store/session';
-import companyLogo from '../../../../assets/img/company-logo-2x.png';
+import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
 import './styles.scss';
 
 const noop = () => {};
