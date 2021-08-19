@@ -10,7 +10,7 @@ $category-color-mix2: #ffffff;
 .bg-container {
   width: 100%;
   min-height: 100vh;
-  background: url(./assets/img/container-bg.svg) center center no-repeat;
+  background: url(../public/assets/img/container-bg.svg) center center no-repeat;
   background-size: cover;
 }
 
@@ -134,7 +134,7 @@ $category-color-mix2: #ffffff;
   }
 
   .dropdown-toggle[aria-expanded='true']::before {
-    content: url(./assets/img/select-up.svg);
+    content: url(../public/assets/img/select-up.svg);
     height: 6px;
     width: 10px;
     margin-top: -2px;
@@ -142,7 +142,7 @@ $category-color-mix2: #ffffff;
   }
 
   .dropdown-toggle[aria-expanded='false']::before {
-    content: url(./assets/img/select-down.svg);
+    content: url(../public/assets/img/select-down.svg);
     height: 6px;
     width: 10px;
     margin-top: -2px;

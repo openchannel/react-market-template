@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { OcGetStartedComponent } from '@openchannel/react-common-components/dist/ui/common/molecules';
 
-import getStartedImg from '../../../../assets/img/get-started.svg';
+import getStartedImg from '../../../../../public/assets/img/get-started.svg';
 
 const GetStarted = () => {
   return (
