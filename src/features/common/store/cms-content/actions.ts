@@ -8,7 +8,7 @@ import { ActionTypes } from './action-types';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
-const setCmsContent = (cmsData?: any) => {
+const setCmsContent = (cmsData?: unknown) => {
 	const app = cmsSiteContent.getContentByPaths(cmsData, defaultCMSData)({
 		siteTitle: 'site.title',
 		siteFaviconHref: 'site.favicon',
