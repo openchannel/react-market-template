@@ -1,31 +1,32 @@
 import * as React from 'react';
-import { OcFeaturedAppsComponent, FeaturedAppsProps } from '@openchannel/react-common-components/dist/ui/common/organisms';
+import { OcFeaturedAppsComponent } from '@openchannel/react-common-components/dist/ui/common/organisms';
+
+import { data } from '../../../../mocks/app-list';
+import { useCmsData } from '../../hooks';
 
 import './style.scss';
 
-const Hero: React.FC<FeaturedAppsProps> = ({ data = [], customClass, mainRouterLink }) => {
+const Hero: React.FC = () => {
+  const { home } = useCmsData();
+
   return (
     <div className="bg-container height-unset d-flex flex-column align-items-center">
       <div className="container">
         <div className="row">
           <div className="page-info col-md-9 col-lg-7 text-center mx-auto">
-            <h1 className="page-title">Your app marketplace</h1>
-            <p className="page-description mb-4 text-secondary">
-              A default design template for implementing your app directory with OpenChannel
-            </p>
+            <h1 className="page-title">{home?.pageInfoTitle}</h1>
+            <p className="page-description mb-4 text-secondary">{home?.pageInfoSubtext}</p>
           </div>
         </div>
       </div>
       <div className="container featured-apps-container">
-        {data?.length && (
-          <OcFeaturedAppsComponent
-            data={data}
-            mainRouterLink={mainRouterLink}
-            // navigationParam="safeName[0]"
-            label="Featured"
-            customClass={customClass}
-          />
-        )}
+        <OcFeaturedAppsComponent
+          data={data}
+          mainRouterLink="/details"
+          // navigationParam="safeName[0]"
+          label="Featured"
+          customClass=""
+        />
       </div>
     </div>
   );
