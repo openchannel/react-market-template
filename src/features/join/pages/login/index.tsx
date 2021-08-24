@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { OcLoginComponent } from '@openchannel/react-common-components/dist/auth/organisms';
+import { OcLoginComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
+import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
-import { notify } from '../../../common/components';
 import { nativeLogin } from '../../../common/store/session';
-import companyLogo from '../../../../assets/img/company-logo-2x.png';
+import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
 import './styles.scss';
 
-export const LoginPage = (): JSX.Element => {
+const noop = () => {};
+
+const LoginPage = (): JSX.Element => {
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -24,19 +24,17 @@ export const LoginPage = (): JSX.Element => {
 
       try {
         await dispatch(nativeLogin({ email, password, isChecked: false }));
-        notify.success('You are successfully logged in');
         history.push('/');
       } catch (error) {
-        notify.error(error.response.data.message);
         if (error.response.data.code === 'VALIDATION') {
           setServerErrorValidation(true);
+        } else {
+          notify.error(error.response.data.message);
         }
       }
     },
     [history, serverErrorValidation],
   );
-
-  const onActivationLinkClick = React.useCallback(() => {}, []);
 
   return (
     <div className="bg-container pt-sm-5">
@@ -45,7 +43,7 @@ export const LoginPage = (): JSX.Element => {
           signupUrl="/signup"
           forgotPwdUrl="/forgot-password"
           handleSubmit={onSubmit}
-          onActivationLinkClick={onActivationLinkClick}
+          onActivationLinkClick={noop}
           companyLogoUrl={companyLogo}
           isIncorrectEmail={serverErrorValidation}
         />

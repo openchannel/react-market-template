@@ -1,11 +1,9 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { OcFeaturedAppsComponent, FeaturedAppsProps } from '@openchannel/react-common-components/dist/common/organisms';
+import { OcFeaturedAppsComponent, FeaturedAppsProps } from '@openchannel/react-common-components/dist/ui/common/organisms';
 
 import './style.scss';
 
-export const Hero = ({ data = [], customClass, mainRouterLink }: FeaturedAppsProps) => {
+const Hero: React.FC<FeaturedAppsProps> = ({ data = [], customClass, mainRouterLink }) => {
   return (
     <div className="bg-container height-unset d-flex flex-column align-items-center">
       <div className="container">

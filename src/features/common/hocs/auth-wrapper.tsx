@@ -52,7 +52,7 @@ export const AuthWrapper: React.FC = ({ children }) => {
 			return;
 		}
 
-		setAuthWithOidcLoading(true)
+		setAuthWithOidcLoading(true);
 		await authWithOidc();
 	};
 

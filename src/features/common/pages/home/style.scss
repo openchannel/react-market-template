@@ -8,7 +8,6 @@
   & + .section-wrapper {
     @include media-breakpoint-md {
       display: block;
-
       margin-top: 4rem;
     }
   }
@@ -16,16 +15,13 @@
 
 .filter__container {
   display: flex;
-
   flex-direction: column;
 }
 
 .featured-apps-container {
   @include media-breakpoint-md {
     max-width: 100%;
-
     padding: 0;
-
     margin: 0;
   }
 }
@@ -52,7 +48,6 @@
   .featured .item-title,
   .item-description {
     margin-left: auto !important;
-
     margin-right: auto !important;
   }
 }

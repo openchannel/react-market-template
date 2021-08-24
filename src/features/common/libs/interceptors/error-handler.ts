@@ -5,8 +5,7 @@ import {
 	storage,
 	InterceptorError,
 } from '@openchannel/react-common-services';
-
-import { notify } from '../../components';
+import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
 let isRefreshing = false;
 let skipByErrorCode: number[] = [];

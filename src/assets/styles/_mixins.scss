@@ -23,19 +23,3 @@
     @content;
   }
 }
-
-// React Toast mixin
-
-@mixin react-toast() {
-  position: relative;
-  overflow: hidden;
-  margin: 0 0 6px;
-  width: 300px;
-  border-radius: 3px 3px 3px 3px;
-  background-repeat: no-repeat;
-  box-shadow: 0 0 12px #999;
-  color: #fff;
-  padding: 16px 24px 16px 48px;
-  background-position: 24px center;
-  background-size: 12px;
-}
