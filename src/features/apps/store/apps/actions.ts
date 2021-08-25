@@ -1,8 +1,8 @@
 import { Dispatch } from 'redux';
 import { apps, frontend, AppResponse } from '@openchannel/react-common-services';
 
-import { NormalizedFilter, Gallery } from '../../types';
-import { normalizeAppData, normalizeFilters } from '../../lib/normalize';
+import { MappedFilter, Gallery } from '../../types';
+import { mapAppData, mapFilters } from '../../lib/map';
 import { ActionTypes } from './action-types';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
@@ -21,7 +21,7 @@ const getApps = async (
 	return data.list;
 };
 
-const getAppsByFilters = async (filters: NormalizedFilter[]) => {
+const getAppsByFilters = async (filters: MappedFilter[]) => {
 	const requests = filters.map(({ sort, query }) => getApps(1, 4, sort, query));
 
 	const responses = await Promise.allSettled(requests);
@@ -37,12 +37,12 @@ export const fetchGalleries = () => async (dispatch: Dispatch) => {
 
 	try {
 		const { data } = await frontend.getFilters();
-		const filters = normalizeFilters(data.list);
+		const filters = mapFilters(data.list);
 
 		const filteredApps = await getAppsByFilters(filters);
 
 		const galleries = filteredApps.reduce((acc, data, i) => {
-			if (data.length > 0) acc.push({ ...filters[i], data: data.map(d => normalizeAppData(d)) });
+			if (data.length > 0) acc.push({ ...filters[i], data: data.map(d => mapAppData(d)) });
 			return acc;
 		}, [] as Gallery[]);
 

@@ -5,12 +5,12 @@ import { AppResponse } from '@openchannel/react-common-services';
 
 import { pageConfig } from '../../../assets/config';
 import { isNonEmpty } from '../../common/libs/helpers';
-import type { NormalizedFilter } from '../types';
+import type { MappedFilter } from '../types';
 
-export const normalizeFilters = (source: Filter[]): NormalizedFilter[] => {
+export const mapFilters = (source: Filter[]): MappedFilter[] => {
 	return source
 	.filter((f) => isNonEmpty(f.values))
 	.flatMap((f) => f.values.map((v) => ({ ...v, valueId: v.id, filterId: f.id })));
 };
 
-export const normalizeAppData = (app: AppResponse) => new FullAppData(app, pageConfig.fieldMappings);
+export const mapAppData = (app: AppResponse) => new FullAppData(app, pageConfig.fieldMappings);
