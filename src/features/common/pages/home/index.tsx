@@ -1,15 +1,16 @@
 import * as React from 'react';
 
+import { AppList } from '../../organisms';
 import { MainTemplate } from '../../templates';
 import { Hero, GetStarted } from '../../components';
-import { data } from '../../../../mocks/app-list';
 
 import './style.scss';
 
 export const HomePage = () => {
   return (
     <MainTemplate>
-      <Hero data={data} customClass="" mainRouterLink="/details" />
+      <Hero />
+      <AppList />
       <GetStarted />
     </MainTemplate>
   );
