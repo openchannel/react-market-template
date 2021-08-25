@@ -46,8 +46,6 @@ export const fetchGalleries = () => async (dispatch: Dispatch) => {
 			return acc;
 		}, [] as Gallery[]);
 
-		console.log('galleries', galleries)
-
 		dispatch(setGalleries(galleries));
 		dispatch(finishLoading());
 	} catch (error) {
