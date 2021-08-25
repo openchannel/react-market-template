@@ -1,6 +1,5 @@
-// import { FullAppData } from '@openchannel/react-common-components';
 import { FullAppData } from '@openchannel/react-common-components/dist/ui/common/models';
-import type { Filter } from '@openchannel/react-common-components';
+import { Filter } from '@openchannel/react-common-components';
 import { AppResponse } from '@openchannel/react-common-services';
 
 import { pageConfig } from '../../../assets/config';
