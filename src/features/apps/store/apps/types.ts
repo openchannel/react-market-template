@@ -1,20 +1,9 @@
-import { FullAppData } from '@openchannel/react-common-components';
-import type { FooterColumn } from '@openchannel/react-common-components';
 import { Gallery } from '../../types';
-
 import { ActionTypes } from './action-types';
-
-type ContentItem = null | Record<string, any>;
-
-type FooterContent = null | Record<string, never> | {
-	logoImageURL: string;
-	columnsDFA: FooterColumn[];
-};
 
 export interface Apps {
 	isLoading: boolean;
 	isLoaded: boolean;
-	// filters: [],
 	galleries: [] | Gallery[],
 	// featured: [],
 }
