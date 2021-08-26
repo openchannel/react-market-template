@@ -1,0 +1,1 @@
+export { appsReducer } from './reducer';
