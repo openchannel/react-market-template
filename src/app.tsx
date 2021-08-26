@@ -11,7 +11,7 @@ import { store } from './store';
 
 import './features/common/libs/interceptors';
 
-import '@openchannel/react-common-components';// it's styles
+import '@openchannel/react-common-components'; // it's styles
 import './theme.scss';
 import './styles.scss';
 

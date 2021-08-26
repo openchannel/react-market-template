@@ -6,24 +6,18 @@ import { fetchAuthConfig } from '../store/oidc';
 import { AuthWrapper } from './auth-wrapper';
 
 export const OidcWrapper: React.FC = ({ children }) => {
-	const dispatch = useDispatch();
-	const { isLoaded, isLoading } = useTypedSelector(state => state.oidc);
+  const dispatch = useDispatch();
+  const { isLoaded, isLoading } = useTypedSelector((state) => state.oidc);
 
-	React.useEffect(() => {
-		if (!isLoaded) {
-			dispatch(fetchAuthConfig());
-		}
-	}, []);
+  React.useEffect(() => {
+    if (!isLoaded) {
+      dispatch(fetchAuthConfig());
+    }
+  }, []);
 
-	if (!isLoaded || isLoading) {
-		return (
-			<div>Open ID Loading</div>
-		);
-	}
+  if (!isLoaded || isLoading) {
+    return <div>Open ID Loading</div>;
+  }
 
-	return (
-		<AuthWrapper>
-			{children}
-		</AuthWrapper>
-	);
+  return <AuthWrapper>{children}</AuthWrapper>;
 };
