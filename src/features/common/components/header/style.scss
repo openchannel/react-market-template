@@ -84,13 +84,13 @@ a:hover {
 }
 
 .close-icon {
-  background-image: url(../../../../assets/img/close-icon.svg);
+  background-image: url(../../../../../public/assets/img/close-icon.svg);
 }
 
 .navbar-icon {
   width: 16px;
   height: 16px;
-  background-image: url(../../../../assets/img/navbar-menu.svg);
+  background-image: url(../../../../../public/assets/img/navbar-menu.svg);
 }
 .options-wrapper {
   opacity: 1;
@@ -115,6 +115,10 @@ a:hover {
 
       .navbar-wrapper {
         padding: 0 24px 0 24px;
+      }
+
+      .options-wrapper {
+        display: none;
       }
     }
   }

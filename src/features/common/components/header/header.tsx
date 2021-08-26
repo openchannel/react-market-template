@@ -1,31 +1,49 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { OcProfileNavbar, DropdownModel } from '@openchannel/react-common-components/dist/common/molecules';
-import { Link } from 'react-router-dom';
-// import { useHistory } from 'react-router-dom';
-// import { notify } from '../toast-notify/toast';
-import { hasCompanyPermission, isSSO, isUserLoggedIn, logout } from './utils';
-
-import logo from '../../../../assets/img/logo-company.png';
+import {useHistory ,Link} from 'react-router-dom';
+import { DropdownModel } from '@openchannel/react-common-components';
+import { OcProfileNavbar } from '@openchannel/react-common-components/dist/ui/common/molecules';
+import {useMedia, useTypedSelector} from "../../hooks";
+import logo from '../../../../../public/assets/img/logo-company.png';
+import { hasCompanyPermission, isSSO, isUserLoggedIn } from './utils';
 import './style.scss';
 
-const options = [
-  !isSSO() ? { label: 'My Profile', value: '/management/profile' } : undefined,
-  hasCompanyPermission() ? [{ label: 'My company', value: 'management/company' }] : undefined,
-  { label: 'Logout', value: 'logout' },
-].filter(Boolean) as DropdownModel<string>[];
-
 export const Header = (): JSX.Element => {
-  // const history = useHistory();
-  // notify.success('Notify');
   const [isCollapsed, setIsCollapsed] = React.useState(false);
-  const [isMenuCollapsed, setIsMenuCollapsed] = React.useState(false);
+  const [isMobileMenuCollapsed, setIsMobileMenuCollapsed] = React.useState(false);
+  const { header } = useTypedSelector(state => state.cmsContent);
+  const history = useHistory();
+  const isMobile = useMedia()
+
+  React.useEffect(() => {
+    isMobile? setIsCollapsed(false) : setIsCollapsed(true)
+  }, [isMobile] );
+
+  const options = [
+    !isSSO() ? { label: 'My Profile', value: '/management/profile' } : undefined,
+    hasCompanyPermission() ? { label: 'My company', value: '/management/company' } : undefined,
+    { label: 'Logout', value: 'logout' },
+  ].filter(Boolean) as DropdownModel<string>[];
 
   const closedMenu = (): void => {
-    setIsMenuCollapsed(true);
-    setIsCollapsed(true);
+    if (!isMobile) return
+    setIsMobileMenuCollapsed(false);
+    setIsCollapsed(false);
   };
+
+  const toggleMenu = React.useCallback(() => {
+     setIsCollapsed(prev => !prev)
+  },[])
+
+  const toggleMenuMore = React.useCallback(() => {
+    setIsMobileMenuCollapsed(prev => !prev)
+  },[])
+
+  const onMenuLinkClick = React.useCallback((e) => {
+     if (e.target.dataset.href !== "logout") {
+       history.push(e.target.dataset.href);
+     }
+  },[history.push])
+
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-white">
       <div className="container">
@@ -41,94 +59,67 @@ export const Header = (): JSX.Element => {
             aria-controls="navbarSupportedContent"
             aria-expanded="false"
             aria-label="Toggle navigation"
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={toggleMenu}
           >
-            <div className={`cursor-pointer ${isCollapsed ? 'navbar-icon' : 'close-icon'}`}></div>
+            <div className={`cursor-pointer ${!isCollapsed ? 'navbar-icon' : 'close-icon'}`} />
           </button>
         </div>
         <Link to="#main-content" className="skip-link">
           Skip to main content
         </Link>
-        {!isCollapsed && (
-          <div className="navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav justify-content-end w-100 mb-0">
-              <li className="nav-item">
-                <Link to="/" onClick={closedMenu} className="nav-link cursor-pointer">
-                  Browse
-                </Link>
-              </li>
-              {isUserLoggedIn() && (
-                <li className="nav-item">
-                  <Link
-                    to="/management/apps"
-                    onClick={() => setIsMenuCollapsed(true)}
-                    className="nav-link cursor-pointer"
-                  >
-                    My apps
-                  </Link>
-                </li>
-              )}
-              {isUserLoggedIn() && (
-                <li className="nav-item">
-                  <div className="options-wrapper">
-                    <OcProfileNavbar username="More" options={options} initials="" />
-                  </div>
-                </li>
-              )}
-            </ul>
-
-            {isUserLoggedIn() && (
-              <div className="collaps-items">
-                {isMenuCollapsed && (
-                  <div id="collapsMoreContent" className="collapse">
-                    <ul className="navbar-nav ml-5">
-                      <li className="nav-item">
-                        {!isSSO() && (
-                          <Link
-                            className="nav-link cursor-pointer"
-                            to="/management/profile"
-                            onClick={() => setIsMenuCollapsed(true)}
-                          >
-                            My Profile
-                          </Link>
-                        )}
+        {isCollapsed && (
+            <div className="navbar-collapse" id="navbarSupportedContent">
+              <ul className="navbar-nav justify-content-end w-100 mb-0">
+                {header?.headerItemsDFA?.map((item: any) => {
+                  const validPath = item.location || '/';
+                  return (
+                      <li className={`nav-item ${location.pathname === validPath ? 'active' : ''}`} key={validPath}>
+                        <Link to={validPath} className="nav-link cursor-pointer" onClick={closedMenu}>{item.label}</Link>
                       </li>
-                      {hasCompanyPermission() && (
-                        <li className="nav-item">
-                          <Link
-                            className="nav-link cursor-pointer"
-                            to="/management/company"
-                            onClick={() => setIsMenuCollapsed(true)}
-                          >
-                            My Company
-                          </Link>
-                        </li>
-                      )}
-                      <li className="nav-item">
-                        <Link className="nav-link cursor-pointer" to="/" onClick={() => logout()}>
-                          Logout
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
+                  )
+                })}
+                {isUserLoggedIn() && (
+                    <li className="nav-item">
+                      <div className="options-wrapper">
+                        <OcProfileNavbar username="More" options={options} initials="" />
+                      </div>
+                    </li>
                 )}
-              </div>
-            )}
-
-            {!isUserLoggedIn() && (
-              <div className="d-flex my-2 my-lg-0 ml-0 ml-md-6 auth-button">
-                <Link
-                  className="btn header-login-btn header-btn"
-                  to="/login"
-                  /*[queryParams]="{ returnUrl: getUrlWithoutFragment() }" */
-                >
-                  Log in
-                </Link>
-                <Link className="btn btn-primary header-btn ml-md-2" to="/signup" /*ngIf="!isSsoConfigExist" */>
-                  Sign up
-                </Link>
-              </div>
-            )}
+                {isMobile && (
+                    <>
+                      <li className="nav-item">
+                        <Link to="#" className="nav-link" onClick={toggleMenuMore}>More</Link>
+                      </li>
+                      <div className="collaps-items">
+                        {(
+                            <div id="collapsMoreContent" className={`collapse ${isMobileMenuCollapsed ? 'show': ''}`}>
+                              <ul className="navbar-nav ml-5">
+                                  {options.map((item) =>
+                                  <li className="nav-item" key={item.value}>
+                                    <span className="nav-link cursor-pointer" role="button" tabIndex={0}  data-href={item.value} onClick={onMenuLinkClick} onKeyDown={onMenuLinkClick}>
+                                    {item.label}
+                                  </span>
+                                  </li>)}
+                              </ul>
+                            </div>
+                        )}
+                      </div>
+                    </>
+                )}
+                {!isUserLoggedIn() && (
+                    <div className="d-flex my-2 my-lg-0 ml-0 ml-md-6 auth-button">
+                      <Link
+                          className="btn header-login-btn header-btn"
+                          to="/login"
+                      >
+                        Log in
+                      </Link>
+                      <Link className="btn btn-primary header-btn ml-md-2" to="/signup">
+                        Sign up
+                      </Link>
+                    </div>
+                )}
+              </ul>
           </div>
         )}
       </div>
