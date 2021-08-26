@@ -7,7 +7,8 @@ import logo from '../../../../../public/assets/img/logo-company.png';
 import { hasCompanyPermission, isSSO, isUserLoggedIn } from './utils';
 import './style.scss';
 
-export const Header = ({ cmsData }: any): JSX.Element => {
+// eslint-disable-next-line
+const Header = ({ cmsData }: any): JSX.Element => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [isMobileMenuCollapsed, setIsMobileMenuCollapsed] = React.useState(false);
   const history = useHistory();
@@ -72,16 +73,19 @@ export const Header = ({ cmsData }: any): JSX.Element => {
         {isCollapsed && (
           <div className="navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav justify-content-end w-100 mb-0">
-              {cmsData?.headerItemsDFA?.map((item: any) => {
-                const validPath = item.location || '/';
-                return (
-                  <li className={`nav-item ${location.pathname === validPath ? 'active' : ''}`} key={validPath}>
-                    <Link to={validPath} className="nav-link cursor-pointer" onClick={closedMenu}>
-                      {item.label}
-                    </Link>
-                  </li>
-                );
-              })}
+              {cmsData?.headerItemsDFA?.map(
+                // eslint-disable-next-line
+                (item: any) => {
+                  const validPath = item.location || '/';
+                  return (
+                    <li className={`nav-item ${location.pathname === validPath ? 'active' : ''}`} key={validPath}>
+                      <Link to={validPath} className="nav-link cursor-pointer" onClick={closedMenu}>
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                },
+              )}
               {isUserLoggedIn() && (
                 <li className="nav-item">
                   <div className="options-wrapper">
