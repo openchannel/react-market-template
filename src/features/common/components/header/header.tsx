@@ -2,15 +2,14 @@ import * as React from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { DropdownModel } from '@openchannel/react-common-components';
 import { OcProfileNavbar } from '@openchannel/react-common-components/dist/ui/common/molecules';
-import { useMedia, useTypedSelector } from '../../hooks';
+import { useMedia } from '../../hooks';
 import logo from '../../../../../public/assets/img/logo-company.png';
 import { hasCompanyPermission, isSSO, isUserLoggedIn } from './utils';
 import './style.scss';
 
-export const Header = (): JSX.Element => {
+export const Header = ({ cmsData }: any): JSX.Element => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [isMobileMenuCollapsed, setIsMobileMenuCollapsed] = React.useState(false);
-  const { header } = useTypedSelector((state) => state.cmsContent);
   const history = useHistory();
   const isMobile = useMedia();
 
@@ -73,7 +72,7 @@ export const Header = (): JSX.Element => {
         {isCollapsed && (
           <div className="navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav justify-content-end w-100 mb-0">
-              {header?.headerItemsDFA?.map((item: any) => {
+              {cmsData?.headerItemsDFA?.map((item: any) => {
                 const validPath = item.location || '/';
                 return (
                   <li className={`nav-item ${location.pathname === validPath ? 'active' : ''}`} key={validPath}>

@@ -7,10 +7,11 @@ import { Header } from '../components';
 
 export const MainTemplate: React.FC = ({ children }) => {
   const footer = useTypedSelector(({ cmsContent }) => cmsContent.footer);
+  const header = useTypedSelector(({ cmsContent }) => cmsContent.header);
 
   return (
     <>
-      <Header />
+      <Header cmsData={header} />
       {children}
       <OcFooter socialLinks={socialLinks} cmsData={footer} />
     </>
