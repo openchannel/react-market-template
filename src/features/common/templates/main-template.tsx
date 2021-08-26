@@ -6,8 +6,7 @@ import { socialLinks } from '../../../consts/social-links';
 import { Header } from '../components';
 
 export const MainTemplate: React.FC = ({ children }) => {
-  const footer = useTypedSelector(({ cmsContent }) => cmsContent.footer);
-  const header = useTypedSelector(({ cmsContent }) => cmsContent.header);
+  const { header, footer } = useTypedSelector(({ cmsContent }) => cmsContent);
 
   return (
     <>
