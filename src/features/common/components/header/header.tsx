@@ -1,17 +1,21 @@
 import * as React from 'react';
 import { useHistory, Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { DropdownModel } from '@openchannel/react-common-components';
 import { OcProfileNavbar } from '@openchannel/react-common-components/dist/ui/common/molecules';
-import { useMedia } from '../../hooks';
+import { useMedia, useTypedSelector } from '../../hooks';
 import logo from '../../../../../public/assets/img/logo-company.png';
-import { hasCompanyPermission, isSSO, isUserLoggedIn } from './utils';
+import { hasCompanyPermission, isSSO } from './utils';
 import './style.scss';
+import { logout } from '../../store/session/actions';
 
 export const Header = ({ cmsData }: any): JSX.Element => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [isMobileMenuCollapsed, setIsMobileMenuCollapsed] = React.useState(false);
   const history = useHistory();
   const isMobile = useMedia();
+  const dispatch = useDispatch();
+  const { isExist } = useTypedSelector((store) => store.session);
 
   React.useEffect(() => {
     isMobile ? setIsCollapsed(false) : setIsCollapsed(true);
@@ -41,10 +45,20 @@ export const Header = ({ cmsData }: any): JSX.Element => {
     (e) => {
       if (e.target.dataset.href !== 'logout') {
         history.push(e.target.dataset.href);
+      } else {
+        dispatch(logout());
       }
     },
     [history.push],
   );
+
+  const onClick = React.useCallback(({ value }) => {
+    if (value === 'logout') {
+      dispatch(logout());
+    } else {
+      history.push(value);
+    }
+  }, []);
 
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-white">
@@ -82,14 +96,14 @@ export const Header = ({ cmsData }: any): JSX.Element => {
                   </li>
                 );
               })}
-              {isUserLoggedIn() && (
+              {isExist && (
                 <li className="nav-item">
                   <div className="options-wrapper">
-                    <OcProfileNavbar username="More" options={options} initials="" />
+                    <OcProfileNavbar username="More" options={options} initials="" onSelect={onClick} />
                   </div>
                 </li>
               )}
-              {isMobile && (
+              {isMobile && isExist && (
                 <>
                   <li className="nav-item">
                     <Link to="#" className="nav-link" onClick={toggleMenuMore}>
@@ -120,17 +134,17 @@ export const Header = ({ cmsData }: any): JSX.Element => {
                   </div>
                 </>
               )}
-              {!isUserLoggedIn() && (
-                <div className="d-flex my-2 my-lg-0 ml-0 ml-md-6 auth-button">
-                  <Link className="btn header-login-btn header-btn" to="/login">
-                    Log in
-                  </Link>
-                  <Link className="btn btn-primary header-btn ml-md-2" to="/signup">
-                    Sign up
-                  </Link>
-                </div>
-              )}
             </ul>
+            {!isExist && (
+              <div className="d-flex my-2 my-lg-0 ml-0 ml-md-6 auth-button">
+                <Link className="btn header-login-btn header-btn" to="/login">
+                  Log in
+                </Link>
+                <Link className="btn btn-primary header-btn ml-md-2" to="/signup">
+                  Sign up
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>
