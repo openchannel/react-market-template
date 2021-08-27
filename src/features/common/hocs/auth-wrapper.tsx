@@ -4,15 +4,15 @@ import { useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { joinRoutes } from '../../join';
-import { useTypedSelector } from '../hooks';
-import { loginWithSSOTokens, tryLoginByRefreshToken } from '../store/session';
+import { useAuth, useTypedSelector } from '../hooks';
+import { loginWithSSOTokens } from '../store/session';
 
 export const AuthWrapper: React.FC = ({ children }) => {
   const [isAuthWithOidcLoading, setAuthWithOidcLoading] = React.useState(false);
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { isLoading: isSessionLoading } = useTypedSelector((state) => state.session);
+  const { isLoading: isSessionLoading, checkSession } = useAuth();
   const { isLoading: isOidcLoading, userManager, isSsoLogin } = useTypedSelector((state) => state.oidc);
 
   const loginWithOidcTokens = React.useCallback(
@@ -60,9 +60,9 @@ export const AuthWrapper: React.FC = ({ children }) => {
   };
 
   React.useEffect(() => {
-    const checkSession = async () => {
+    const get = async () => {
       try {
-        await dispatch(tryLoginByRefreshToken());
+        await checkSession();
 
         const joinPaths = joinRoutes.map(({ path }) => path);
         if (joinPaths.includes(location.pathname)) {
@@ -73,7 +73,7 @@ export const AuthWrapper: React.FC = ({ children }) => {
       }
     };
 
-    checkSession();
+    get();
   }, []);
 
   if (isSessionLoading || isOidcLoading || isAuthWithOidcLoading) {
