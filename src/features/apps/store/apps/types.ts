@@ -5,10 +5,15 @@ export interface Apps {
   isLoading: boolean;
   isLoaded: boolean;
   galleries: [] | Gallery[];
+  filters: /* [] | any[] */ any;
   // featured: [],
 }
 
 export type Action =
+  | {
+      type: ActionTypes.SET_FILTERS;
+      payload: any;
+    }
   | {
       type: ActionTypes.SET_GALLERIES;
       payload: Gallery[];

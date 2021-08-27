@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import { apps, frontend, AppResponse } from '@openchannel/react-common-services';
+import { apps, frontend, AppResponse, FilterResponse } from '@openchannel/react-common-services';
 
 import { MappedFilter, Gallery } from '../../types';
 import { mapAppData, mapFilters } from '../../lib/map';
@@ -8,6 +8,7 @@ import { ActionTypes } from './action-types';
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
 const setGalleries = (payload: Gallery[]) => ({ type: ActionTypes.SET_GALLERIES, payload });
+const setFilters = (payload: any) => ({ type: ActionTypes.SET_FILTERS, payload });
 // const setFeaturedApps = (payload: any) => ({ type: ActionTypes.SET_FEATURED, payload });
 
 const getApps = async (pageNumber: number, limit: number, sort?: string, filter?: string): Promise<AppResponse[]> => {
@@ -42,6 +43,21 @@ export const fetchGalleries = () => async (dispatch: Dispatch) => {
     }, [] as Gallery[]);
 
     dispatch(setGalleries(galleries));
+    dispatch(finishLoading());
+  } catch (error) {
+    dispatch(finishLoading());
+
+    throw error;
+  }
+};
+
+export const getFilters = () => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+
+  try {
+    const { data } = await frontend.getFilters();
+    const filters = data.list;
+    dispatch(setFilters(filters));
     dispatch(finishLoading());
   } catch (error) {
     dispatch(finishLoading());
