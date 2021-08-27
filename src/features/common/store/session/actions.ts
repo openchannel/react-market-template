@@ -28,8 +28,6 @@ export const nativeLogin = (body: UserLoginModel) => async (dispatch: Dispatch) 
 export const loginWithSSOTokens = (idToken: string, accessToken: string) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const { data } = await auth.login({ idToken, accessToken });
 
   dispatch(setSession(data));
@@ -55,6 +53,20 @@ export const tryLoginByRefreshToken = () => async (dispatch: Dispatch) => {
     dispatch(finishLoading());
     console.error('Refresh token error.', e);
 
+    throw e;
+  }
+};
+
+export const logout = () => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+  try {
+    const logoutSession = await auth.logOut();
+    if (logoutSession) {
+      dispatch(removeSession());
+    }
+    dispatch(finishLoading());
+  } catch (e) {
+    console.error('error.', e);
     throw e;
   }
 };
