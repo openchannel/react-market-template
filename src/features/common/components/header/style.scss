@@ -87,6 +87,11 @@ a:hover {
   background-image: url(../../../../../public/assets/img/close-icon.svg);
 }
 
+.display-flex {
+  display: flex;
+  justify-content: space-between;
+}
+
 .navbar-icon {
   width: 16px;
   height: 16px;

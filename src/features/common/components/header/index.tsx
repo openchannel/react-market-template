@@ -4,10 +4,12 @@ import { useDispatch } from 'react-redux';
 import { DropdownModel } from '@openchannel/react-common-components';
 import { OcProfileNavbar } from '@openchannel/react-common-components/dist/ui/common/molecules';
 import { useMedia, useTypedSelector } from '../../hooks';
-import logo from '../../../../../public/assets/img/logo-company.png';
 import { hasCompanyPermission, isSSO } from './utils';
-import './style.scss';
 import { logout } from '../../store/session/actions';
+import './style.scss';
+import logo from '../../../../../public/assets/img/logo-company.png';
+import buttonDown from '../../../../../public/assets/img/select-down.svg';
+import buttonUp from '../../../../../public/assets/img/select-up.svg';
 
 export const Header = ({ cmsData }: any): JSX.Element => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
@@ -23,7 +25,7 @@ export const Header = ({ cmsData }: any): JSX.Element => {
 
   const options = [
     !isSSO() ? { label: 'My Profile', value: '/management/profile' } : undefined,
-    hasCompanyPermission() ? { label: 'My company', value: '/management/company' } : undefined,
+    hasCompanyPermission() ? { label: 'My Company', value: '/management/company' } : undefined,
     { label: 'Logout', value: 'logout' },
   ].filter(Boolean) as DropdownModel<string>[];
 
@@ -42,24 +44,27 @@ export const Header = ({ cmsData }: any): JSX.Element => {
   }, []);
 
   const onMenuLinkClick = React.useCallback(
-    (e) => {
+    async (e) => {
       if (e.target.dataset.href !== 'logout') {
         history.push(e.target.dataset.href);
       } else {
-        dispatch(logout());
+        await dispatch(logout());
       }
     },
     [history.push],
   );
 
-  const onClick = React.useCallback(({ value }) => {
-    if (value === 'logout') {
-      dispatch(logout());
-    } else {
+  const onProfileNavbarClick = React.useCallback(async ({ value }) => {
+    if (value !== 'logout') {
       history.push(value);
+    } else {
+      await dispatch(logout());
     }
   }, []);
 
+  const checkIncludesUrl = (url1: any, url2?: any): boolean => {
+    return location.pathname.includes(url1) || (url2 && location.pathname.includes(url2));
+  };
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-white">
       <div className="container">
@@ -102,15 +107,23 @@ export const Header = ({ cmsData }: any): JSX.Element => {
               {isExist && (
                 <li className="nav-item">
                   <div className="options-wrapper">
-                    <OcProfileNavbar username="More" options={options} initials="" onSelect={onClick} />
+                    <OcProfileNavbar username="More" options={options} initials="" onSelect={onProfileNavbarClick} />
                   </div>
                 </li>
               )}
               {isMobile && isExist && (
                 <>
-                  <li className="nav-item">
-                    <Link to="#" className="nav-link" onClick={toggleMenuMore}>
+                  <li
+                    className={`nav-item ${
+                      checkIncludesUrl('/management/profile', '/management/company') ? 'active' : ''
+                    }`}
+                    onClick={checkIncludesUrl}
+                    role="presentation"
+                    onKeyDown={checkIncludesUrl}
+                  >
+                    <Link to="#" className={`nav-link display-flex`} onClick={toggleMenuMore}>
                       More
+                      <img src={`${isMobileMenuCollapsed ? buttonUp : buttonDown}`} alt="toggle" />
                     </Link>
                   </li>
                   <div className="collaps-items">
