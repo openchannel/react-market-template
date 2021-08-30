@@ -4,13 +4,14 @@ import { useDispatch } from 'react-redux';
 import { DropdownModel } from '@openchannel/react-common-components';
 import { OcProfileNavbar } from '@openchannel/react-common-components/dist/ui/common/molecules';
 import { useMedia, useTypedSelector } from '../../hooks';
-import { hasCompanyPermission, isSSO } from './utils';
+import { hasCompanyPermission, isSSO, checkIncludesUrl } from './utils';
 import { logout } from '../../store/session/actions';
 import './style.scss';
 import logo from '../../../../../public/assets/img/logo-company.png';
-import buttonDown from '../../../../../public/assets/img/select-down.svg';
-import buttonUp from '../../../../../public/assets/img/select-up.svg';
+import { ReactComponent as ButtonDown } from '../../../../../public/assets/img/select-down.svg';
+import { ReactComponent as ButtonUp } from '../../../../../public/assets/img/select-up.svg';
 
+// eslint-disable-next-line
 export const Header = ({ cmsData }: any): JSX.Element => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [isMobileMenuCollapsed, setIsMobileMenuCollapsed] = React.useState(false);
@@ -54,17 +55,17 @@ export const Header = ({ cmsData }: any): JSX.Element => {
     [history.push],
   );
 
-  const onProfileNavbarClick = React.useCallback(async ({ value }) => {
-    if (value !== 'logout') {
-      history.push(value);
-    } else {
-      await dispatch(logout());
-    }
-  }, []);
+  const onProfileNavbarClick = React.useCallback(
+    async ({ value }) => {
+      if (value !== 'logout') {
+        history.push(value);
+      } else {
+        await dispatch(logout());
+      }
+    },
+    [history.push],
+  );
 
-  const checkIncludesUrl = (url1: any, url2?: any): boolean => {
-    return location.pathname.includes(url1) || (url2 && location.pathname.includes(url2));
-  };
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-white">
       <div className="container">
@@ -113,18 +114,19 @@ export const Header = ({ cmsData }: any): JSX.Element => {
               )}
               {isMobile && isExist && (
                 <>
-                  <li
-                    className={`nav-item ${
-                      checkIncludesUrl('/management/profile', '/management/company') ? 'active' : ''
-                    }`}
-                    onClick={checkIncludesUrl}
-                    role="presentation"
-                    onKeyDown={checkIncludesUrl}
-                  >
-                    <Link to="#" className={`nav-link display-flex`} onClick={toggleMenuMore}>
-                      More
-                      <img src={`${isMobileMenuCollapsed ? buttonUp : buttonDown}`} alt="toggle" />
-                    </Link>
+                  <li className="nav-item">
+                    <div
+                      className={`nav-item collaps-none justify-content-between align-items-center ${
+                        checkIncludesUrl('/management/profile', '/management/company') ? 'active' : ''
+                      }`}
+                      onClick={toggleMenuMore}
+                      role="button"
+                      onKeyDown={toggleMenuMore}
+                      tabIndex={0}
+                    >
+                      <span className="nav-link display-flex">More</span>
+                      <div className="pr-3">{isMobileMenuCollapsed ? <ButtonUp /> : <ButtonDown />}</div>
+                    </div>
                   </li>
                   <div className="collaps-items">
                     {

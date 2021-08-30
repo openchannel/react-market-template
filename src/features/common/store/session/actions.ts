@@ -62,10 +62,13 @@ export const logout = () => async (dispatch: Dispatch, getState: () => RootState
   const {
     oidc: { isSsoLogin, userManager },
   } = getState();
+
   await auth.logOut();
   dispatch(removeSession());
-  if (!userManager) return;
-  if (isSsoLogin && userManager) {
+
+  if (isSsoLogin) {
+    if (!userManager) return;
+
     await userManager.signoutRedirect();
   }
 };
