@@ -15,6 +15,7 @@ export type NormalizedConfigObject = {
   automaticSilentRenew: boolean;
   loadUserInfo: boolean;
   monitorSession: boolean;
+  post_logout_redirect_uri: string;
 };
 
 export const normalizeOIdConfig = (config: ConfigObject): NormalizedConfigObject => {
@@ -28,5 +29,6 @@ export const normalizeOIdConfig = (config: ConfigObject): NormalizedConfigObject
     automaticSilentRenew: true,
     loadUserInfo: true,
     monitorSession: false, // set to true by default. this causes a signout after few seconds in chrome browser
+    post_logout_redirect_uri: window.location.origin,
   };
 };

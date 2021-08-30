@@ -1,18 +1,23 @@
 import * as React from 'react';
 import { useHistory, Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { DropdownModel } from '@openchannel/react-common-components';
 import { OcProfileNavbar } from '@openchannel/react-common-components/dist/ui/common/molecules';
-import { useMedia } from '../../hooks';
-import logo from '../../../../../public/assets/img/logo-company.png';
-import { hasCompanyPermission, isSSO, isUserLoggedIn } from './utils';
+import { useMedia, useTypedSelector } from '../../hooks';
+import { hasCompanyPermission, isSSO, checkIncludesUrl } from './utils';
+import { logout } from '../../store/session/actions';
 import './style.scss';
+import logo from '../../../../../public/assets/img/logo-company.png';
+import { ReactComponent as ButtonDown } from '../../../../../public/assets/img/select-down.svg';
 
 // eslint-disable-next-line
-const Header = ({ cmsData }: any): JSX.Element => {
+export const Header = ({ cmsData }: any): JSX.Element => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [isMobileMenuCollapsed, setIsMobileMenuCollapsed] = React.useState(false);
   const history = useHistory();
   const isMobile = useMedia();
+  const dispatch = useDispatch();
+  const { isExist } = useTypedSelector((store) => store.session);
 
   React.useEffect(() => {
     isMobile ? setIsCollapsed(false) : setIsCollapsed(true);
@@ -20,7 +25,7 @@ const Header = ({ cmsData }: any): JSX.Element => {
 
   const options = [
     !isSSO() ? { label: 'My Profile', value: '/management/profile' } : undefined,
-    hasCompanyPermission() ? { label: 'My company', value: '/management/company' } : undefined,
+    hasCompanyPermission() ? { label: 'My Company', value: '/management/company' } : undefined,
     { label: 'Logout', value: 'logout' },
   ].filter(Boolean) as DropdownModel<string>[];
 
@@ -39,9 +44,22 @@ const Header = ({ cmsData }: any): JSX.Element => {
   }, []);
 
   const onMenuLinkClick = React.useCallback(
-    (e) => {
+    async (e) => {
       if (e.target.dataset.href !== 'logout') {
         history.push(e.target.dataset.href);
+      } else {
+        await dispatch(logout());
+      }
+    },
+    [history.push],
+  );
+
+  const onProfileNavbarClick = React.useCallback(
+    async ({ value }) => {
+      if (value !== 'logout') {
+        history.push(value);
+      } else {
+        await dispatch(logout());
       }
     },
     [history.push],
@@ -86,19 +104,34 @@ const Header = ({ cmsData }: any): JSX.Element => {
                   );
                 },
               )}
-              {isUserLoggedIn() && (
+              {isExist && (
                 <li className="nav-item">
                   <div className="options-wrapper">
-                    <OcProfileNavbar username="More" options={options} initials="" />
+                    <OcProfileNavbar username="More" options={options} initials="" onSelect={onProfileNavbarClick} />
                   </div>
                 </li>
               )}
-              {isMobile && (
+              {isMobile && isExist && (
                 <>
                   <li className="nav-item">
-                    <Link to="#" className="nav-link" onClick={toggleMenuMore}>
-                      More
-                    </Link>
+                    <div
+                      className={`nav-item collaps-none justify-content-between align-items-center ${
+                        checkIncludesUrl('/management/profile', '/management/company') ? 'active' : ''
+                      }`}
+                      onClick={toggleMenuMore}
+                      role="button"
+                      onKeyDown={toggleMenuMore}
+                      tabIndex={0}
+                    >
+                      <span className="nav-link">More</span>
+                      <div className={`pr-3 ${isMobileMenuCollapsed ? 'rotate-img' : ''}`}>
+                        <ButtonDown
+                          className={`${
+                            checkIncludesUrl('/management/profile', '/management/company') ? '' : 'change-icon-color'
+                          }`}
+                        />
+                      </div>
+                    </div>
                   </li>
                   <div className="collaps-items">
                     {
@@ -124,17 +157,17 @@ const Header = ({ cmsData }: any): JSX.Element => {
                   </div>
                 </>
               )}
-              {!isUserLoggedIn() && (
-                <div className="d-flex my-2 my-lg-0 ml-0 ml-md-6 auth-button">
-                  <Link className="btn header-login-btn header-btn" to="/login">
-                    Log in
-                  </Link>
-                  <Link className="btn btn-primary header-btn ml-md-2" to="/signup">
-                    Sign up
-                  </Link>
-                </div>
-              )}
             </ul>
+            {!isExist && (
+              <div className="d-flex my-2 my-lg-0 ml-0 ml-md-6 auth-button">
+                <Link className="btn header-login-btn header-btn" to="/login">
+                  Log in
+                </Link>
+                <Link className="btn btn-primary header-btn ml-md-2" to="/signup">
+                  Sign up
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>
