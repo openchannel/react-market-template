@@ -9,7 +9,6 @@ import { logout } from '../../store/session/actions';
 import './style.scss';
 import logo from '../../../../../public/assets/img/logo-company.png';
 import { ReactComponent as ButtonDown } from '../../../../../public/assets/img/select-down.svg';
-import { ReactComponent as ButtonUp } from '../../../../../public/assets/img/select-up.svg';
 
 // eslint-disable-next-line
 export const Header = ({ cmsData }: any): JSX.Element => {
@@ -124,8 +123,14 @@ export const Header = ({ cmsData }: any): JSX.Element => {
                       onKeyDown={toggleMenuMore}
                       tabIndex={0}
                     >
-                      <span className="nav-link display-flex">More</span>
-                      <div className="pr-3">{isMobileMenuCollapsed ? <ButtonUp /> : <ButtonDown />}</div>
+                      <span className="nav-link">More</span>
+                      <div className={`pr-3 ${isMobileMenuCollapsed ? 'rotate-img' : ''}`}>
+                        <ButtonDown
+                          className={`${
+                            checkIncludesUrl('/management/profile', '/management/company') ? '' : 'change-icon-color'
+                          }`}
+                        />
+                      </div>
                     </div>
                   </li>
                   <div className="collaps-items">
