@@ -2,17 +2,18 @@ import { Dispatch } from 'redux';
 import { auth, nativeLogin as native, storage, UserLoginModel } from '@openchannel/react-common-services';
 
 import { ActionTypes } from './action-types';
+import { RootState } from '../../../../types';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
 
-const setSession = (payload: { accessToken: string; refreshToken: string }) => {
+export const setSession = (payload: { accessToken: string; refreshToken: string }) => {
   storage.persist(payload.accessToken, payload.refreshToken);
 
   return { type: ActionTypes.SET, payload };
 };
 
-const removeSession = () => {
+export const removeSession = () => {
   storage.removeTokens();
 
   return { type: ActionTypes.REMOVE };
@@ -57,16 +58,14 @@ export const tryLoginByRefreshToken = () => async (dispatch: Dispatch) => {
   }
 };
 
-export const logout = () => async (dispatch: Dispatch) => {
-  dispatch(startLoading());
-  try {
-    const logoutSession = await auth.logOut();
-    if (logoutSession) {
-      dispatch(removeSession());
-    }
-    dispatch(finishLoading());
-  } catch (e) {
-    console.error('error.', e);
-    throw e;
+export const logout = () => async (dispatch: Dispatch, getState: () => RootState) => {
+  const {
+    oidc: { isSsoLogin, userManager },
+  } = getState();
+  await auth.logOut();
+  dispatch(removeSession());
+  if (!userManager) return;
+  if (isSsoLogin && userManager) {
+    await userManager.signoutRedirect();
   }
 };
