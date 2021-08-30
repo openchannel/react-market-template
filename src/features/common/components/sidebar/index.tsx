@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { OcSidebar, SidebarProps } from '@openchannel/react-common-components/dist/ui/common/molecules';
+import { OcSidebar } from '@openchannel/react-common-components/dist/ui/common/molecules';
 import { getFilters } from '../../../apps/store/apps/actions';
 import { useTypedSelector } from '../../hooks';
 
@@ -12,6 +12,9 @@ export const Sidebar: React.FC = () => {
     dispatch(getFilters());
   }, []);
 
+  const [upperLevelCategory, setUpperLevelCategory] = React.useState('');
+  const [lowerLevelCategory, setLowerLevelCategory] = React.useState([]);
+
   const renderFilters = React.useMemo(
     () =>
       filters.map((item: any, index: number) => {
@@ -20,7 +23,14 @@ export const Sidebar: React.FC = () => {
             subArray.values = undefined;
           }
         });
-        return <OcSidebar sidebarModel={item.values} title={item.name} key={item.name + index} />;
+        return (
+          <OcSidebar
+            sidebarModel={item.values}
+            title={item.name}
+            key={item.name + index}
+            baseNavigation={`browse/${item.id}`}
+          />
+        );
       }),
     [filters],
   );

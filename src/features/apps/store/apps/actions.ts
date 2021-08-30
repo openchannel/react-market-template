@@ -8,7 +8,7 @@ import { ActionTypes } from './action-types';
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
 const setGalleries = (payload: Gallery[]) => ({ type: ActionTypes.SET_GALLERIES, payload });
-const setFilters = (payload: any) => ({ type: ActionTypes.SET_FILTERS, payload });
+const setFilters = (payload: FilterResponse[]) => ({ type: ActionTypes.SET_FILTERS, payload });
 // const setFeaturedApps = (payload: any) => ({ type: ActionTypes.SET_FEATURED, payload });
 
 const getApps = async (pageNumber: number, limit: number, sort?: string, filter?: string): Promise<AppResponse[]> => {
@@ -56,7 +56,7 @@ export const getFilters = () => async (dispatch: Dispatch) => {
 
   try {
     const { data } = await frontend.getFilters();
-    const filters = data.list;
+    const filters = data.list; 
     dispatch(setFilters(filters));
     dispatch(finishLoading());
   } catch (error) {
