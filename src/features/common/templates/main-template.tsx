@@ -4,10 +4,13 @@ import { OcFooter } from '@openchannel/react-common-components/dist/ui/common/or
 import { Header } from '../components';
 import { useTypedSelector, useAuth } from '../hooks';
 import { socialLinks } from '../../../consts/social-links';
+import { useDispatch } from 'react-redux';
+import { fetchAuthConfig } from '../store';
 
 export const MainTemplate: React.FC = ({ children }) => {
   const { header, footer } = useTypedSelector(({ cmsContent }) => cmsContent);
   const { checkSession } = useAuth();
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     const check = async () => {
@@ -19,6 +22,7 @@ export const MainTemplate: React.FC = ({ children }) => {
     };
 
     check();
+    dispatch(fetchAuthConfig());
   }, []);
 
   return (
