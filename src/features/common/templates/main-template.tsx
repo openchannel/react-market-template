@@ -3,7 +3,7 @@ import { OcFooter } from '@openchannel/react-common-components/dist/ui/common/or
 
 import { Header } from '../components';
 import { useTypedSelector, useAuth } from '../hooks';
-import { socialLinks } from '../../../consts/social-links';
+import { SOCIAL_LINKS } from '../../../consts';
 import { useDispatch } from 'react-redux';
 import { fetchAuthConfig } from '../store';
 
@@ -29,7 +29,7 @@ export const MainTemplate: React.FC = ({ children }) => {
     <>
       <Header cmsData={header} />
       {children}
-      <OcFooter socialLinks={socialLinks} cmsData={footer} />
+      <OcFooter socialLinks={SOCIAL_LINKS} cmsData={footer} />
     </>
   );
 };
