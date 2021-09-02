@@ -10,7 +10,7 @@ export const OidcWrapper: React.FC = ({ children }) => {
   const { isLoaded, isLoading } = useTypedSelector((state) => state.oidc);
 
   React.useEffect(() => {
-    if (!isLoaded) {
+    if (!isLoaded && !isLoading) {
       dispatch(fetchAuthConfig());
     }
   }, []);

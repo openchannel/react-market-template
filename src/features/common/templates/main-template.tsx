@@ -1,16 +1,19 @@
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
+import {useLocation} from "react-router-dom";
 import { OcFooter } from '@openchannel/react-common-components/dist/ui/common/organisms';
 
-import { Header } from '../components';
-import { useTypedSelector, useAuth } from '../hooks';
 import { socialLinks } from '../../../consts/social-links';
-import { useDispatch } from 'react-redux';
+import { Header } from '../components';
 import { fetchAuthConfig } from '../store';
+import {useTypedSelector, useAuth, useCmsData} from '../hooks';
 
 export const MainTemplate: React.FC = ({ children }) => {
-  const { header, footer } = useTypedSelector(({ cmsContent }) => cmsContent);
+  const location = useLocation();
+  const { header, footer, getCmsData } = useCmsData();
   const { checkSession } = useAuth();
   const dispatch = useDispatch();
+  const { isLoaded, isLoading } = useTypedSelector((state) => state.oidc);
 
   React.useEffect(() => {
     const check = async () => {
@@ -21,8 +24,14 @@ export const MainTemplate: React.FC = ({ children }) => {
       }
     };
 
-    check();
-    dispatch(fetchAuthConfig());
+    if (location.pathname === '/') {
+      check();
+
+      if (!isLoaded && !isLoading) {
+        dispatch(fetchAuthConfig());
+      }
+    }
+    getCmsData()
   }, []);
 
   return (
