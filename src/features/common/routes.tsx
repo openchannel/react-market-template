@@ -13,7 +13,6 @@ export const commonRoutes = [
   {
     path: '/env',
     exact: true,
-    protected: true,
     Component: () => (
       <div>
         {['NODE_ENV', 'REACT_APP_PRODUCTION', 'REACT_APP_API_URL', 'REACT_APP_MARKETPLACE_NAME'].map((key) => (
