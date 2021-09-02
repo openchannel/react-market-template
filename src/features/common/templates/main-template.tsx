@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import {useLocation} from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 import { OcFooter } from '@openchannel/react-common-components/dist/ui/common/organisms';
 
 import { socialLinks } from '../../../consts/social-links';
 import { Header } from '../components';
 import { fetchAuthConfig } from '../store';
-import {useTypedSelector, useAuth, useCmsData} from '../hooks';
+import { useTypedSelector, useAuth, useCmsData } from '../hooks';
 
 export const MainTemplate: React.FC = ({ children }) => {
   const location = useLocation();
@@ -31,7 +31,7 @@ export const MainTemplate: React.FC = ({ children }) => {
         dispatch(fetchAuthConfig());
       }
     }
-    getCmsData()
+    getCmsData();
   }, []);
 
   return (
