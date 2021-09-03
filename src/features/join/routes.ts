@@ -6,7 +6,7 @@ export const joinRoutes = [
   {
     path: '/login',
     exact: true,
-    protected: true,
+    private: true,
     Component: LoginPage,
   },
 ];
