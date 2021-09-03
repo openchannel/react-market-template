@@ -34,6 +34,7 @@ export const fetchGalleries = () => async (dispatch: Dispatch) => {
   try {
     const { data } = await frontend.getFilters();
     const filters = mapFilters(data.list);
+    dispatch(setFilters(data.list));
 
     const filteredApps = await getAppsByFilters(filters);
 
@@ -43,21 +44,6 @@ export const fetchGalleries = () => async (dispatch: Dispatch) => {
     }, [] as Gallery[]);
 
     dispatch(setGalleries(galleries));
-    dispatch(finishLoading());
-  } catch (error) {
-    dispatch(finishLoading());
-
-    throw error;
-  }
-};
-
-export const getFilters = () => async (dispatch: Dispatch) => {
-  dispatch(startLoading());
-
-  try {
-    const { data } = await frontend.getFilters();
-    const filters = data.list; 
-    dispatch(setFilters(filters));
     dispatch(finishLoading());
   } catch (error) {
     dispatch(finishLoading());
