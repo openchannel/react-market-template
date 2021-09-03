@@ -1,5 +1,11 @@
 import { Dispatch } from 'redux';
-import { auth, nativeLogin as native, storage, UserLoginModel } from '@openchannel/react-common-services';
+import {
+  auth,
+  ChangePasswordRequest,
+  nativeLogin as native,
+  storage,
+  UserLoginModel,
+} from '@openchannel/react-common-services';
 
 import { ActionTypes } from './action-types';
 import { RootState } from '../../../../types';
@@ -70,5 +76,17 @@ export const logout = () => async (dispatch: Dispatch, getState: () => RootState
     if (!userManager) return;
 
     await userManager.signoutRedirect();
+  }
+};
+
+export const changePassword = (body: ChangePasswordRequest) => async (dispatch: Dispatch) => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const response = await native.changePassword({ ...body, jwtRefreshToken: storage.getRefreshToken() });
+
+    dispatch(setSession({ accessToken: storage.getAccessToken(), refreshToken: storage.getRefreshToken() }));
+  } catch {
+    //do
   }
 };

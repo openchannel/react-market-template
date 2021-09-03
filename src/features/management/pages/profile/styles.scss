@@ -3,11 +3,10 @@
 @import '/src/assets/styles/mixins';
 
 .active-link {
-    //color: #537cfd;
     @include font-medium();
     @include media-breakpoint-md {
         color: #333 !important;
-        border-bottom: 3px solid #537cfd;
+        border-bottom: 3px solid $link-primary;
         padding-bottom: 1rem;
     }
 }
@@ -36,7 +35,7 @@ ul.list-unstyled {
             }
         }
 
-        a {
+        span {
             color: inherit;
             cursor: pointer;
             @include font-size-md();
