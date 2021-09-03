@@ -4,22 +4,19 @@ import { notify } from '@openchannel/react-common-components/dist/ui/common/atom
 let isRefreshing = false;
 let skipByErrorCode: number[] = [];
 
-// eslint-disable-next-line
-const process401Error = async (request: any) => {
-  console.log('process401Error');
+const process401Error = async <T>(config: T) => {
+  console.log('process401Error')
+
   if (!isRefreshing) {
     isRefreshing = true;
 
     try {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       const { data } = await auth.refreshToken({ refreshToken: storage.getRefreshToken() });
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      storage.persist(data);
+      storage.persist(data.accessToken, data.refreshToken);
       isRefreshing = false;
-      return axiosRequest(request);
+
+      return axiosRequest(config);
     } catch (error) {
       storage.removeTokens();
       isRefreshing = false;
@@ -27,7 +24,7 @@ const process401Error = async (request: any) => {
       throw error;
     }
   } else {
-    return axiosRequest(request);
+    return axiosRequest(config);
   }
 };
 
@@ -61,7 +58,7 @@ const errorHandler = (error: InterceptorError): Promise<any> | InterceptorError 
   const status = error.response?.status;
 
   if (status === 401 && !config?.url?.includes('refresh')) {
-    return process401Error(error?.request);
+    return process401Error<typeof config>(config);
   }
 
   if (data?.['validation-errors'] || (data?.errors?.length >= 1 && data?.errors[0]?.field)) {
