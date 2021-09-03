@@ -12,7 +12,7 @@ export const AuthWrapper: React.FC = ({ children }) => {
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { isLoading: isSessionLoading, checkSession } = useAuth();
+  const { isSessionLoading, checkSession } = useAuth();
   const { isLoading: isOidcLoading, userManager, isSsoLogin } = useTypedSelector((state) => state.oidc);
 
   const loginWithOidcTokens = React.useCallback(
@@ -60,7 +60,7 @@ export const AuthWrapper: React.FC = ({ children }) => {
   };
 
   React.useEffect(() => {
-    const get = async () => {
+    const init = async () => {
       try {
         await checkSession();
 
@@ -73,7 +73,7 @@ export const AuthWrapper: React.FC = ({ children }) => {
       }
     };
 
-    get();
+    init();
   }, []);
 
   if (isSessionLoading || isOidcLoading || isAuthWithOidcLoading) {

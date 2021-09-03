@@ -5,6 +5,7 @@ import { joinRoutes } from './features/join';
 import { commonRoutes } from './features/common';
 import { OidcWrapper } from './features/common/hocs';
 
+// commonRoutes must be last in the array
 const routes = [...joinRoutes, ...commonRoutes];
 
 export const Routes = (): JSX.Element => (
@@ -15,7 +16,7 @@ export const Routes = (): JSX.Element => (
           key={key}
           path={route.path}
           render={() =>
-            route.protected ? (
+            route.private ? (
               <OidcWrapper>
                 <Component />
               </OidcWrapper>
