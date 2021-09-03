@@ -5,7 +5,7 @@ let isRefreshing = false;
 let skipByErrorCode: number[] = [];
 
 const process401Error = async <T>(config: T) => {
-  console.log('process401Error')
+  console.log('process401Error');
 
   if (!isRefreshing) {
     isRefreshing = true;
