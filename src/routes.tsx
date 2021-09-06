@@ -3,10 +3,10 @@ import { Switch, Route } from 'react-router-dom';
 
 import { joinRoutes } from './features/join';
 import { commonRoutes } from './features/common';
-import { managementRoutes } from './features/management';
 import { OidcWrapper } from './features/common/hocs';
 
-const routes = [...joinRoutes, ...managementRoutes, ...commonRoutes];
+// commonRoutes must be last in the array
+const routes = [...joinRoutes, ...commonRoutes];
 
 export const Routes = (): JSX.Element => (
   <React.Suspense fallback={<div className="bg-container">Loading...</div>}>
@@ -16,7 +16,7 @@ export const Routes = (): JSX.Element => (
           key={key}
           path={route.path}
           render={() =>
-            route.protected ? (
+            route.private ? (
               <OidcWrapper>
                 <Component />
               </OidcWrapper>

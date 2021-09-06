@@ -44,8 +44,6 @@ export const loginWithSSOTokens = (idToken: string, accessToken: string) => asyn
 };
 
 export const tryLoginByRefreshToken = () => async (dispatch: Dispatch) => {
-  dispatch(startLoading());
-
   try {
     const validSession = await auth.tryLoginByRefreshToken();
 
@@ -54,13 +52,10 @@ export const tryLoginByRefreshToken = () => async (dispatch: Dispatch) => {
     }
 
     dispatch(setSession({ accessToken: storage.getAccessToken(), refreshToken: storage.getRefreshToken() }));
-    dispatch(finishLoading());
-  } catch (e) {
+  } catch (error) {
     dispatch(removeSession());
-    dispatch(finishLoading());
-    console.error('Refresh token error.', e);
-
-    throw e;
+    console.error(error);
+    throw error;
   }
 };
 
