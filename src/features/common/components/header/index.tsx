@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { useHistory, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useHistory, Link } from 'react-router-dom';
 import { DropdownModel } from '@openchannel/react-common-components';
 import { OcProfileNavbar } from '@openchannel/react-common-components/dist/ui/common/molecules';
+
 import { useMedia, useTypedSelector } from '../../hooks';
 import { hasCompanyPermission, isSSO, checkIncludesUrl } from './utils';
 import { logout } from '../../store/session/actions';
@@ -49,9 +50,13 @@ export const Header = ({ cmsData }: any): JSX.Element => {
         history.push(e.target.dataset.href);
       } else {
         await dispatch(logout());
+
+        if (location.pathname !== '/') {
+          history.replace('/');
+        }
       }
     },
-    [history.push],
+    [history.push, history.replace, location.pathname],
   );
 
   const onProfileNavbarClick = React.useCallback(

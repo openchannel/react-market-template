@@ -25,10 +25,9 @@ const AppList: React.FC = () => {
           {/*		<OcAppCategoriesComponent />*/}
           {/*	</div>*/}
           {/*))}*/}
-          <div className="section-wrapper">
-            {galleries.map((gallery) => (
+          {galleries.map((gallery) => (
+            <div key={gallery.id} className="section-wrapper">
               <OcAppGallery
-                key={gallery.id}
                 moreAppsTitle="See All"
                 appsArr={gallery?.data}
                 appGalleryTitle={gallery.label}
@@ -37,8 +36,8 @@ const AppList: React.FC = () => {
                 routerLinkForOneApp="/details"
                 // appNavigationParam="safeName[0]"
               />
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
