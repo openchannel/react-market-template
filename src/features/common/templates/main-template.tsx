@@ -2,11 +2,15 @@ import * as React from 'react';
 import { OcFooter } from '@openchannel/react-common-components/dist/ui/common/organisms';
 
 import { Header } from '../components';
-import { useTypedSelector } from '../hooks';
+import { useCmsData } from '../hooks';
 import { SOCIAL_LINKS } from '../../../consts';
 
 export const MainTemplate: React.FC = ({ children }) => {
-  const { header, footer } = useTypedSelector(({ cmsContent }) => cmsContent);
+  const { header, footer, getCmsData } = useCmsData();
+
+  React.useEffect(() => {
+    getCmsData();
+  }, []);
 
   return (
     <>

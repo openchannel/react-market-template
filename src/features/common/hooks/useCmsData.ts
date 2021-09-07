@@ -6,12 +6,10 @@ import { useTypedSelector } from './useTypedSelector';
 
 export const useCmsData = () => {
   const dispatch = useDispatch();
-  const { isLoaded, isLoading, app, header, home, login, footer } = useTypedSelector(({ cmsContent }) => cmsContent);
+  const { app, header, home, login, footer } = useTypedSelector(({ cmsContent }) => cmsContent);
 
-  React.useEffect(() => {
-    if (!isLoaded && !isLoading) {
-      dispatch(fetchCmsContent());
-    }
+  const getCmsData = React.useCallback(() => {
+    dispatch(fetchCmsContent());
   }, []);
 
   return {
@@ -20,5 +18,6 @@ export const useCmsData = () => {
     home,
     login,
     footer,
+    getCmsData,
   };
 };
