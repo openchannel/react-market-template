@@ -80,7 +80,8 @@ export const changePassword = (body: ChangePasswordRequest) => async (dispatch: 
     // @ts-ignore
     const response = await native.changePassword({ ...body, jwtRefreshToken: storage.getRefreshToken() });
 
-    dispatch(setSession({ accessToken: storage.getAccessToken(), refreshToken: storage.getRefreshToken() }));
+    const { accessToken, refreshToken } = response.data;
+    dispatch(setSession({ accessToken, refreshToken }));
   } catch {
     //do
   }
