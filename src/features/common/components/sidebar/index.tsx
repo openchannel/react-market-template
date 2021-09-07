@@ -95,9 +95,9 @@ export const Sidebar: React.FC = () => {
     [setSelectedItems, selectedItems],
   );
 
-  const renderItems = React.useMemo(
-    () =>
-      filters?.map(
+  return (
+    <>
+      {filters?.map(
         (item) =>
           item.values &&
           item.values.length > 0 && (
@@ -109,11 +109,9 @@ export const Sidebar: React.FC = () => {
               onItemClick={(i) => handleItemClick(item.id, i)}
             />
           ),
-      ),
-    [filters, selectedItems, handleItemClick],
+      )}
+    </>
   );
-
-  return <>{renderItems}</>;
 };
 
 export default Sidebar;
