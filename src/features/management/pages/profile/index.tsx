@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ChangePasswordRequest } from '@openchannel/react-common-services';
+import { useHistory } from 'react-router-dom';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
@@ -30,9 +31,12 @@ const form = {
 };
 
 const Profile = (): JSX.Element => {
-  const historyBack = () => history.back();
   const [isSelectedPage, setSelectedPage] = React.useState('myProfile');
   const dispatch = useDispatch();
+  const history = useHistory();
+  const historyBack = React.useCallback(() => {
+    history.goBack();
+  }, [history.goBack]);
 
   const onClickPass = React.useCallback((e) => {
     setSelectedPage(e.target.dataset.link);
