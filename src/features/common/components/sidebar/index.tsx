@@ -27,18 +27,18 @@ export const Sidebar: React.FC = () => {
         setSelectedItems([{ id, parent: selectedItem[0] }]);
       }
     } else if (search.length > 0) {
-      const query: any = Object.entries(queryString.parse(search.replace(/^\?/, ''))).reduce(
-        (obj: any, [key, value]) => {
-          obj[key] = !value ? value : Array.isArray(value) ? value : value.split(',');
+      const query = Object.entries(queryString.parse(search.replace(/^\?/, ''))).reduce(
+        (obj: { [key: string]: string[] }, [key, value]) => {
+          obj[key] = !value ? [] : Array.isArray(value) ? value : value.split(',');
           return obj;
         },
-        {},
+        {} as { [key: string]: string[] },
       );
       const newSelectedItems = Object.entries(query).flatMap(([key, value]) =>
         filters
           .filter((f) => f.id === key)
           .flatMap((f) => f.values)
-          .filter((v) => (value as any[]).includes(v.id))
+          .filter((v) => value.includes(v.id!))
           .map((v) => ({ id: key, parent: v })),
       );
       setSelectedItems(newSelectedItems);
@@ -46,15 +46,17 @@ export const Sidebar: React.FC = () => {
   }, [filters, setSelectedItems]);
 
   const buildQuery = React.useCallback((): string => {
-    const query: any = selectedItems.reduce((acc, val) => {
-      if (val.id === COLLECTIONS) {
-        acc[val.id] = val.parent.id;
-      } else {
-        acc[val.id] = !acc[val.id] ? val.parent.id : `${acc[val.id]},${val.parent.id}`;
+    const query = selectedItems.reduce((acc: { [key: string]: string }, val: { id: string } & SidebarItem) => {
+      if (val.parent.id) {
+        if (val.id === COLLECTIONS) {
+          acc[val.id] = val.parent.id;
+        } else {
+          acc[val.id] = !acc[val.id] ? val.parent.id : `${acc[val.id]},${val.parent.id}`;
+        }
       }
 
       return acc;
-    }, {} as any);
+    }, {} as { [key: string]: string });
 
     return Object.entries(query)
       .map(([key, value]) => `${key}=${value}`)
