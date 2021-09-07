@@ -6,7 +6,7 @@ export const managementRoutes = [
   {
     path: '/management/profile',
     exact: true,
-    protected: true,
+    private: true,
     Component: ProfilePage,
   },
 ];
