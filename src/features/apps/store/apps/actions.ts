@@ -4,7 +4,7 @@ import { apps, frontend, AppResponse } from '@openchannel/react-common-services'
 import { MappedFilter, Gallery } from '../../types';
 import { mapAppData, mapFilters } from '../../lib/map';
 import { ActionTypes } from './action-types';
-import {Filter} from '@openchannel/react-common-components';
+import { Filter } from '@openchannel/react-common-components';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });

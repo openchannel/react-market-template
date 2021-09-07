@@ -1,6 +1,6 @@
 import { Gallery } from '../../types';
 import { ActionTypes } from './action-types';
-import {Filter, SidebarValue} from '@openchannel/react-common-components';
+import { Filter } from '@openchannel/react-common-components';
 
 export interface Apps {
   isLoading: boolean;
