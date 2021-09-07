@@ -1,14 +1,15 @@
 import { Dispatch } from 'redux';
-import { apps, frontend, AppResponse, FilterResponse } from '@openchannel/react-common-services';
+import { apps, frontend, AppResponse } from '@openchannel/react-common-services';
 
 import { MappedFilter, Gallery } from '../../types';
 import { mapAppData, mapFilters } from '../../lib/map';
 import { ActionTypes } from './action-types';
+import {Filter} from '@openchannel/react-common-components';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
 const setGalleries = (payload: Gallery[]) => ({ type: ActionTypes.SET_GALLERIES, payload });
-const setFilters = (payload: FilterResponse[]) => ({ type: ActionTypes.SET_FILTERS, payload });
+const setFilters = (payload: Filter[]) => ({ type: ActionTypes.SET_FILTERS, payload });
 // const setFeaturedApps = (payload: any) => ({ type: ActionTypes.SET_FEATURED, payload });
 
 const getApps = async (pageNumber: number, limit: number, sort?: string, filter?: string): Promise<AppResponse[]> => {
