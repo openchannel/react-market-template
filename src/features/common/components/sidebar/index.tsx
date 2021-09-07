@@ -113,17 +113,7 @@ export const Sidebar: React.FC = () => {
     [filters, selectedItems, handleItemClick],
   );
 
-  return (
-    <>
-      {/* <oc-text-search class="mb-3" (enterSearch)="catchSearchText($event)"></oc-text-search> 
-      <app-collapse-with-title titleForClose="Close filter options"
-      titleForOpen="Open filter options"
-      [collapsed]="filterCollapsed"
-      (collapseChanged)="onCollapseChanged($event)">
-    </app-collapse-with-title> */}
-      {renderItems}
-    </>
-  );
+  return <>{renderItems}</>;
 };
 
 export default Sidebar;
