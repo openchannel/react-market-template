@@ -3,4 +3,5 @@ export enum ActionTypes {
   FINISH_LOADING = '@apps/FINISH_LOADING',
   SET_GALLERIES = '@apps/SET_GALLERIES',
   SET_FEATURED = '@apps/SET_FEATURED',
+  SET_FILTERS = '@apps/SET_FILTERS',
 }

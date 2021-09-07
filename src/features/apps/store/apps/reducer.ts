@@ -5,6 +5,7 @@ const initialState = {
   isLoading: false,
   isLoaded: false,
   galleries: [],
+  filters: [],
   // featured: [],
 };
 
@@ -30,6 +31,13 @@ export const appsReducer = (state: Apps = initialState, action: Action): Apps =>
       return {
         ...state,
         galleries: action.payload,
+      };
+    }
+
+    case ActionTypes.SET_FILTERS: {
+      return {
+        ...state,
+        filters: action.payload,
       };
     }
 

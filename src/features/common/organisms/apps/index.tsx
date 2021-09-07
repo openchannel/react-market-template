@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { OcAppGallery } from '@openchannel/react-common-components/dist/ui/market/organisms';
-
+import Sidebar from '../../components/sidebar';
 import { fetchGalleries } from '../../../apps/store/apps/actions';
 import { useTypedSelector } from '../../hooks';
 
@@ -16,7 +16,9 @@ const AppList: React.FC = () => {
   return (
     <div className="container">
       <div className="row mt-7">
-        <div className="col-md-3 filter__container" id="main-content" />
+        <div className="col-md-3 filter__container" id="main-content">
+          <Sidebar />
+        </div>
         <div className="col-md-9">
           {/*{homePageConfig.appListPage.map((element) => (*/}
           {/*	<div className="mb-7">*/}
