@@ -1,16 +1,21 @@
 import * as React from 'react';
-
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { OcTextSearchComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
-import { useAuth, useMedia } from '../../hooks';
+import { useAuth, useMedia, useTypedSelector } from '../../hooks';
 import { AppList } from '../../organisms';
 import { MainTemplate } from '../../templates';
 import { Hero, GetStarted, Sidebar, CollapseWithTitle } from '../../components';
-
+import { setSelectedFilters } from '../../../apps/store/apps/actions';
 import './style.scss';
 
 export const HomePage: React.FC = () => {
+  const history = useHistory();
+  const dispatch = useDispatch();
   const { checkSession, getAuthConfig, isConfigLoaded } = useAuth();
   const [collapsed, changeCollapseStatus] = React.useState(false);
+  const [searchValue, setSearchValue] = React.useState('');
+  const { filters } = useTypedSelector(({ apps }) => apps);
   const isMobile = useMedia();
 
   React.useEffect(() => {
@@ -32,6 +37,17 @@ export const HomePage: React.FC = () => {
 
     init();
   }, []);
+
+  const handleEnterAction = () => {
+    if (searchValue) {
+      // dispatch(setSelectedFilters([{ id: filters[0].id, parent: filters[0].values[0] }]));
+      history.push(`/browse/${filters[0].id}/${filters[0].values[0].id}?search=${searchValue}`);
+    } else {
+      // dispatch(setSelectedFilters([{ id: filters[0].id, parent: filters[0].values[0] }]));
+      history.push(`/browse/collections/allApps`);
+    }
+  };
+
   return (
     <MainTemplate>
       <Hero />
@@ -41,8 +57,9 @@ export const HomePage: React.FC = () => {
             <OcTextSearchComponent
               hasMagnifier={true}
               placeholder="Search..."
-              onChange={() => {}}
-              // enterAction={catchSearchText}
+              onChange={setSearchValue}
+              value={searchValue}
+              enterAction={handleEnterAction}
               searchButtonText=""
               clearButtonText=""
             />
@@ -54,7 +71,7 @@ export const HomePage: React.FC = () => {
                 changeCollapseStatus={changeCollapseStatus}
               />
             )}
-            {!collapsed && <Sidebar />}
+            {!collapsed && <Sidebar searchValue={searchValue} />}
           </div>
           <div className="col-md-9">
             <AppList />
@@ -67,3 +84,8 @@ export const HomePage: React.FC = () => {
 };
 
 export default HomePage;
+//What to do:
+// 1. save search text (where?) and on home and add a tag on search page
+// 2. make 1 request on filters on init page, and check query in pathname if present.
+//                   After this, i can rely on selected filters to draw tags
+// 3. make a query to backend to get apps for app-list-grid, i need to write action for this

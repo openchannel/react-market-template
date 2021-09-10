@@ -1,6 +1,8 @@
 @import 'src/assets/styles/mixins';
 
 .container {
+  min-height: none;
+  padding: 0;
   .navigation-container {
     margin: 24px 0 32px;
     @include media-breakpoint-sm() {
@@ -44,7 +46,7 @@
       justify-content: flex-start;
       align-items: center;
       flex-wrap: wrap;
-      &__element {
+      &.tag-element {
         margin: 0 8px 8px 0;
       }
     }

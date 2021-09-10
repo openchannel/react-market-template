@@ -5,11 +5,16 @@ import { MappedFilter, Gallery } from '../../types';
 import { mapAppData, mapFilters } from '../../lib/map';
 import { ActionTypes } from './action-types';
 import { Filter } from '@openchannel/react-common-components';
+import { SelectedFilter } from './types';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
 const setGalleries = (payload: Gallery[]) => ({ type: ActionTypes.SET_GALLERIES, payload });
 const setFilters = (payload: Filter[]) => ({ type: ActionTypes.SET_FILTERS, payload });
+const updateSelectedFilters = (payload: { filters: SelectedFilter[]; searchStr: string }) => ({
+  type: ActionTypes.SET_SELECTED_FILTERS,
+  payload,
+});
 // const setFeaturedApps = (payload: any) => ({ type: ActionTypes.SET_FEATURED, payload });
 
 const getApps = async (pageNumber: number, limit: number, sort?: string, filter?: string): Promise<AppResponse[]> => {
@@ -27,6 +32,10 @@ const getAppsByFilters = async (filters: MappedFilter[]) => {
     if (r.status === 'fulfilled') acc.push(r.value);
     return acc;
   }, [] as AppResponse[][]);
+};
+
+export const setSelectedFilters = (filters: SelectedFilter[], searchString: string) => (dispatch: Dispatch) => {
+  dispatch(updateSelectedFilters({ filters: filters, searchStr: searchString }));
 };
 
 export const fetchGalleries = () => async (dispatch: Dispatch) => {
@@ -66,7 +75,3 @@ export const fetchFilters = () => async (dispatch: Dispatch) => {
     throw error;
   }
 };
-
-// export const fetchFeaturedApps = () => async (dispatch: Dispatch) => {
-//
-// }
