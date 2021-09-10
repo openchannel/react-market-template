@@ -2,6 +2,8 @@ export enum ActionTypes {
   START_LOADING = '@apps/START_LOADING',
   FINISH_LOADING = '@apps/FINISH_LOADING',
   SET_GALLERIES = '@apps/SET_GALLERIES',
+  UPDATE_MY_APPS = '@apps/UPDATE_MY_APPS',
+  RESET_MY_APPS = '@apps/RESET_MY_APPS',
   SET_FEATURED = '@apps/SET_FEATURED',
   SET_FILTERS = '@apps/SET_FILTERS',
 }
