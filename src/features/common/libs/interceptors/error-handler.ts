@@ -14,13 +14,14 @@ const process401Error = async <T>(config: T) => {
     isRefreshing = true;
 
     try {
-      const { data: { accessToken, refreshToken } } = await auth.refreshToken({ refreshToken: storage.getRefreshToken() });
+      const {
+        data: { accessToken, refreshToken },
+      } = await auth.refreshToken({ refreshToken: storage.getRefreshToken() });
 
       store.dispatch(setSession({ accessToken, refreshToken }));
       isRefreshing = false;
 
       return axiosRequest(config);
-
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
