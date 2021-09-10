@@ -83,10 +83,14 @@ const Profile = (): JSX.Element => {
               <OcForm
                 formJsonData={form}
                 onSubmit={async (value, { resetForm }) => {
-                  await dispatch(changePassword(value as ChangePasswordRequest));
-                  resetForm();
-
-                  notify.success('Password has been updated');
+                  try {
+                    await dispatch(changePassword(value as ChangePasswordRequest));
+                    resetForm();
+                    notify.success('Password has been updated');
+                  } catch (e) {
+                    notify.error(e.response.data.message);
+                    resetForm();
+                  }
                 }}
                 successButtonText="Save"
               />
