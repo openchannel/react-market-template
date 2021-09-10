@@ -2,6 +2,7 @@ import * as React from 'react';
 
 const ChartPage = React.lazy(() => import('./pages/chart'));
 const HomePage = React.lazy(() => import('./pages/home'));
+const MyAppsPage = React.lazy(() => import('./pages/account-management/my-apps'));
 
 export const commonRoutes = [
   {
@@ -23,6 +24,12 @@ export const commonRoutes = [
         ))}
       </div>
     ),
+  },
+  {
+    path: '/management/apps',
+    exact: true,
+    private: true,
+    Component: MyAppsPage,
   },
   {
     path: '/',
