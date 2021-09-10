@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTypedSelector } from '../../../hooks';
-import { MainTemplate } from '../../../templates';
+import { useTypedSelector } from '../../../common/hooks';
+import { MainTemplate } from '../../../common/templates';
 import {
   OcDropdown,
   OcDropdownButton,
@@ -8,9 +8,9 @@ import {
 } from '@openchannel/react-common-components/dist/ui/common/molecules';
 import { OcAppShortInfo } from '@openchannel/react-common-components/dist/ui/market/molecules';
 import { useDispatch } from 'react-redux';
-import { clearMyApps, fetchMyApps } from '../../../../apps/store/apps/actions';
+import { clearMyApps, fetchMyApps } from '../../../apps/store/apps/actions';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import dots from '../../../../../../public/assets/img/dots-hr-icon.svg';
+import dots from '../../../../../public/assets/img/dots-hr-icon.svg';
 
 import './styles.scss';
 
@@ -69,6 +69,8 @@ export const MyAppsPage: React.FC = () => {
   const loadApps = (page: number = pageNumber, sortValue?: string) =>
     dispatch(fetchMyApps(page, limit, sortValue || sort || showOptions[0].value));
 
+  const handleShowOptionSelect = (v?: Option) => loadApps(1, v?.value);
+
   const handleClickByApp = () => {};
 
   const handleAppAction = () => {};
@@ -81,12 +83,7 @@ export const MyAppsPage: React.FC = () => {
         </div>
         <div className="container">
           <div className="d-flex justify-content-end pt-4 pb-3">
-            <OcDropdown
-              title="Show"
-              options={showOptions}
-              selected={showOption}
-              onSelect={(v) => loadApps(1, v?.value)}
-            />
+            <OcDropdown title="Show" options={showOptions} selected={showOption} onSelect={handleShowOptionSelect} />
           </div>
           <InfiniteScroll
             dataLength={apps.length}
@@ -102,7 +99,7 @@ export const MyAppsPage: React.FC = () => {
                   customDropdown={
                     <OcDropdownButton options={appOptions} onSelect={handleAppAction}>
                       <button className="btn btn-outline-info menu-button">
-                        <img alt="" className="user-table__menu-icon-dots" src={dots} />
+                        <img alt="Button with dots" className="user-table__menu-icon-dots" src={dots} />
                       </button>
                     </OcDropdownButton>
                   }
