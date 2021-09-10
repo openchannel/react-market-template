@@ -53,6 +53,20 @@ export const fetchGalleries = () => async (dispatch: Dispatch) => {
   }
 };
 
+export const fetchFilters = () => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+
+  try {
+    const { data } = await frontend.getFilters();
+    dispatch(setFilters(data.list));
+    dispatch(finishLoading());
+  } catch (error) {
+    dispatch(finishLoading());
+
+    throw error;
+  }
+};
+
 // export const fetchFeaturedApps = () => async (dispatch: Dispatch) => {
 //
 // }

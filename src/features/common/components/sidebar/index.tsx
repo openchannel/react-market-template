@@ -7,15 +7,70 @@ import queryString from 'querystring';
 const BROWSE = 'browse';
 const COLLECTIONS = 'collections';
 
+interface SelectedItem extends SidebarItem {
+  id: string;
+}
+
 export const Sidebar: React.FC = () => {
   const history = useHistory();
   const { filters } = useTypedSelector(({ apps }) => apps);
-  const [selectedItems, setSelectedItems] = React.useState<({ id: string } & SidebarItem)[]>([]);
+  const [selectedItems, setSelectedItems] = React.useState<SelectedItem[]>([]);
+
+  console.log('filters', filters);
+
+  const historyFunc = React.useMemo<'replace' | 'push'>(() => {
+    const { pathname: path } = history.location;
+    return path.startsWith(`/${BROWSE}`) ? 'replace' : 'push';
+  }, [history]);
+
+  const buildQuery = React.useCallback((selectedItems: SelectedItem[]): string => {
+    const query = selectedItems.reduce((acc: { [key: string]: string }, val: { id: string } & SidebarItem) => {
+      if (val.parent.id) {
+        if (val.id === COLLECTIONS) {
+          acc[val.id] = val.parent.id;
+        } else {
+          acc[val.id] = !acc[val.id] ? val.parent.id : `${acc[val.id]},${val.parent.id}`;
+        }
+      }
+
+      return acc;
+    }, {} as { [key: string]: string });
+
+    return Object.entries(query)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+  }, []);
+
+  const updatePath = React.useCallback(
+    (selectedItems) => {
+      switch (true) {
+        case !selectedItems.length:
+          history[historyFunc]('/');
+          break;
+        case selectedItems.length === 1:
+          history[historyFunc](`/${BROWSE}/${selectedItems[0].id}/${selectedItems[0].parent.id}`);
+          break;
+        default:
+          history[historyFunc](`/${BROWSE}?${buildQuery(selectedItems)}`);
+      }
+    },
+    [buildQuery, history, historyFunc],
+  );
+
+  const updateSelectedItems = React.useCallback(
+    (selectedItems: SelectedItem[]) => {
+      setSelectedItems(selectedItems);
+      updatePath(selectedItems);
+    },
+    [setSelectedItems, updatePath],
+  );
 
   React.useEffect(() => {
-    const path = history.location.pathname;
-    const search = history.location.search;
+    if (!filters || !filters.length) {
+      return;
+    }
 
+    const { pathname: path, search } = history.location;
     const [id, parentId] = path.split('/').filter((p) => p !== BROWSE && !!p);
     if (id) {
       const selectedItem = filters
@@ -24,7 +79,7 @@ export const Sidebar: React.FC = () => {
         .filter((v) => v.id === parentId);
 
       if (selectedItem && selectedItem[0]) {
-        setSelectedItems([{ id, parent: selectedItem[0] }]);
+        updateSelectedItems([{ id, parent: selectedItem[0] }]);
       }
     } else if (search.length > 0) {
       const query = Object.entries(queryString.parse(search.replace(/^\?/, ''))).reduce(
@@ -41,44 +96,9 @@ export const Sidebar: React.FC = () => {
           .filter((v) => value.includes(v.id!))
           .map((v) => ({ id: key, parent: v })),
       );
-      setSelectedItems(newSelectedItems);
+      updateSelectedItems(newSelectedItems);
     }
-  }, [filters, setSelectedItems]);
-
-  const buildQuery = React.useCallback((): string => {
-    const query = selectedItems.reduce((acc: { [key: string]: string }, val: { id: string } & SidebarItem) => {
-      if (val.parent.id) {
-        if (val.id === COLLECTIONS) {
-          acc[val.id] = val.parent.id;
-        } else {
-          acc[val.id] = !acc[val.id] ? val.parent.id : `${acc[val.id]},${val.parent.id}`;
-        }
-      }
-
-      return acc;
-    }, {} as { [key: string]: string });
-
-    return Object.entries(query)
-      .map(([key, value]) => `${key}=${value}`)
-      .join('&');
-  }, [selectedItems]);
-
-  React.useEffect(() => {
-    if (!filters || !filters.length) {
-      return;
-    }
-
-    switch (true) {
-      case !selectedItems.length:
-        history.replace('/');
-        break;
-      case selectedItems.length === 1:
-        history.replace(`/${BROWSE}/${selectedItems[0].id}/${selectedItems[0].parent.id}`);
-        break;
-      default:
-        history.replace(`/${BROWSE}?${buildQuery()}`);
-    }
-  }, [filters, selectedItems, buildQuery]);
+  }, [history, filters, updateSelectedItems]);
 
   const handleItemClick = React.useCallback(
     (id: string, selectedItem: SidebarItem) => {
@@ -89,12 +109,12 @@ export const Sidebar: React.FC = () => {
 
       // item was unselected
       if (newSelectedItems.length !== selectedItems.length) {
-        setSelectedItems(id === COLLECTIONS ? [] : newSelectedItems);
+        updateSelectedItems(id === COLLECTIONS ? [] : newSelectedItems);
       } else {
-        setSelectedItems(id === COLLECTIONS ? [item] : [...selectedItems, item]);
+        updateSelectedItems(id === COLLECTIONS ? [item] : [...selectedItems, item]);
       }
     },
-    [setSelectedItems, selectedItems],
+    [updateSelectedItems, selectedItems],
   );
 
   return (
