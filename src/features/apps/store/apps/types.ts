@@ -5,26 +5,28 @@ import { Filter, FullAppData, SidebarItem } from '@openchannel/react-common-comp
 export interface SelectedFilter extends SidebarItem {
   id: string;
 }
+
+export interface SelectedFilters {
+  filters: SelectedFilter[];
+  searchStr: string;
+}
 export interface Apps {
   isLoading: boolean;
   isLoaded: boolean;
   galleries: [] | Gallery[];
   filters: [] | Filter[];
-  selectedFilters: {
-    filters: SelectedFilter[];
-    searchStr: string;
-  };
+  selectedFilters: SelectedFilters;
   filteredApps: [] | FullAppData[];
   // featured: [],
 }
 
 export type Action =
   | {
+      type: ActionTypes.RESET_SELECTED_FILTERS;
+    }
+  | {
       type: ActionTypes.SET_SELECTED_FILTERS;
-      payload: {
-        filters: SelectedFilter[];
-        searchStr: string;
-      };
+      payload: SelectedFilters;
     }
   | {
       type: ActionTypes.SET_FILTERED_APPS;

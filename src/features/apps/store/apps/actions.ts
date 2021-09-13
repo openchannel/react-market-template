@@ -5,17 +5,18 @@ import { MappedFilter, Gallery } from '../../types';
 import { mapAppData, mapFilters } from '../../lib/map';
 import { ActionTypes } from './action-types';
 import { Filter } from '@openchannel/react-common-components';
-import { SelectedFilter } from './types';
+import { SelectedFilters } from './types';
+import { RootState } from '../../../../types';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
+const resetSearchPayload = () => ({ type: ActionTypes.RESET_SELECTED_FILTERS });
 const setGalleries = (payload: Gallery[]) => ({ type: ActionTypes.SET_GALLERIES, payload });
 const setFilters = (payload: Filter[]) => ({ type: ActionTypes.SET_FILTERS, payload });
-const updateSelectedFilters = (payload: { filters: SelectedFilter[]; searchStr: string }) => ({
+const updateSearchPayload = (payload: SelectedFilters) => ({
   type: ActionTypes.SET_SELECTED_FILTERS,
   payload,
 });
-// const setFeaturedApps = (payload: any) => ({ type: ActionTypes.SET_FEATURED, payload });
 
 const getApps = async (pageNumber: number, limit: number, sort?: string, filter?: string): Promise<AppResponse[]> => {
   const { data } = await apps.getApps(pageNumber, limit, sort, filter);
@@ -34,8 +35,21 @@ const getAppsByFilters = async (filters: MappedFilter[]) => {
   }, [] as AppResponse[][]);
 };
 
-export const setSelectedFilters = (filters: SelectedFilter[], searchString: string) => (dispatch: Dispatch) => {
-  dispatch(updateSelectedFilters({ filters: filters, searchStr: searchString }));
+export const setSearchPayload =
+  ({ filters, searchStr }: Partial<SelectedFilters>) =>
+  (dispatch: Dispatch, getState: () => RootState) => {
+    const {
+      apps: { selectedFilters },
+    } = getState();
+    const searchPayload = {
+      filters: filters != null ? filters : selectedFilters?.filters,
+      searchStr: searchStr != null ? searchStr : selectedFilters?.searchStr,
+    };
+    dispatch(updateSearchPayload(searchPayload));
+  };
+
+export const resetSelectedFilters = () => (dispatch: Dispatch) => {
+  dispatch(resetSearchPayload());
 };
 
 export const fetchGalleries = () => async (dispatch: Dispatch) => {

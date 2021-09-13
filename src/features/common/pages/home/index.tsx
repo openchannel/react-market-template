@@ -6,16 +6,18 @@ import { useAuth, useMedia, useTypedSelector } from '../../hooks';
 import { AppList } from '../../organisms';
 import { MainTemplate } from '../../templates';
 import { Hero, GetStarted, Sidebar, CollapseWithTitle } from '../../components';
-import { setSelectedFilters } from '../../../apps/store/apps/actions';
+import { setSearchPayload } from '../../../apps/store/apps/actions';
+
 import './style.scss';
+
+//  NEED to do: add tags, make backend query for apps, make enterClick on text search
 
 export const HomePage: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { checkSession, getAuthConfig, isConfigLoaded } = useAuth();
   const [collapsed, changeCollapseStatus] = React.useState(false);
-  const [searchValue, setSearchValue] = React.useState('');
-  const { filters } = useTypedSelector(({ apps }) => apps);
+  const { filters, selectedFilters } = useTypedSelector(({ apps }) => apps);
   const isMobile = useMedia();
 
   React.useEffect(() => {
@@ -39,11 +41,9 @@ export const HomePage: React.FC = () => {
   }, []);
 
   const handleEnterAction = () => {
-    if (searchValue) {
-      // dispatch(setSelectedFilters([{ id: filters[0].id, parent: filters[0].values[0] }]));
-      history.push(`/browse/${filters[0].id}/${filters[0].values[0].id}?search=${searchValue}`);
+    if (selectedFilters.searchStr) {
+      history.push(`/browse/${filters[0].id}/${filters[0].values[0].id}?search=${selectedFilters.searchStr}`);
     } else {
-      // dispatch(setSelectedFilters([{ id: filters[0].id, parent: filters[0].values[0] }]));
       history.push(`/browse/collections/allApps`);
     }
   };
@@ -57,8 +57,11 @@ export const HomePage: React.FC = () => {
             <OcTextSearchComponent
               hasMagnifier={true}
               placeholder="Search..."
-              onChange={setSearchValue}
-              value={searchValue}
+              onChange={(searchStr: string) => {
+                console.log('ksjdhfkjasdn', searchStr);
+                dispatch(setSearchPayload({ searchStr }));
+              }}
+              value={selectedFilters.searchStr}
               enterAction={handleEnterAction}
               searchButtonText=""
               clearButtonText=""
@@ -71,7 +74,7 @@ export const HomePage: React.FC = () => {
                 changeCollapseStatus={changeCollapseStatus}
               />
             )}
-            {!collapsed && <Sidebar searchValue={searchValue} />}
+            {!collapsed && <Sidebar />}
           </div>
           <div className="col-md-9">
             <AppList />
@@ -84,8 +87,3 @@ export const HomePage: React.FC = () => {
 };
 
 export default HomePage;
-//What to do:
-// 1. save search text (where?) and on home and add a tag on search page
-// 2. make 1 request on filters on init page, and check query in pathname if present.
-//                   After this, i can rely on selected filters to draw tags
-// 3. make a query to backend to get apps for app-list-grid, i need to write action for this

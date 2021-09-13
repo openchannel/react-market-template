@@ -51,6 +51,12 @@ export const appsReducer = (state: Apps = initialState, action: Action): Apps =>
         selectedFilters: action.payload,
       };
     }
+    case ActionTypes.RESET_SELECTED_FILTERS: {
+      return {
+        ...state,
+        selectedFilters: initialState.selectedFilters,
+      };
+    }
     case ActionTypes.SET_FILTERED_APPS: {
       return {
         ...state,
