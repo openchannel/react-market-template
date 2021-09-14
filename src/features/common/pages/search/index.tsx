@@ -1,20 +1,30 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import queryString from 'querystring';
+import { debounce } from 'lodash';
 
 import { MainTemplate } from 'features/common/templates';
 import { Sidebar } from 'features/common/components/index';
 import { useMedia, useTypedSelector } from 'features/common/hooks';
 import CollapseWithTitle from '../../components/collapse-with-title';
-import { fetchFilters, resetSelectedFilters, setSearchPayload } from '../../../apps/store/apps/actions';
+import {
+  fetchFilters,
+  resetSelectedFilters,
+  setSearchPayload,
+  fetchFilteredApps,
+} from '../../../apps/store/apps/actions';
 
 import { OcAppListGrid } from '@openchannel/react-common-components/dist/ui/market/organisms';
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
 import { OcTextSearchComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcTagElement } from '@openchannel/react-common-components/dist/ui/common/atoms';
-import queryString from 'querystring';
-import './style.scss';
+import { QueryUtil } from '@openchannel/react-common-services';
 import { SelectedFilter, SelectedFilters } from 'features/apps/store/apps/types';
+import closeIconUrl from '../../../../../public/assets/img/close-icon.png';
+import defaultAppIcon from '../../../../../public/assets/img/default-app-icon.svg';
+
+import './style.scss';
 
 const BROWSE = 'browse';
 const COLLECTIONS = 'collections';
@@ -24,7 +34,8 @@ export const SearchPage: React.FC = () => {
   const isMobile = useMedia();
   const dispatch = useDispatch();
   const [collapsed, changeCollapseStatus] = React.useState(false);
-  const { filters, selectedFilters } = useTypedSelector(({ apps }) => apps);
+  const [searchText, setSearchText] = React.useState('');
+  const { filters, selectedFilters, filteredApps } = useTypedSelector(({ apps }) => apps);
 
   React.useEffect(() => {
     if (!filters || !filters.length) {
@@ -103,6 +114,34 @@ export const SearchPage: React.FC = () => {
     dispatch(resetSelectedFilters());
   }, [history]);
 
+  const handleTagClick = (title: string, id?: string) => {
+    const newClearedFilters = id
+      ? selectedFilters.filters.filter((filter) => filter.parent.id !== id)
+      : selectedFilters.filters.filter((filter) => filter.parent.label !== title);
+    dispatch(setSearchPayload({ filters: newClearedFilters }));
+  };
+
+  React.useEffect(() => {
+    const queryFromSelectedFilters = QueryUtil.getAndQuery(
+      selectedFilters.filters.map((filter) => filter.parent.query || '').filter(Boolean),
+    );
+    dispatch(fetchFilteredApps(selectedFilters.searchStr, ['name'], queryFromSelectedFilters));
+    window.scrollTo(0, 0);
+  }, [selectedFilters]);
+
+  const handleTagDelete = () => {
+    setSearchText('');
+    dispatch(setSearchPayload({ searchStr: '' }));
+  };
+
+  const search = debounce((searchStr: string) => {
+    dispatch(setSearchPayload({ searchStr }));
+  }, 300);
+
+  const handleSearchTextEnter = React.useCallback(() => {
+    search(searchText);
+  }, [searchText]);
+
   return (
     <MainTemplate>
       <div className="container">
@@ -129,33 +168,35 @@ export const SearchPage: React.FC = () => {
             <OcTextSearchComponent
               hasMagnifier={true}
               placeholder="Search..."
-              value={selectedFilters.searchStr}
-              onChange={(searchStr: string) => dispatch(setSearchPayload({ searchStr }))}
-              enterAction={() => dispatch(setSearchPayload({ searchStr: selectedFilters.searchStr }))}
+              value={searchText}
+              onChange={setSearchText}
+              enterAction={handleSearchTextEnter}
               searchButtonText=""
               clearButtonText=""
             />
             <div className="search-tags">
               {selectedFilters.filters.map((filter) => (
                 <OcTagElement
+                  // id={filter.id}
                   title={filter?.parent.label}
-                  // (clickEmitter)="disableFilterValue(filter.filterId, filter.value)"
-                  key={filter.id}
+                  onIconClick={() => handleTagClick(filter.parent.label)}
+                  deleteTagImgUrl={closeIconUrl}
+                  key={filter.id + filter.parent.id}
                 />
               ))}
               {selectedFilters.searchStr && (
                 <OcTagElement
                   title={selectedFilters.searchStr}
-                  // (clickEmitter)="clearSearchText()"
+                  deleteTagImgUrl={closeIconUrl}
+                  onIconClick={handleTagDelete}
                 />
               )}
             </div>
             <OcAppListGrid
-              appList={[]}
-              // [appList]="appPage?.list"
+              appList={filteredApps}
               // baseLinkForOneApp="/details"
               // appNavigationParam="safeName[0]"
-              // defaultAppIcon="./assets/img/default-app-icon.svg"
+              defaultAppIcon={defaultAppIcon}
             />
           </div>
         </div>

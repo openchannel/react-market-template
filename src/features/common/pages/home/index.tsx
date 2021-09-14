@@ -6,7 +6,7 @@ import { useAuth, useMedia, useTypedSelector } from '../../hooks';
 import { AppList } from '../../organisms';
 import { MainTemplate } from '../../templates';
 import { Hero, GetStarted, Sidebar, CollapseWithTitle } from '../../components';
-import { setSearchPayload } from '../../../apps/store/apps/actions';
+import { setSearchPayload, resetSelectedFilters } from '../../../apps/store/apps/actions';
 
 import './style.scss';
 
@@ -38,6 +38,7 @@ export const HomePage: React.FC = () => {
     };
 
     init();
+    dispatch(resetSelectedFilters());
   }, []);
 
   const handleEnterAction = () => {
@@ -58,7 +59,6 @@ export const HomePage: React.FC = () => {
               hasMagnifier={true}
               placeholder="Search..."
               onChange={(searchStr: string) => {
-                console.log('ksjdhfkjasdn', searchStr);
                 dispatch(setSearchPayload({ searchStr }));
               }}
               value={selectedFilters.searchStr}
