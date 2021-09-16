@@ -1,5 +1,8 @@
-import { auth, axiosRequest, interceptors, storage, InterceptorError } from '@openchannel/react-common-services';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
+import { auth, axiosRequest, interceptors, storage, InterceptorError } from '@openchannel/react-common-services';
+
+import { store } from '../../../../store';
+import { setSession, removeSession } from '../../store/session/actions';
 
 let isRefreshing = false;
 let skipByErrorCode: number[] = [];
@@ -11,14 +14,18 @@ const process401Error = async <T>(config: T) => {
     isRefreshing = true;
 
     try {
-      const { data } = await auth.refreshToken({ refreshToken: storage.getRefreshToken() });
+      const {
+        data: { accessToken, refreshToken },
+      } = await auth.refreshToken({ refreshToken: storage.getRefreshToken() });
 
-      storage.persist(data.accessToken, data.refreshToken);
+      store.dispatch(setSession({ accessToken, refreshToken }));
       isRefreshing = false;
 
       return axiosRequest(config);
     } catch (error) {
-      storage.removeTokens();
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      store.dispatch(removeSession());
       isRefreshing = false;
       //navigate
       throw error;

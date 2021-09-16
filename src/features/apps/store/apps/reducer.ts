@@ -5,6 +5,12 @@ const initialState = {
   isLoading: false,
   isLoaded: false,
   galleries: [],
+  myApps: {
+    data: [],
+    pageNumber: 1,
+    limit: 5,
+    pages: 0,
+  },
   filters: [],
   selectedFilters: {
     filters: [],
@@ -36,6 +42,22 @@ export const appsReducer = (state: Apps = initialState, action: Action): Apps =>
         ...state,
         galleries: action.payload,
       };
+    }
+
+    case ActionTypes.UPDATE_MY_APPS: {
+      const newState = { ...state, myApps: { ...state.myApps, ...action.payload } };
+
+      if (action.payload.pageNumber > state.myApps.pageNumber) {
+        newState.myApps.data = [...state.myApps.data, ...action.payload.data];
+      } else if (action.payload.data != null) {
+        newState.myApps.data = [...action.payload.data];
+      }
+
+      return newState;
+    }
+
+    case ActionTypes.RESET_MY_APPS: {
+      return { ...state, myApps: initialState.myApps };
     }
 
     case ActionTypes.SET_FILTERS: {

@@ -65,9 +65,13 @@ export const Header = ({ cmsData }: any): JSX.Element => {
         history.push(value);
       } else {
         await dispatch(logout());
+
+        if (location.pathname !== '/') {
+          history.replace('/');
+        }
       }
     },
-    [history.push],
+    [history.push, history.replace, location.pathname],
   );
 
   return (

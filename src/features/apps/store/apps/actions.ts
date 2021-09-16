@@ -1,8 +1,8 @@
 import { Dispatch } from 'redux';
 import { apps, frontend, AppResponse } from '@openchannel/react-common-services';
-import { Filter } from '@openchannel/react-common-components';
+import { Filter, FullAppData } from '@openchannel/react-common-components';
 
-import { MappedFilter, Gallery } from '../../types';
+import { MappedFilter, Gallery, Searchable } from '../../types';
 import { mapAppData, mapFilters } from '../../lib/map';
 import { ActionTypes } from './action-types';
 import { SelectedFilters } from './types';
@@ -12,6 +12,8 @@ const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
 const resetSearchPayload = () => ({ type: ActionTypes.RESET_SELECTED_FILTERS });
 const setGalleries = (payload: Gallery[]) => ({ type: ActionTypes.SET_GALLERIES, payload });
+const updateMyApps = (payload: Partial<Searchable<FullAppData>>) => ({ type: ActionTypes.UPDATE_MY_APPS, payload });
+const resetMyApps = () => ({ type: ActionTypes.RESET_MY_APPS });
 const setFilters = (payload: Filter[]) => ({ type: ActionTypes.SET_FILTERS, payload });
 const updateSearchPayload = (payload: SelectedFilters) => ({
   type: ActionTypes.SET_SELECTED_FILTERS,
@@ -111,4 +113,28 @@ export const fetchFilters = () => async (dispatch: Dispatch) => {
 
     throw error;
   }
+};
+
+export const fetchMyApps = (pageNumber: number, limit: number, sort: string) => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+
+  try {
+    dispatch(updateMyApps({ sort }));
+    const sortFields = JSON.stringify({ [sort === 'featured' ? 'attributes.featured' : 'created']: -1 });
+    const {
+      data: { list, pages },
+    } = await apps.getApps(pageNumber, limit, sortFields, '', true);
+    const myApps = list.map(mapAppData);
+
+    dispatch(updateMyApps({ data: myApps, pageNumber, limit, pages, sort }));
+    dispatch(finishLoading());
+  } catch (error) {
+    dispatch(finishLoading());
+
+    throw error;
+  }
+};
+
+export const clearMyApps = () => (dispatch: Dispatch) => {
+  dispatch(resetMyApps());
 };
