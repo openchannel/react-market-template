@@ -18,7 +18,6 @@ export interface Apps {
   filters: [] | Filter[];
   selectedFilters: SelectedFilters;
   filteredApps: [] | FullAppData[];
-  // featured: [],
 }
 
 export type Action =

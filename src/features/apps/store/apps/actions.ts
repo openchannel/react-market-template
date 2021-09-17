@@ -20,6 +20,7 @@ const updateSearchPayload = (payload: SelectedFilters) => ({
   payload,
 });
 const setFilteredApps = (payload: AppResponse[]) => ({ type: ActionTypes.SET_FILTERED_APPS, payload });
+const resetFilteredApps = () => ({ type: ActionTypes.RESET_FILTERED_APPS });
 
 const getApps = async (pageNumber: number, limit: number, sort?: string, filter?: string): Promise<AppResponse[]> => {
   const { data } = await apps.getApps(pageNumber, limit, sort, filter);
@@ -39,20 +40,13 @@ const getAppsByFilters = async (filters: MappedFilter[]) => {
 };
 
 export const fetchFilteredApps =
-  (searchText: string, fields: string[] = ['name'], query?: string) =>
-  async (dispatch: Dispatch) => {
+  (searchText: string, fields: string[], query?: string) => async (dispatch: Dispatch) => {
     dispatch(startLoading());
 
     try {
-      if (searchText) {
-        const { data } = await apps.searchApp(searchText, query, fields);
-        dispatch(setFilteredApps(data.list));
-        dispatch(finishLoading());
-      } else {
-        const { data } = await apps.searchApp(' ', query, fields);
-        dispatch(setFilteredApps(data.list));
-        dispatch(finishLoading());
-      }
+      const { data } = await apps.searchApp(searchText, query, fields);
+      dispatch(setFilteredApps(data.list));
+      dispatch(finishLoading());
     } catch (error) {
       dispatch(finishLoading());
 
@@ -73,8 +67,12 @@ export const setSearchPayload =
     dispatch(updateSearchPayload(searchPayload));
   };
 
-export const resetSelectedFilters = () => (dispatch: Dispatch) => {
+export const clearSelectedFilters = () => (dispatch: Dispatch) => {
   dispatch(resetSearchPayload());
+};
+
+export const clearFilteredApps = () => (dispatch: Dispatch) => {
+  dispatch(resetFilteredApps());
 };
 
 export const fetchGalleries = () => async (dispatch: Dispatch) => {

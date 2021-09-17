@@ -1,23 +1,20 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { OcTextSearchComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { useAuth, useMedia, useTypedSelector } from '../../hooks';
 import { AppList } from '../../organisms';
 import { MainTemplate } from '../../templates';
 import { Hero, GetStarted, Sidebar, CollapseWithTitle } from '../../components';
-import { setSearchPayload, resetSelectedFilters } from '../../../apps/store/apps/actions';
 
 import './style.scss';
-
-//  NEED to do: add tags, make backend query for apps, make enterClick on text search
+import { SelectedFilter } from 'features/apps/store/apps/types';
 
 export const HomePage: React.FC = () => {
   const history = useHistory();
-  const dispatch = useDispatch();
   const { checkSession, getAuthConfig, isConfigLoaded } = useAuth();
-  const [collapsed, changeCollapseStatus] = React.useState(false);
-  const { filters, selectedFilters } = useTypedSelector(({ apps }) => apps);
+  const [collapsed, setCollapsed] = React.useState(false);
+  const [searchStr, setSearchStr] = React.useState('');
+  const { filters } = useTypedSelector(({ apps }) => apps);
   const isMobile = useMedia();
 
   React.useEffect(() => {
@@ -38,16 +35,28 @@ export const HomePage: React.FC = () => {
     };
 
     init();
-    dispatch(resetSelectedFilters());
   }, []);
 
-  const handleEnterAction = () => {
-    if (selectedFilters.searchStr) {
-      history.push(`/browse/${filters[0].id}/${filters[0].values[0].id}?search=${selectedFilters.searchStr}`);
-    } else {
-      history.push(`/browse/collections/allApps`);
+  const goToSearch = React.useCallback((selectedFilter: SelectedFilter, searchStr?: string) => {
+    let path = `/browse/${selectedFilter.id}/${selectedFilter.parent.id}`;
+    if (searchStr && searchStr.length > 0) {
+      path += `?search=${searchStr}`;
     }
-  };
+
+    history.push(path);
+  }, []);
+
+  const handleSearchSubmit = React.useCallback(() => {
+    const firstFilter = filters[0];
+    goToSearch({ id: firstFilter.id, parent: firstFilter.values[0] }, searchStr);
+  }, [goToSearch, searchStr]);
+
+  const handleSidebarClick = React.useCallback(
+    (selectedFilter: SelectedFilter) => {
+      goToSearch(selectedFilter);
+    },
+    [goToSearch],
+  );
 
   return (
     <MainTemplate>
@@ -58,11 +67,9 @@ export const HomePage: React.FC = () => {
             <OcTextSearchComponent
               hasMagnifier={true}
               placeholder="Search..."
-              onChange={(searchStr: string) => {
-                dispatch(setSearchPayload({ searchStr }));
-              }}
-              value={selectedFilters.searchStr}
-              enterAction={handleEnterAction}
+              onChange={setSearchStr}
+              value={searchStr}
+              enterAction={handleSearchSubmit}
               searchButtonText=""
               clearButtonText=""
             />
@@ -71,10 +78,10 @@ export const HomePage: React.FC = () => {
                 titleForClose="Close filter options"
                 titleForOpen="Open filter options"
                 collapsed={collapsed}
-                changeCollapseStatus={changeCollapseStatus}
+                changeCollapseStatus={setCollapsed}
               />
             )}
-            {!collapsed && <Sidebar />}
+            {!collapsed && <Sidebar items={filters} onItemClick={handleSidebarClick} />}
           </div>
           <div className="col-md-9">
             <AppList />
