@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { OcAppGallery } from '@openchannel/react-common-components/dist/ui/market/organisms';
-import Sidebar from '../../components/sidebar';
 import { fetchGalleries } from '../../../apps/store/apps/actions';
 import { useTypedSelector } from '../../hooks';
 
@@ -14,33 +13,20 @@ const AppList: React.FC = () => {
   }, []);
 
   return (
-    <div className="container">
-      <div className="row mt-7">
-        <div className="col-md-3 filter__container" id="main-content">
-          <Sidebar />
+    <>
+      {galleries.map((gallery) => (
+        <div key={gallery.id} className="section-wrapper">
+          <OcAppGallery
+            moreAppsTitle="See All"
+            appsArr={gallery?.data}
+            appGalleryTitle={gallery.label}
+            appGalleryDescription={gallery.description}
+            seeAllUrl={`/browse/${gallery.filterId}/${gallery.valueId}`}
+            routerLinkForOneApp="/details"
+          />
         </div>
-        <div className="col-md-9">
-          {/*{homePageConfig.appListPage.map((element) => (*/}
-          {/*	<div className="mb-7">*/}
-          {/*		<OcAppCategoriesComponent />*/}
-          {/*	</div>*/}
-          {/*))}*/}
-          {galleries.map((gallery) => (
-            <div key={gallery.id} className="section-wrapper">
-              <OcAppGallery
-                moreAppsTitle="See All"
-                appsArr={gallery?.data}
-                appGalleryTitle={gallery.label}
-                appGalleryDescription={gallery.description}
-                seeAllUrl={`/browse/${gallery.filterId}/${gallery.valueId}`}
-                routerLinkForOneApp="/details"
-                // appNavigationParam="safeName[0]"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+      ))}
+    </>
   );
 };
 

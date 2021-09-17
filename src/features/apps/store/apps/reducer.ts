@@ -12,7 +12,11 @@ const initialState = {
     pages: 0,
   },
   filters: [],
-  // featured: [],
+  selectedFilters: {
+    filters: [],
+    searchStr: '',
+  },
+  filteredApps: [],
 };
 
 export const appsReducer = (state: Apps = initialState, action: Action): Apps => {
@@ -60,6 +64,25 @@ export const appsReducer = (state: Apps = initialState, action: Action): Apps =>
       return {
         ...state,
         filters: action.payload,
+      };
+    }
+
+    case ActionTypes.SET_SELECTED_FILTERS: {
+      return {
+        ...state,
+        selectedFilters: action.payload,
+      };
+    }
+    case ActionTypes.RESET_SELECTED_FILTERS: {
+      return {
+        ...state,
+        selectedFilters: initialState.selectedFilters,
+      };
+    }
+    case ActionTypes.SET_FILTERED_APPS: {
+      return {
+        ...state,
+        filteredApps: action.payload,
       };
     }
 

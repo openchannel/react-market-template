@@ -1,19 +1,26 @@
 import { Dispatch } from 'redux';
 import { apps, frontend, AppResponse } from '@openchannel/react-common-services';
+import { Filter, FullAppData } from '@openchannel/react-common-components';
 
 import { MappedFilter, Gallery, Searchable } from '../../types';
 import { mapAppData, mapFilters } from '../../lib/map';
 import { ActionTypes } from './action-types';
-import { Filter } from '@openchannel/react-common-components';
-import { FullAppData } from '@openchannel/react-common-components/dist/ui/common/models';
+import { SelectedFilters } from './types';
+import { RootState } from '../../../../types';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
+const resetSearchPayload = () => ({ type: ActionTypes.RESET_SELECTED_FILTERS });
 const setGalleries = (payload: Gallery[]) => ({ type: ActionTypes.SET_GALLERIES, payload });
 const updateMyApps = (payload: Partial<Searchable<FullAppData>>) => ({ type: ActionTypes.UPDATE_MY_APPS, payload });
 const resetMyApps = () => ({ type: ActionTypes.RESET_MY_APPS });
 const setFilters = (payload: Filter[]) => ({ type: ActionTypes.SET_FILTERS, payload });
-// const setFeaturedApps = (payload: any) => ({ type: ActionTypes.SET_FEATURED, payload });
+const updateSearchPayload = (payload: SelectedFilters) => ({
+  type: ActionTypes.SET_SELECTED_FILTERS,
+  payload,
+});
+const setFilteredApps = (payload: AppResponse[]) => ({ type: ActionTypes.SET_FILTERED_APPS, payload });
+const resetFilteredApps = () => ({ type: ActionTypes.RESET_FILTERED_APPS });
 
 const getApps = async (pageNumber: number, limit: number, sort?: string, filter?: string): Promise<AppResponse[]> => {
   const { data } = await apps.getApps(pageNumber, limit, sort, filter);
@@ -32,6 +39,42 @@ const getAppsByFilters = async (filters: MappedFilter[]) => {
   }, [] as AppResponse[][]);
 };
 
+export const fetchFilteredApps =
+  (searchText: string, fields: string[], query?: string) => async (dispatch: Dispatch) => {
+    dispatch(startLoading());
+
+    try {
+      const { data } = await apps.searchApp(searchText, query, fields);
+      dispatch(setFilteredApps(data.list));
+      dispatch(finishLoading());
+    } catch (error) {
+      dispatch(finishLoading());
+
+      throw error;
+    }
+  };
+
+export const setSearchPayload =
+  ({ filters, searchStr }: Partial<SelectedFilters>) =>
+  (dispatch: Dispatch, getState: () => RootState) => {
+    const {
+      apps: { selectedFilters },
+    } = getState();
+    const searchPayload = {
+      filters: filters != null ? filters : selectedFilters?.filters,
+      searchStr: searchStr != null ? searchStr : selectedFilters?.searchStr,
+    };
+    dispatch(updateSearchPayload(searchPayload));
+  };
+
+export const clearSelectedFilters = () => (dispatch: Dispatch) => {
+  dispatch(resetSearchPayload());
+};
+
+export const clearFilteredApps = () => (dispatch: Dispatch) => {
+  dispatch(resetFilteredApps());
+};
+
 export const fetchGalleries = () => async (dispatch: Dispatch) => {
   dispatch(startLoading());
 
@@ -48,6 +91,20 @@ export const fetchGalleries = () => async (dispatch: Dispatch) => {
     }, [] as Gallery[]);
 
     dispatch(setGalleries(galleries));
+    dispatch(finishLoading());
+  } catch (error) {
+    dispatch(finishLoading());
+
+    throw error;
+  }
+};
+
+export const fetchFilters = () => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+
+  try {
+    const { data } = await frontend.getFilters();
+    dispatch(setFilters(data.list));
     dispatch(finishLoading());
   } catch (error) {
     dispatch(finishLoading());
@@ -79,7 +136,3 @@ export const fetchMyApps = (pageNumber: number, limit: number, sort: string) => 
 export const clearMyApps = () => (dispatch: Dispatch) => {
   dispatch(resetMyApps());
 };
-
-// export const fetchFeaturedApps = () => async (dispatch: Dispatch) => {
-//
-// }

@@ -1,18 +1,37 @@
 import { Gallery, Searchable } from '../../types';
 import { ActionTypes } from './action-types';
-import { Filter } from '@openchannel/react-common-components';
-import { FullAppData } from '@openchannel/react-common-components/dist/ui/common/models';
+import { Filter, FullAppData, SidebarItem } from '@openchannel/react-common-components';
 
+export interface SelectedFilter extends SidebarItem {
+  id: string;
+}
+
+export interface SelectedFilters {
+  filters: SelectedFilter[];
+  searchStr: string;
+}
 export interface Apps {
   isLoading: boolean;
   isLoaded: boolean;
   galleries: [] | Gallery[];
   myApps: Searchable<FullAppData>;
   filters: [] | Filter[];
-  // featured: [],
+  selectedFilters: SelectedFilters;
+  filteredApps: [] | FullAppData[];
 }
 
 export type Action =
+  | {
+      type: ActionTypes.RESET_SELECTED_FILTERS;
+    }
+  | {
+      type: ActionTypes.SET_SELECTED_FILTERS;
+      payload: SelectedFilters;
+    }
+  | {
+      type: ActionTypes.SET_FILTERED_APPS;
+      payload: FullAppData[];
+    }
   | {
       type: ActionTypes.SET_FILTERS;
       payload: Filter[];
