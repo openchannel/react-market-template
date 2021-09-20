@@ -87,7 +87,7 @@ const Profile = (): JSX.Element => {
                     await dispatch(changePassword(value as ChangePasswordRequest));
                     resetForm();
                     notify.success('Password has been updated');
-                  } catch (e) {
+                  } catch (e: any) {
                     notify.error(e.response.data.message);
                     resetForm();
                   }

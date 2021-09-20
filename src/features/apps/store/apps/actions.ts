@@ -20,6 +20,7 @@ const updateSearchPayload = (payload: SelectedFilters) => ({
   payload,
 });
 const setFilteredApps = (payload: AppResponse[]) => ({ type: ActionTypes.SET_FILTERED_APPS, payload });
+const setSelectedApp = (payload: FullAppData) => ({ type: ActionTypes.SET_SELECTED_APP, payload });
 const resetFilteredApps = () => ({ type: ActionTypes.RESET_FILTERED_APPS });
 
 const getApps = async (pageNumber: number, limit: number, sort?: string, filter?: string): Promise<AppResponse[]> => {
@@ -135,4 +136,19 @@ export const fetchMyApps = (pageNumber: number, limit: number, sort: string) => 
 
 export const clearMyApps = () => (dispatch: Dispatch) => {
   dispatch(resetMyApps());
+};
+
+export const fetchSelectedApp = (id: string) => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+
+  try {
+    const { data } = await apps.getAppById(id);
+    // const app = mapAppData(data)
+    dispatch(setSelectedApp(data));
+    dispatch(finishLoading());
+  } catch (error) {
+    dispatch(finishLoading());
+
+    throw error;
+  }
 };

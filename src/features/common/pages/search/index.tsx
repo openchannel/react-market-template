@@ -226,7 +226,11 @@ export const SearchPage: React.FC = () => {
                 />
               )}
             </div>
-            <OcAppListGrid appList={filteredApps} defaultAppIcon={defaultAppIcon} />
+            <OcAppListGrid
+              appList={filteredApps}
+              defaultAppIcon={defaultAppIcon}
+              // onAppClick={(app) => console.log(app)}
+            />
           </div>
         </div>
       </div>

@@ -17,6 +17,7 @@ const initialState = {
     searchStr: '',
   },
   filteredApps: [],
+  selectedApp: null,
 };
 
 export const appsReducer = (state: Apps = initialState, action: Action): Apps => {
@@ -83,6 +84,12 @@ export const appsReducer = (state: Apps = initialState, action: Action): Apps =>
       return {
         ...state,
         filteredApps: action.payload,
+      };
+    }
+    case ActionTypes.SET_SELECTED_APP: {
+      return {
+        ...state,
+        selectedApp: action.payload,
       };
     }
 

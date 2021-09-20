@@ -25,7 +25,7 @@ const LoginPage = (): JSX.Element => {
       try {
         await dispatch(nativeLogin({ email, password, isChecked: false }));
         history.push('/');
-      } catch (error) {
+      } catch (error: any) {
         if (error.response.data.code === 'VALIDATION') {
           setServerErrorValidation(true);
         } else {

@@ -18,9 +18,14 @@ export interface Apps {
   filters: [] | Filter[];
   selectedFilters: SelectedFilters;
   filteredApps: [] | FullAppData[];
+  selectedApp: null | FullAppData;
 }
 
 export type Action =
+  | {
+      type: ActionTypes.SET_SELECTED_APP;
+      payload: FullAppData;
+    }
   | {
       type: ActionTypes.RESET_SELECTED_FILTERS;
     }
