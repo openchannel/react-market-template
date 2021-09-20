@@ -9,6 +9,7 @@ import {
 import { OcAppShortInfo } from '@openchannel/react-common-components/dist/ui/market/molecules';
 import { useDispatch } from 'react-redux';
 import { clearMyApps, fetchMyApps } from '../../../apps/store/apps/actions';
+import { useHistory } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import dots from '../../../../../public/assets/img/dots-hr-icon.svg';
 
@@ -20,6 +21,7 @@ declare type Option = {
 };
 
 export const MyAppsPage: React.FC = () => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const {
     myApps: { data: apps, pageNumber, limit, pages, sort },
@@ -66,6 +68,10 @@ export const MyAppsPage: React.FC = () => {
     [showOptions, sort],
   );
 
+  const historyBack = React.useCallback(() => {
+    history.goBack();
+  }, [history.goBack]);
+
   const loadApps = (page: number = pageNumber, sortValue?: string) =>
     dispatch(fetchMyApps(page, limit, sortValue || sort || showOptions[0].value));
 
@@ -79,7 +85,7 @@ export const MyAppsPage: React.FC = () => {
     <MainTemplate>
       <div className="my-apps">
         <div className="bg-container min-height-auto header-padding">
-          <OcNavigationBreadcrumbs pageTitle="My apps" navigateText={'Back'} />
+          <OcNavigationBreadcrumbs pageTitle="My apps" navigateText="Back" navigateClick={historyBack} />
         </div>
         <div className="container">
           <div className="d-flex justify-content-end pt-4 pb-3">
