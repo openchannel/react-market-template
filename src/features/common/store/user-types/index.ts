@@ -1,2 +1,2 @@
 export { userTypesReducer } from './reducer';
-export { getUserTypes, getUserAccountTypes } from './actions';
+export { loadUserProfileForm, saveUserData } from './actions';

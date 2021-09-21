@@ -14,7 +14,7 @@ import {
   OcEditUserFormComponent,
   OcEditUserFormConfig,
 } from '@openchannel/react-common-components/dist/ui/auth/organisms';
-import { loadUserProfileForm, saveUserData } from '../../../common/store/user-types/actions';
+import { loadUserProfileForm, saveUserData } from '../../../common/store/user-types';
 import { useTypedSelector } from '../../../common/hooks';
 
 const form = {
