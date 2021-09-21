@@ -34,15 +34,25 @@
         font-size: 24px;
       }
     }
+    .medium {
+      @include font-medium();
+    }
   }
 
   &__price {
     @include font-medium();
+    color: $link-primary;
   }
+}
+.main-container {
+  min-height: 0 !important;
+  padding: 0 !important;
+}
+.description {
+  width: 66.6%;
 }
 
 .image-gallery__item-image {
-  // width: 350px;
   height: 192px;
 }
 
@@ -114,4 +124,8 @@
     padding-left: 3rem;
     padding-right: 3rem;
   }
+}
+
+.oc-card__content {
+  width: 75%;
 }

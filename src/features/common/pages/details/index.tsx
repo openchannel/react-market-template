@@ -15,9 +15,7 @@ export const DetailsPage: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchSelectedApp(appId));
-  }, [history]);
-
-  console.log(selectedApp);
+  }, []);
 
   return (
     <MainTemplate>{selectedApp && <AppDetails appListingActions={[]} price={0} app={selectedApp} />}</MainTemplate>

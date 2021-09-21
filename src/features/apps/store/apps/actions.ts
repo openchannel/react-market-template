@@ -21,6 +21,7 @@ const updateSearchPayload = (payload: SelectedFilters) => ({
 });
 const setFilteredApps = (payload: AppResponse[]) => ({ type: ActionTypes.SET_FILTERED_APPS, payload });
 const setSelectedApp = (payload: FullAppData) => ({ type: ActionTypes.SET_SELECTED_APP, payload });
+const setRecommendedApps = (payload: FullAppData[]) => ({ type: ActionTypes.SET_RECOMMENDED_APPS, payload });
 const resetFilteredApps = () => ({ type: ActionTypes.RESET_FILTERED_APPS });
 
 const getApps = async (pageNumber: number, limit: number, sort?: string, filter?: string): Promise<AppResponse[]> => {
@@ -143,8 +144,22 @@ export const fetchSelectedApp = (id: string) => async (dispatch: Dispatch) => {
 
   try {
     const { data } = await apps.getAppById(id);
-    // const app = mapAppData(data)
     dispatch(setSelectedApp(data));
+    dispatch(finishLoading());
+  } catch (error) {
+    dispatch(finishLoading());
+
+    throw error;
+  }
+};
+
+export const fetchRecommendedApps = () => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+
+  try {
+    const { data } = await apps.getApps(1, 3, '{randomize: 1}', "{'status.value':'approved'}");
+    const recApps = data.list.map((app) => mapAppData(app));
+    dispatch(setRecommendedApps(recApps));
     dispatch(finishLoading());
   } catch (error) {
     dispatch(finishLoading());

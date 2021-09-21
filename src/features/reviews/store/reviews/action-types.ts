@@ -1,0 +1,5 @@
+export enum ActionTypes {
+  START_LOADING = '@apps/START_LOADING',
+  FINISH_LOADING = '@apps/FINISH_LOADING',
+  SET_REVIEWS_BY_APP = '@apps/SET_REVIEWS_BY_APP',
+}

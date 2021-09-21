@@ -19,9 +19,14 @@ export interface Apps {
   selectedFilters: SelectedFilters;
   filteredApps: [] | FullAppData[];
   selectedApp: null | FullAppData;
+  recommendedApps: null | FullAppData[];
 }
 
 export type Action =
+  | {
+      type: ActionTypes.SET_RECOMMENDED_APPS;
+      payload: FullAppData[];
+    }
   | {
       type: ActionTypes.SET_SELECTED_APP;
       payload: FullAppData;

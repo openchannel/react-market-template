@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
 import {
   OcAppDescription,
   OcNavigationBreadcrumbs,
@@ -12,6 +13,7 @@ import {
   OcVideoComponent,
 } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcRatingComponent } from '@openchannel/react-common-components/dist/ui/market/atoms';
+import { OcOverallRating } from '@openchannel/react-common-components/dist/ui/market/organisms';
 import { OcRecommendedAppsComponent } from '@openchannel/react-common-components/dist/ui/common/organisms';
 import { FullAppData } from '@openchannel/react-common-components';
 
@@ -20,6 +22,11 @@ import InternetIcon from '../../../../../public/assets/img/internet.svg';
 import PadlockIcon from '../../../../../public/assets/img/padlock.svg';
 import EmailIcon from '../../../../../public/assets/img/icon-email.svg';
 import BubbleIcon from '../../../../../public/assets/img/speech-bubble.svg';
+// import { pageConfig } from '../../../../assets/config/configData';
+// import { ButtonAction, DownloadButtonAction, FormButtonAction } from '../action-button/types';
+import { fetchRecommendedApps } from '../../../apps/store/apps/actions';
+import { fetchReviewByAppId } from '../../../reviews/store/reviews/actions';
+import { useTypedSelector } from 'features/common/hooks';
 
 import './style.scss';
 
@@ -31,9 +38,49 @@ export interface AppDetailsProps {
 
 export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   const { app, price = 0, appListingActions = [] } = props;
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    dispatch(fetchRecommendedApps());
+    dispatch(fetchReviewByAppId(app.appId));
+  }, []);
+  const { recommendedApps } = useTypedSelector(({ apps }) => apps);
+  const { reviewsByApp } = useTypedSelector(({ reviews }) => reviews);
+
   const appGalleryImages = app?.customData?.images.map((imageUrl: string) => {
     return { image: imageUrl, title: '', description: '' };
   });
+
+  const reviewList: Array<number> = reviewsByApp?.list?.map((rev) => Math.round(rev.rating / 100)) || [];
+  const overallReviews = {
+    rating: app.rating / 100 || 0,
+    reviewCount: reviewsByApp?.count || 0,
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+  };
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  reviewList.forEach((review) => overallReviews[review]++);
+
+  const [isWritingReview, setIsWritingReview] = React.useState(false);
+
+  // const getButtonActions = (config: any): ButtonAction[] => {
+  //   const buttonActions = config?.appDetailsPage['listing-actions'];
+
+  //   if (buttonActions && app?.type) {
+  //     return buttonActions.filter((action: FormButtonAction) => {
+  //       const isTypeSupported = action?.appTypes?.includes(app.type as string);
+  //       const isNoDownloadType = action?.type !== 'download';
+  //       const isFileFieldPresent = !!get(app, (action as unknown as DownloadButtonAction).fileField);
+
+  //       return isTypeSupported && (isNoDownloadType || isFileFieldPresent);
+  //     });
+  //   }
+  //   return [];
+  // };
+
   return (
     <>
       <div className="bg-container bg bg-s pb-7">
@@ -52,7 +99,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
               )}
               <div className="d-flex flex-column">
                 <h1 className="mb-2 page-title-size">{app?.name}</h1>
-                <span className="app-detail__price">{app?.model[0]?.price || price}</span>
+                <span className="app-detail__price">{(price || app.model[0]?.price) === 0 && 'Free'}</span>
                 <div className="text-secondary mt-1">{app?.customData.summary}</div>
                 <OcRatingComponent
                   className="mb-3"
@@ -141,43 +188,47 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
 
         <div className="d-flex flex-wrap flex-md-nowrap">
           <div className="rating-column">
-            <OcRatingComponent rating={app?.rating / 100 || 0} /* [allReviewSummary]="overallRating" */ />
+            <OcOverallRating allReviewSummary={overallReviews} />
+            {/* <OcRatingComponent rating={app?.rating / 100 || 0} /> */}
           </div>
           <div className="review-column">
-            <OcReviewListComponent /* *ngIf="!isWritingReview"
-                                [currentUserId]="currentUserId"
-                                [reviewsList]="reviewsPage?.list"
-                                [totalReview]="reviewsPage?.count"
-                                [allowWriteReview]="app.ownership && !userReview"
-                                (writeAReview)="onNewReview()"
-                                (chosenAction)="onChosenReviewActon($event)" */
-              reviewListTitle="Most recent reviews"
-            >
-              <div>
-                <OcDropdown
-                  options={/* reviewsSorts */ []}
-                  onSelect={() => {}}
-                  //  selected={selectedSort}
-                  // (selectedChange)="onReviewSortChange($event)"
-                  // className="mr-5"
-                />
-                <OcDropdown
-                  options={/* reviewsFilter */ []}
-                  title="Show"
-                  onSelect={() => {}}
-                  /* (selectedChange)="onReviewFilterChange($event)"
-                                     [selected]="selectedFilter" */
-                />
-              </div>
-            </OcReviewListComponent>
-            <OcReviewComponent /* *ngIf="isWritingReview" */
-              heading="Write a review"
-              /* [submitInProgress]="reviewSubmitInProgress"
-                           (reviewFormData)="onReviewSubmit($event)"
-                           (cancelReview)="onCancelReview()"
-                           [reviewData]="userReview"
-                           [enableButtons]="true" */
-            />
+            {!isWritingReview && (
+              <OcReviewListComponent
+                // currentUserId={currentUserId}
+                reviewList={reviewsByApp?.list || []}
+                // totalReview={reviewsPage?.count}
+                // allowWriteReview={app.ownership && !userReview}
+                // writeReview={onNewReview}
+                // chosenAction={onChosenReviewActon($event)}
+                reviewListTitle="Most recent reviews"
+              >
+                <div>
+                  <OcDropdown
+                    options={/* reviewsSorts */ []}
+                    onSelect={() => {}}
+                    //  selected={selectedSort}
+                    // (selectedChange)="onReviewSortChange($event)"
+                    // className="mr-5"
+                  />
+                  <OcDropdown
+                    options={/* reviewsFilter */ []}
+                    title="Show"
+                    onSelect={() => {}}
+                    /* (selectedChange)="onReviewFilterChange($event)"
+                  [selected]="selectedFilter" */
+                  />
+                </div>
+              </OcReviewListComponent>
+            )}
+            {isWritingReview && (
+              <OcReviewComponent
+                heading="Write a review"
+                // onSubmit={onReviewSubmit}
+                // cancelReview={onCancelReview}
+                // reviewData={userReview}
+                enableButtons
+              />
+            )}
           </div>
         </div>
       </div>
@@ -185,7 +236,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
         <div className="container">
           <OcRecommendedAppsComponent
             recommendedAppTitle="Recommended for you"
-            appList={/* recommendedApps */ []}
+            appList={recommendedApps || []}
             routerLinkForOneApp="/details"
             clickByAppCard={() => {}}
             /* appNavigationParam="safeName[0]" */
