@@ -159,7 +159,7 @@ const Profile = (): JSX.Element => {
                     await dispatch(saveUserData(next));
                     notify.success('Your profile has been updated');
                   } catch (e) {
-                    console.log(e);
+                    notify.error(e.response.data.message);
                   }
                 }}
                 enableTypesDropdown={true}
