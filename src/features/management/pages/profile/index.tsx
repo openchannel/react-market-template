@@ -10,68 +10,10 @@ import { useDispatch } from 'react-redux';
 
 import './styles.scss';
 import { changePassword } from '../../../common/store/session/actions';
-import {
-  OcEditUserFormComponent,
-  OcEditUserFormConfig,
-} from '@openchannel/react-common-components/dist/ui/auth/organisms';
+import { OcEditUserFormComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 import { loadUserProfileForm, saveUserData } from '../../../common/store/user-types';
 import { useTypedSelector } from '../../../common/hooks';
-
-const form = {
-  fields: [
-    {
-      id: 'password',
-      label: 'Current Password',
-      type: 'password',
-      attributes: [],
-      defaultValue: '',
-    },
-    {
-      id: 'newPassword',
-      label: 'New Password',
-      type: 'password',
-      attributes: [],
-      defaultValue: '',
-    },
-  ],
-};
-
-const formConfigsWithoutTypeData: OcEditUserFormConfig[] = [
-  {
-    name: 'Default',
-    account: {
-      type: 'default',
-      typeData: {
-        fields: [],
-      },
-      includeFields: ['name', 'email'],
-    },
-    organization: {
-      type: '',
-      typeData: {
-        fields: [],
-      },
-      includeFields: [],
-    },
-  },
-  {
-    name: 'Custom',
-    account: {
-      type: 'custom-account-type',
-      typeData: {
-        fields: [],
-      },
-      includeFields: ['name', 'username', 'email', 'customData.about-me'],
-    },
-    organization: {
-      type: '',
-      typeData: {
-        fields: [],
-      },
-      includeFields: [],
-    },
-  },
-];
+import { formConfigsWithoutTypeData, formPassword } from '../../../common/store/user-types/constants';
 
 const Profile = (): JSX.Element => {
   const [isSelectedPage, setSelectedPage] = React.useState('myProfile');
@@ -131,7 +73,7 @@ const Profile = (): JSX.Element => {
           <div className="col-md-5 col-lg-4 pt-1">
             {isSelectedPage === 'changePassword' && (
               <OcForm
-                formJsonData={form}
+                formJsonData={formPassword}
                 onSubmit={async (value, { resetForm }) => {
                   try {
                     await dispatch(changePassword(value as ChangePasswordRequest));
