@@ -13,7 +13,7 @@ import { changePassword } from '../../../common/store/session/actions';
 import { OcEditUserFormComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 import { loadUserProfileForm, saveUserData } from '../../../common/store/user-types';
 import { useTypedSelector } from '../../../common/hooks';
-import { formConfigsWithoutTypeData, formPassword } from '../../../common/store/user-types/constants';
+import { formConfigsWithoutTypeData, formPassword } from './constants';
 
 const Profile = (): JSX.Element => {
   const [isSelectedPage, setSelectedPage] = React.useState('myProfile');
