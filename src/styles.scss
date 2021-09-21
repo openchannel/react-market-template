@@ -7,6 +7,10 @@ $link-gray: #333333;
 $category-color-mix1: #ff0606;
 $category-color-mix2: #ffffff;
 
+* {
+  outline: none;
+}
+
 .bg-container {
   width: 100%;
   min-height: 100vh;

@@ -2,8 +2,15 @@ import * as React from 'react';
 
 const ChartPage = React.lazy(() => import('./pages/chart'));
 const HomePage = React.lazy(() => import('./pages/home'));
+const SearchPage = React.lazy(() => import('./pages/search'));
 
 export const commonRoutes = [
+  {
+    path: '/browse',
+    exact: false,
+    //   private: true,
+    Component: SearchPage,
+  },
   {
     path: '/chart',
     exact: true,
