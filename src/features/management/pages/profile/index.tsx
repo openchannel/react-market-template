@@ -10,6 +10,12 @@ import { useDispatch } from 'react-redux';
 
 import './styles.scss';
 import { changePassword } from '../../../common/store/session/actions';
+import {
+  OcEditUserFormComponent,
+  OcEditUserFormConfig,
+} from '@openchannel/react-common-components/dist/ui/auth/organisms';
+import { loadUserProfileForm, saveUserData } from '../../../common/store/user-types/actions';
+import { useTypedSelector } from '../../../common/hooks';
 
 const form = {
   fields: [
@@ -30,6 +36,43 @@ const form = {
   ],
 };
 
+const formConfigsWithoutTypeData: OcEditUserFormConfig[] = [
+  {
+    name: 'Default',
+    account: {
+      type: 'default',
+      typeData: {
+        fields: [],
+      },
+      includeFields: ['name', 'email'],
+    },
+    organization: {
+      type: '',
+      typeData: {
+        fields: [],
+      },
+      includeFields: [],
+    },
+  },
+  {
+    name: 'Custom',
+    account: {
+      type: 'custom-account-type',
+      typeData: {
+        fields: [],
+      },
+      includeFields: ['name', 'username', 'email', 'customData.about-me'],
+    },
+    organization: {
+      type: '',
+      typeData: {
+        fields: [],
+      },
+      includeFields: [],
+    },
+  },
+];
+
 const Profile = (): JSX.Element => {
   const [isSelectedPage, setSelectedPage] = React.useState('myProfile');
   const dispatch = useDispatch();
@@ -37,9 +80,16 @@ const Profile = (): JSX.Element => {
   const historyBack = React.useCallback(() => {
     history.goBack();
   }, [history.goBack]);
+  const { configs, account } = useTypedSelector(({ userTypes }) => userTypes);
+  const onClickPass = React.useCallback(
+    (e) => {
+      setSelectedPage(e.target.dataset.link);
+    },
+    [setSelectedPage],
+  );
 
-  const onClickPass = React.useCallback((e) => {
-    setSelectedPage(e.target.dataset.link);
+  React.useEffect(() => {
+    dispatch(loadUserProfileForm(formConfigsWithoutTypeData, false, true));
   }, []);
 
   return (
@@ -93,6 +143,27 @@ const Profile = (): JSX.Element => {
                   }
                 }}
                 successButtonText="Save"
+              />
+            )}
+            {isSelectedPage === 'myProfile' && (
+              <OcEditUserFormComponent
+                formConfigs={configs}
+                defaultEmptyConfigsErrorMessage=""
+                enableCustomTerms
+                onSubmit={async (value) => {
+                  const next = {
+                    ...account,
+                    ...value,
+                  };
+                  try {
+                    await dispatch(saveUserData(next));
+                    notify.success('Your profile has been updated');
+                  } catch (e) {
+                    console.log(e);
+                  }
+                }}
+                enableTypesDropdown={true}
+                submitText="Save"
               />
             )}
           </div>
