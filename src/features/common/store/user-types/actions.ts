@@ -8,6 +8,7 @@ import {
 import { userAccount, userAccountTypes, users } from '@openchannel/react-common-services';
 import { Dispatch } from 'redux';
 import { cloneDeep, keyBy } from 'lodash';
+import { normalizeError } from '../utils';
 
 const EMPTY_TYPE_RESPONSE = {
   list: [],
@@ -110,9 +111,12 @@ export const loadUserProfileForm =
   };
 
 export const saveUserData = (accountData: OcEditUserResult) => async (dispatch: Dispatch) => {
-  const { data: savedUser } = await userAccount.updateUserAccount(accountData);
-
-  dispatch(saveAccount(savedUser));
+  try {
+    const { data: savedUser } = await userAccount.updateUserAccount(accountData);
+    dispatch(saveAccount(savedUser));
+  } catch (error) {
+    throw normalizeError(error);
+  }
 };
 
 export const getUserAccount = async () => {

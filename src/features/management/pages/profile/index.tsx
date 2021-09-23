@@ -14,6 +14,7 @@ import { OcEditUserFormComponent } from '@openchannel/react-common-components/di
 import { loadUserProfileForm, saveUserData } from '../../../common/store/user-types';
 import { useTypedSelector } from '../../../common/hooks';
 import { formConfigsWithoutTypeData, formPassword } from './constants';
+import { FormikHelpers, FormikValues } from 'formik';
 
 const Profile = (): JSX.Element => {
   const [isSelectedPage, setSelectedPage] = React.useState('myProfile');
@@ -33,6 +34,36 @@ const Profile = (): JSX.Element => {
   React.useEffect(() => {
     dispatch(loadUserProfileForm(formConfigsWithoutTypeData, false, true));
   }, []);
+
+  const handleChangePasswordSubmit = async (
+    value: FormikValues,
+    { resetForm, setErrors }: FormikHelpers<FormikValues>,
+  ) => {
+    try {
+      await dispatch(changePassword(value as ChangePasswordRequest));
+      resetForm();
+      notify.success('Password has been updated');
+    } catch (e) {
+      if (e.errors != null) {
+        setErrors(e.errors);
+      }
+    }
+  };
+
+  const handleMyProfileSubmit = async (value: FormikValues, { setErrors }: FormikHelpers<FormikValues>) => {
+    const next = {
+      ...account,
+      ...value,
+    };
+    try {
+      await dispatch(saveUserData(next));
+      notify.success('Your profile has been updated');
+    } catch (e) {
+      if (e.errors != null) {
+        setErrors(e.errors);
+      }
+    }
+  };
 
   return (
     <MainTemplate>
@@ -72,38 +103,14 @@ const Profile = (): JSX.Element => {
           </div>
           <div className="col-md-5 col-lg-4 pt-1">
             {isSelectedPage === 'changePassword' && (
-              <OcForm
-                formJsonData={formPassword}
-                onSubmit={async (value, { resetForm }) => {
-                  try {
-                    await dispatch(changePassword(value as ChangePasswordRequest));
-                    resetForm();
-                    notify.success('Password has been updated');
-                  } catch (e) {
-                    notify.error(e.response.data.message);
-                    resetForm();
-                  }
-                }}
-                successButtonText="Save"
-              />
+              <OcForm formJsonData={formPassword} onSubmit={handleChangePasswordSubmit} successButtonText="Save" />
             )}
             {isSelectedPage === 'myProfile' && (
               <OcEditUserFormComponent
                 formConfigs={configs}
                 defaultEmptyConfigsErrorMessage=""
                 enableCustomTerms
-                onSubmit={async (value) => {
-                  const next = {
-                    ...account,
-                    ...value,
-                  };
-                  try {
-                    await dispatch(saveUserData(next));
-                    notify.success('Your profile has been updated');
-                  } catch (e) {
-                    notify.error(e.response.data.message);
-                  }
-                }}
+                onSubmit={handleMyProfileSubmit}
                 enableTypesDropdown={true}
                 submitText="Save"
               />
