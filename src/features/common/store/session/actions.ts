@@ -9,6 +9,7 @@ import {
 
 import { ActionTypes } from './action-types';
 import { RootState } from '../../../../types';
+import { normalizeError } from '../utils';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
@@ -75,8 +76,11 @@ export const logout = () => async (dispatch: Dispatch, getState: () => RootState
 };
 
 export const changePassword = (body: ChangePasswordRequest) => async (dispatch: Dispatch) => {
-  const response = await native.changePassword({ ...body, jwtRefreshToken: storage.getRefreshToken() });
-
-  const { accessToken, refreshToken } = response.data;
-  dispatch(setSession({ accessToken, refreshToken }));
+  try {
+    const response = await native.changePassword({ ...body, jwtRefreshToken: storage.getRefreshToken() });
+    const { accessToken, refreshToken } = response.data;
+    dispatch(setSession({ accessToken, refreshToken }));
+  } catch (error) {
+    throw normalizeError(error);
+  }
 };
