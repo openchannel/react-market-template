@@ -1,13 +1,14 @@
 import { ActionTypes } from './action-types';
-import { Action, Apps } from './types';
+import { Action, Reviews } from './types';
 
 const initialState = {
   isLoading: false,
   isLoaded: false,
   reviewsByApp: null,
+  sorts: [],
 };
 
-export const reviewsReducer = (state: Apps = initialState, action: Action): Apps => {
+export const reviewsReducer = (state: Reviews = initialState, action: Action): Reviews => {
   switch (action.type) {
     case ActionTypes.START_LOADING: {
       return {
@@ -26,15 +27,15 @@ export const reviewsReducer = (state: Apps = initialState, action: Action): Apps
     }
 
     case ActionTypes.SET_REVIEWS_BY_APP: {
-      const list = action.payload.list.map(({ description, ...rest }) => ({
-        ...rest,
-        review: description,
-        description: '',
-      }));
-      const newPayload = { ...action.payload, list };
       return {
         ...state,
-        reviewsByApp: newPayload,
+        reviewsByApp: action.payload,
+      };
+    }
+    case ActionTypes.SET_REVIEWS_SORTS: {
+      return {
+        ...state,
+        sorts: action.payload,
       };
     }
 

@@ -17,7 +17,8 @@ const process401Error = async <T>(config: T) => {
       const {
         data: { accessToken, refreshToken },
       } = await auth.refreshToken({ refreshToken: storage.getRefreshToken() });
-
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       store.dispatch(setSession({ accessToken, refreshToken }));
       isRefreshing = false;
 

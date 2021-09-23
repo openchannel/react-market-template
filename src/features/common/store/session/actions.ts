@@ -5,6 +5,7 @@ import {
   nativeLogin as native,
   storage,
   UserLoginModel,
+  userAccount,
 } from '@openchannel/react-common-services';
 
 import { ActionTypes } from './action-types';
@@ -12,6 +13,7 @@ import { RootState } from '../../../../types';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
+const setUserId = (payload: string) => ({ type: ActionTypes.SET_USER_ID, payload });
 
 export const setSession = (payload: { accessToken: string; refreshToken: string }) => {
   storage.persist(payload.accessToken, payload.refreshToken);
@@ -79,4 +81,17 @@ export const changePassword = (body: ChangePasswordRequest) => async (dispatch: 
 
   const { accessToken, refreshToken } = response.data;
   dispatch(setSession({ accessToken, refreshToken }));
+};
+
+export const fetchUserId = () => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+  try {
+    const { data } = await userAccount.getUserAccount();
+    console.log(data);
+    dispatch(setUserId('ghj'));
+    dispatch(finishLoading());
+  } catch (error) {
+    dispatch(finishLoading());
+    throw error;
+  }
 };

@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+
 import {
   OcAppDescription,
   OcNavigationBreadcrumbs,
@@ -22,10 +24,8 @@ import InternetIcon from '../../../../../public/assets/img/internet.svg';
 import PadlockIcon from '../../../../../public/assets/img/padlock.svg';
 import EmailIcon from '../../../../../public/assets/img/icon-email.svg';
 import BubbleIcon from '../../../../../public/assets/img/speech-bubble.svg';
-// import { pageConfig } from '../../../../assets/config/configData';
-// import { ButtonAction, DownloadButtonAction, FormButtonAction } from '../action-button/types';
 import { fetchRecommendedApps } from '../../../apps/store/apps/actions';
-import { fetchReviewByAppId } from '../../../reviews/store/reviews/actions';
+import { fetchReviewByAppId, fetchSorts } from '../../../reviews/store/reviews/actions';
 import { useTypedSelector } from 'features/common/hooks';
 
 import './style.scss';
@@ -35,16 +35,37 @@ export interface AppDetailsProps {
   price?: number;
   appListingActions?: any;
 }
+export interface Option {
+  label: string;
+  [key: string]: any;
+}
 
 export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   const { app, price = 0, appListingActions = [] } = props;
   const dispatch = useDispatch();
+  const history = useHistory();
   React.useEffect(() => {
+    setSortSelected({ label: '', value: '' });
+    setFilterSelected({ label: 'All Stars', value: null });
     dispatch(fetchRecommendedApps());
+    dispatch(fetchSorts());
     dispatch(fetchReviewByAppId(app.appId));
   }, []);
   const { recommendedApps } = useTypedSelector(({ apps }) => apps);
-  const { reviewsByApp } = useTypedSelector(({ reviews }) => reviews);
+  const { reviewsByApp, sorts } = useTypedSelector(({ reviews }) => reviews);
+  const [isWritingReview, setIsWritingReview] = React.useState(false);
+  const [sortSelected, setSortSelected] = React.useState<Option | undefined>({ label: '', value: '' });
+  const [filterSelected, setFilterSelected] = React.useState<Option | undefined>({ label: 'All Stars', value: null });
+
+  const historyBack = React.useCallback(() => {
+    history.goBack();
+  }, [history]);
+
+  const handleDropdownClick = (appId: string, filter?: Option | undefined, sort?: Option | undefined) => {
+    setSortSelected(sort);
+    setFilterSelected(filter);
+    dispatch(fetchReviewByAppId(appId, sort?.value, filter?.value));
+  };
 
   const appGalleryImages = app?.customData?.images.map((imageUrl: string) => {
     return { image: imageUrl, title: '', description: '' };
@@ -64,30 +85,13 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   // @ts-ignore
   reviewList.forEach((review) => overallReviews[review]++);
 
-  const [isWritingReview, setIsWritingReview] = React.useState(false);
-
-  // const getButtonActions = (config: any): ButtonAction[] => {
-  //   const buttonActions = config?.appDetailsPage['listing-actions'];
-
-  //   if (buttonActions && app?.type) {
-  //     return buttonActions.filter((action: FormButtonAction) => {
-  //       const isTypeSupported = action?.appTypes?.includes(app.type as string);
-  //       const isNoDownloadType = action?.type !== 'download';
-  //       const isFileFieldPresent = !!get(app, (action as unknown as DownloadButtonAction).fileField);
-
-  //       return isTypeSupported && (isNoDownloadType || isFileFieldPresent);
-  //     });
-  //   }
-  //   return [];
-  // };
-
   return (
     <>
       <div className="bg-container bg bg-s pb-7">
         <div className="container container_custom">
           <div className="app-detail__back-link height-unset">
             <div className="d-flex flex-row align-items-center">
-              <OcNavigationBreadcrumbs pageTitle="" navigateText="Back" navigateClick={() => {}} />
+              <OcNavigationBreadcrumbs pageTitle="" navigateText="Back" navigateClick={historyBack} />
             </div>
           </div>
           <div className="app-detail__data">
@@ -108,15 +112,17 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                   label="reviews"
                   labelClass="medium"
                   type="single-star"
+                  disabled={true}
                 />
                 {appListingActions?.length > 0 && (
                   <div className="actions-container">
                     {appListingActions?.map((action: any, index: number) => (
                       <OcButtonComponent
-                        /* [appData]="app"
-                      [buttonAction]="action"
-                      (updateAppData)="getAppData()" 
-                      className="action-button" */
+                        text={action.type}
+                        // [appData]="app"
+                        // [buttonAction]="action"
+                        // (updateAppData)="getAppData()"
+                        // className={action.button.class || ''}
                         key={index}
                       />
                     ))}
@@ -189,36 +195,38 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
         <div className="d-flex flex-wrap flex-md-nowrap">
           <div className="rating-column">
             <OcOverallRating allReviewSummary={overallReviews} />
-            {/* <OcRatingComponent rating={app?.rating / 100 || 0} /> */}
           </div>
           <div className="review-column">
+            <OcDropdown
+              title="Sort by"
+              options={sorts}
+              onSelect={(selectedSort: Option | undefined) =>
+                handleDropdownClick(app.appId, filterSelected, selectedSort)
+              }
+              selected={sortSelected}
+            />
+            <OcDropdown
+              options={[
+                { label: 'All Stars', value: null },
+                { label: '5 Stars', value: `{'rating': 500}` },
+                { label: '4 Stars', value: `{'rating': 400}` },
+                { label: '3 Stars', value: `{'rating': 300}` },
+                { label: '2 Stars', value: `{'rating': 200}` },
+                { label: '1 Stars', value: `{'rating': 100}` },
+              ]}
+              title="Show"
+              onSelect={(selectedFilter: Option | undefined) =>
+                handleDropdownClick(app.appId, selectedFilter, sortSelected)
+              }
+              selected={filterSelected}
+            />
             {!isWritingReview && (
               <OcReviewListComponent
-                // currentUserId={currentUserId}
                 reviewList={reviewsByApp?.list || []}
-                // totalReview={reviewsPage?.count}
                 // allowWriteReview={app.ownership && !userReview}
-                // writeReview={onNewReview}
-                // chosenAction={onChosenReviewActon($event)}
+                writeReview={() => setIsWritingReview(!isWritingReview)}
                 reviewListTitle="Most recent reviews"
-              >
-                <div>
-                  <OcDropdown
-                    options={/* reviewsSorts */ []}
-                    onSelect={() => {}}
-                    //  selected={selectedSort}
-                    // (selectedChange)="onReviewSortChange($event)"
-                    // className="mr-5"
-                  />
-                  <OcDropdown
-                    options={/* reviewsFilter */ []}
-                    title="Show"
-                    onSelect={() => {}}
-                    /* (selectedChange)="onReviewFilterChange($event)"
-                  [selected]="selectedFilter" */
-                  />
-                </div>
-              </OcReviewListComponent>
+              />
             )}
             {isWritingReview && (
               <OcReviewComponent

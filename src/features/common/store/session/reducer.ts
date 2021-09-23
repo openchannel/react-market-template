@@ -6,9 +6,10 @@ const initialState = {
   isExist: false,
   accessToken: '',
   refreshToken: '',
+  userId: '',
 };
 
-export const sessionReducer = (state: Session = initialState, action: Action) => {
+export const sessionReducer = (state: Session = initialState, action: Action): Session => {
   switch (action.type) {
     case ActionTypes.START_LOADING: {
       return {
@@ -30,6 +31,17 @@ export const sessionReducer = (state: Session = initialState, action: Action) =>
         isExist: true,
         accessToken: action.payload.accessToken,
         refreshToken: action.payload.refreshToken,
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    case ActionTypes.SET_USER_ID: {
+      return {
+        ...state,
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        userId: action.payload,
       };
     }
 

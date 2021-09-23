@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-
+import { get } from 'lodash';
+import { ButtonAction, DownloadButtonAction, FormButtonAction } from '../../components/action-button/types';
+import { pageConfig } from '../../../../assets/config/configData';
 import { useTypedSelector } from '../../hooks';
 import { fetchSelectedApp } from '../../../apps/store/apps/actions';
 import { MainTemplate } from '../../templates';
@@ -17,8 +19,26 @@ export const DetailsPage: React.FC = () => {
     dispatch(fetchSelectedApp(appId));
   }, []);
 
+  const getButtonActions = (config: any): ButtonAction[] => {
+    const buttonActions = config?.appDetailsPage['listing-actions'];
+
+    if (buttonActions && selectedApp?.type) {
+      return buttonActions.filter((action: FormButtonAction) => {
+        const isTypeSupported = action?.appTypes?.includes(selectedApp.type as string);
+        const isNoDownloadType = action?.type !== 'download';
+        const isFileFieldPresent = !!get(selectedApp, (action as unknown as DownloadButtonAction).fileField);
+
+        return isTypeSupported && (isNoDownloadType || isFileFieldPresent);
+      });
+    }
+    return [];
+  };
+  const actions = getButtonActions(pageConfig);
+
+  console.log(actions);
+
   return (
-    <MainTemplate>{selectedApp && <AppDetails appListingActions={[]} price={0} app={selectedApp} />}</MainTemplate>
+    <MainTemplate>{selectedApp && <AppDetails appListingActions={actions} price={0} app={selectedApp} />}</MainTemplate>
   );
 };
 
