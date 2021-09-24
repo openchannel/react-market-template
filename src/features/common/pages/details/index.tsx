@@ -16,7 +16,6 @@ export const DetailsPage: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchSelectedApp(appSafeName));
-    console.log('Fetch Selected App inside DetailsPage(parent)');
   }, [history.location, appSafeName]);
   const { selectedApp } = useTypedSelector(({ apps }) => apps);
 
@@ -35,8 +34,6 @@ export const DetailsPage: React.FC = () => {
     return [];
   };
   const actions = getButtonActions(pageConfig);
-
-  // console.log('butonActionss', actions);
 
   return (
     <MainTemplate>{selectedApp && <AppDetails appListingActions={actions} price={0} app={selectedApp} />}</MainTemplate>

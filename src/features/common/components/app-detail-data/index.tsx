@@ -51,7 +51,6 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     dispatch(fetchSorts());
     dispatch(fetchReviewByAppId(app.appId));
     dispatch(fetchUserId());
-    console.log('Fetch reviewsByApp inside appDetails child', reviewsByApp);
   }, [app]);
   const { recommendedApps } = useTypedSelector(({ apps }) => apps);
   const { reviewsByApp, sorts } = useTypedSelector(({ reviews }) => reviews);
@@ -93,8 +92,6 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
 
   const userReview = React.useMemo(() => {
     const hasUserReview = reviewsByApp ? !!find(reviewsByApp.list, ['userId', userId]) : false;
-    console.log('has user the review', hasUserReview);
-
     return hasUserReview;
   }, [reviewsByApp]);
 
@@ -104,16 +101,8 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
       ...review,
       appId: app.appId,
     };
-    if (Object.keys(reviewData).length > 0) {
-      dispatch(
-        updateReview({
-          ...reviewData,
-          reviewId: review.reviewId,
-        }),
-      );
-    } else {
-      dispatch(createReview(reviewData));
-    }
+    dispatch(createReview(reviewData));
+    setIsWritingReview(false);
   };
 
   return (

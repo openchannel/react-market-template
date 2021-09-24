@@ -11,6 +11,7 @@ import {
 } from '@openchannel/react-common-services';
 import { ActionTypes } from './action-types';
 import { Option } from '../../../common/components/app-detail-data';
+import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
@@ -60,8 +61,9 @@ export const createReview = (reviewData: ReviewResponse) => async (dispatch: Dis
       dispatch(finishLoading());
       throw new Error();
     }
-  } catch (error) {
+  } catch (error: any) {
     dispatch(finishLoading());
+    error.response.data.errors.forEach((err: any) => notify.error(err.message));
     throw error;
   }
 };
