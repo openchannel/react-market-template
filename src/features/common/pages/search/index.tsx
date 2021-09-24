@@ -22,7 +22,6 @@ import { OcTextSearchComponent } from '@openchannel/react-common-components/dist
 import { OcTagElement } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { QueryUtil } from '@openchannel/react-common-services';
 import { SelectedFilter, SelectedFilters } from 'features/apps/store/apps/types';
-import closeIconUrl from '../../../../../public/assets/img/close-icon.svg';
 import defaultAppIcon from '../../../../../public/assets/img/default-app-icon.svg';
 
 import './style.scss';
@@ -214,16 +213,11 @@ export const SearchPage: React.FC = () => {
                 <OcTagElement
                   title={filter?.parent.label}
                   onIconClick={() => handleTagClick(filter.parent.label)}
-                  deleteTagImgUrl={closeIconUrl}
                   key={filter.id + filter.parent.id}
                 />
               ))}
               {selectedFilters.searchStr && (
-                <OcTagElement
-                  title={selectedFilters.searchStr}
-                  deleteTagImgUrl={closeIconUrl}
-                  onIconClick={handleTagDelete}
-                />
+                <OcTagElement title={selectedFilters.searchStr} onIconClick={handleTagDelete} />
               )}
             </div>
             <OcAppListGrid appList={filteredApps} defaultAppIcon={defaultAppIcon} />
