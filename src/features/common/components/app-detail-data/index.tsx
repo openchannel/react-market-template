@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { find } from 'lodash';
 
 import {
   OcAppDescription,
@@ -9,15 +10,13 @@ import {
   OcReviewListComponent,
   OcReviewComponent,
 } from '@openchannel/react-common-components/dist/ui/common/molecules';
-import {
-  OcButtonComponent,
-  OcImageGalleryComponent,
-  OcVideoComponent,
-} from '@openchannel/react-common-components/dist/ui/common/atoms';
+import { OcImageGalleryComponent, OcVideoComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcRatingComponent } from '@openchannel/react-common-components/dist/ui/market/atoms';
 import { OcOverallRating } from '@openchannel/react-common-components/dist/ui/market/organisms';
 import { OcRecommendedAppsComponent } from '@openchannel/react-common-components/dist/ui/common/organisms';
 import { FullAppData } from '@openchannel/react-common-components';
+import { ReviewResponse } from '@openchannel/react-common-services';
+import { ActionButton } from '../action-button';
 
 import HelpIcon from '../../../../../public/assets/img/icon-help.svg';
 import InternetIcon from '../../../../../public/assets/img/internet.svg';
@@ -25,7 +24,8 @@ import PadlockIcon from '../../../../../public/assets/img/padlock.svg';
 import EmailIcon from '../../../../../public/assets/img/icon-email.svg';
 import BubbleIcon from '../../../../../public/assets/img/speech-bubble.svg';
 import { fetchRecommendedApps } from '../../../apps/store/apps/actions';
-import { fetchReviewByAppId, fetchSorts } from '../../../reviews/store/reviews/actions';
+import { fetchReviewByAppId, fetchSorts, createReview, updateReview } from '../../../reviews/store/reviews/actions';
+import { fetchUserId } from '../../store/session/actions';
 import { useTypedSelector } from 'features/common/hooks';
 
 import './style.scss';
@@ -50,9 +50,12 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     dispatch(fetchRecommendedApps());
     dispatch(fetchSorts());
     dispatch(fetchReviewByAppId(app.appId));
-  }, []);
+    dispatch(fetchUserId());
+    console.log('Fetch reviewsByApp inside appDetails child', reviewsByApp);
+  }, [app]);
   const { recommendedApps } = useTypedSelector(({ apps }) => apps);
   const { reviewsByApp, sorts } = useTypedSelector(({ reviews }) => reviews);
+  const { userId } = useTypedSelector(({ session }) => session);
   const [isWritingReview, setIsWritingReview] = React.useState(false);
   const [sortSelected, setSortSelected] = React.useState<Option | undefined>({ label: '', value: '' });
   const [filterSelected, setFilterSelected] = React.useState<Option | undefined>({ label: 'All Stars', value: null });
@@ -71,19 +74,47 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     return { image: imageUrl, title: '', description: '' };
   });
 
-  const reviewList: Array<number> = reviewsByApp?.list?.map((rev) => Math.round(rev.rating / 100)) || [];
-  const overallReviews = {
-    rating: app.rating / 100 || 0,
-    reviewCount: reviewsByApp?.count || 0,
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0,
+  const overallReviews = React.useMemo(() => {
+    const reviewList: Array<number> = reviewsByApp?.list?.map((rev) => Math.round(rev.rating / 100)) || [];
+    const countedReviews = {
+      rating: app.rating / 100 || 0,
+      reviewCount: reviewsByApp?.count || 0,
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+      5: 0,
+    };
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    reviewList.forEach((review) => countedReviews[review]++);
+    return countedReviews;
+  }, [reviewsByApp]);
+
+  const userReview = React.useMemo(() => {
+    const hasUserReview = reviewsByApp ? !!find(reviewsByApp.list, ['userId', userId]) : false;
+    console.log('has user the review', hasUserReview);
+
+    return hasUserReview;
+  }, [reviewsByApp]);
+
+  const onReviewSubmit = (review: ReviewResponse): void => {
+    // reviewSubmitInProgress = true;
+    const reviewData: ReviewResponse = {
+      ...review,
+      appId: app.appId,
+    };
+    if (Object.keys(reviewData).length > 0) {
+      dispatch(
+        updateReview({
+          ...reviewData,
+          reviewId: review.reviewId,
+        }),
+      );
+    } else {
+      dispatch(createReview(reviewData));
+    }
   };
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  reviewList.forEach((review) => overallReviews[review]++);
 
   return (
     <>
@@ -117,14 +148,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                 {appListingActions?.length > 0 && (
                   <div className="actions-container">
                     {appListingActions?.map((action: any, index: number) => (
-                      <OcButtonComponent
-                        text={action.type}
-                        // [appData]="app"
-                        // [buttonAction]="action"
-                        // (updateAppData)="getAppData()"
-                        // className={action.button.class || ''}
-                        key={index}
-                      />
+                      <ActionButton viewData={action.unowned} inProcess={false} onClick={() => {}} key={index} />
                     ))}
                   </div>
                 )}
@@ -197,42 +221,45 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
             <OcOverallRating allReviewSummary={overallReviews} />
           </div>
           <div className="review-column">
-            <OcDropdown
-              title="Sort by"
-              options={sorts}
-              onSelect={(selectedSort: Option | undefined) =>
-                handleDropdownClick(app.appId, filterSelected, selectedSort)
-              }
-              selected={sortSelected}
-            />
-            <OcDropdown
-              options={[
-                { label: 'All Stars', value: null },
-                { label: '5 Stars', value: `{'rating': 500}` },
-                { label: '4 Stars', value: `{'rating': 400}` },
-                { label: '3 Stars', value: `{'rating': 300}` },
-                { label: '2 Stars', value: `{'rating': 200}` },
-                { label: '1 Stars', value: `{'rating': 100}` },
-              ]}
-              title="Show"
-              onSelect={(selectedFilter: Option | undefined) =>
-                handleDropdownClick(app.appId, selectedFilter, sortSelected)
-              }
-              selected={filterSelected}
-            />
             {!isWritingReview && (
               <OcReviewListComponent
                 reviewList={reviewsByApp?.list || []}
-                // allowWriteReview={app.ownership && !userReview}
+                writeReviewPermission={app.ownership && !userReview}
                 writeReview={() => setIsWritingReview(!isWritingReview)}
                 reviewListTitle="Most recent reviews"
-              />
+              >
+                <div>
+                  <OcDropdown
+                    title="Sort by"
+                    options={sorts}
+                    onSelect={(selectedSort: Option | undefined) =>
+                      handleDropdownClick(app.appId, filterSelected, selectedSort)
+                    }
+                    selected={sortSelected}
+                  />
+                  <OcDropdown
+                    options={[
+                      { label: 'All Stars', value: null },
+                      { label: '5 Stars', value: `{'rating': 500}` },
+                      { label: '4 Stars', value: `{'rating': 400}` },
+                      { label: '3 Stars', value: `{'rating': 300}` },
+                      { label: '2 Stars', value: `{'rating': 200}` },
+                      { label: '1 Stars', value: `{'rating': 100}` },
+                    ]}
+                    title="Show"
+                    onSelect={(selectedFilter: Option | undefined) =>
+                      handleDropdownClick(app.appId, selectedFilter, sortSelected)
+                    }
+                    selected={filterSelected}
+                  />
+                </div>
+              </OcReviewListComponent>
             )}
             {isWritingReview && (
               <OcReviewComponent
                 heading="Write a review"
-                // onSubmit={onReviewSubmit}
-                // cancelReview={onCancelReview}
+                onSubmit={onReviewSubmit}
+                onReviewCancel={() => setIsWritingReview(false)}
                 // reviewData={userReview}
                 enableButtons
               />
@@ -240,17 +267,18 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
           </div>
         </div>
       </div>
-      <div className="bg-container mt-5 pt-3 pb-4 px-3 px-md-0 py-md-8 min-height-auto" /* *ngIf="recommendedApps" */>
-        <div className="container">
-          <OcRecommendedAppsComponent
-            recommendedAppTitle="Recommended for you"
-            appList={recommendedApps || []}
-            routerLinkForOneApp="/details"
-            clickByAppCard={() => {}}
-            /* appNavigationParam="safeName[0]" */
-          />
+      {recommendedApps && (
+        <div className="bg-container mt-5 pt-3 pb-4 px-3 px-md-0 py-md-8 min-height-auto">
+          <div className="container">
+            <OcRecommendedAppsComponent
+              recommendedAppTitle="Recommended for you"
+              appList={recommendedApps || []}
+              routerLinkForOneApp="/details"
+              clickByAppCard={() => {}}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

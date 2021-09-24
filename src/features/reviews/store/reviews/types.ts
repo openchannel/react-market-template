@@ -23,4 +23,16 @@ export type Action =
     }
   | {
       type: ActionTypes.FINISH_LOADING;
+    }
+  | {
+      type: ActionTypes.CREATE_REVIEW;
+      payload: Page<OCReviewDetailsResponse>;
+    }
+  | {
+      type: ActionTypes.UPDATE_REVIEW;
+      payload: Page<OCReviewDetailsResponse>;
+    }
+  | {
+      type: ActionTypes.DELETE_REVIEW;
+      payload: Page<OCReviewDetailsResponse>;
     };

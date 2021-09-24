@@ -87,8 +87,7 @@ export const fetchUserId = () => async (dispatch: Dispatch) => {
   dispatch(startLoading());
   try {
     const { data } = await userAccount.getUserAccount();
-    console.log(data);
-    dispatch(setUserId('ghj'));
+    dispatch(setUserId(data.userAccountId));
     dispatch(finishLoading());
   } catch (error) {
     dispatch(finishLoading());

@@ -12,12 +12,13 @@ import AppDetails from '../../components/app-detail-data';
 export const DetailsPage: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const appId = history.location.pathname.split('/')[2];
-  const { selectedApp } = useTypedSelector(({ apps }) => apps);
+  const appSafeName = React.useMemo(() => history.location.pathname.split('/')[2], [history.location]);
 
   React.useEffect(() => {
-    dispatch(fetchSelectedApp(appId));
-  }, []);
+    dispatch(fetchSelectedApp(appSafeName));
+    console.log('Fetch Selected App inside DetailsPage(parent)');
+  }, [history.location, appSafeName]);
+  const { selectedApp } = useTypedSelector(({ apps }) => apps);
 
   const getButtonActions = (config: any): ButtonAction[] => {
     const buttonActions = config?.appDetailsPage['listing-actions'];
@@ -35,7 +36,7 @@ export const DetailsPage: React.FC = () => {
   };
   const actions = getButtonActions(pageConfig);
 
-  console.log(actions);
+  // console.log('butonActionss', actions);
 
   return (
     <MainTemplate>{selectedApp && <AppDetails appListingActions={actions} price={0} app={selectedApp} />}</MainTemplate>

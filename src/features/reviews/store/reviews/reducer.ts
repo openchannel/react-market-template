@@ -38,6 +38,23 @@ export const reviewsReducer = (state: Reviews = initialState, action: Action): R
         sorts: action.payload,
       };
     }
+    case ActionTypes.CREATE_REVIEW: {
+      return {
+        ...state,
+      };
+    }
+    case ActionTypes.UPDATE_REVIEW: {
+      return {
+        ...state,
+        reviewsByApp: action.payload,
+      };
+    }
+    case ActionTypes.DELETE_REVIEW: {
+      return {
+        ...state,
+        reviewsByApp: action.payload,
+      };
+    }
 
     default:
       return state;
