@@ -149,7 +149,6 @@ export const getAllUsers =
 
     if (invites.status === 'fulfilled' && accounts.status === 'fulfilled') {
       const newRoles = await getRoles(startNewPagination, {});
-      console.log('newRoles', newRoles)
       dispatch(saveRoles(newRoles));
 
       nextInvites = invites.value.data.list.map((user: InviteUserModel) => mapToGridUserFromInvite(user, newRoles));
@@ -170,7 +169,6 @@ export const getAllUsers =
       newProperties.data.pages = invites.value.data.pages;
       newProperties.data.pageNumber = invites.value.data.pageNumber;
 
-      console.log('newProperties', newProperties)
       dispatch(saveUserProperties(newProperties));
     } else if (invites.status === 'rejected' && accounts.status === 'rejected') {
       newProperties.data.list = [...nextInvites, ...nextAccount];
