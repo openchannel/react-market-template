@@ -49,7 +49,7 @@ export const HomePage: React.FC = () => {
   const handleSearchSubmit = React.useCallback(() => {
     const firstFilter = filters[0];
     goToSearch({ id: firstFilter.id, parent: firstFilter.values[0] }, searchStr);
-  }, [goToSearch, searchStr]);
+  }, [filters, goToSearch, searchStr]);
 
   const handleSidebarClick = React.useCallback(
     (selectedFilter: SelectedFilter) => {
