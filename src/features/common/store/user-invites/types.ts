@@ -1,8 +1,10 @@
 import { ActionTypes } from './action-types';
 
+export type SortQuery = { sortBy: string; sortOrder: number };
+
 export type UserInvites = {
   listRoles: any;
-  sortQuery: string;
+  sortQuery: SortQuery;
   userProperties: any;
 };
 
@@ -13,7 +15,7 @@ export type Action =
     }
   | {
       type: ActionTypes.SET_SORT_QUERY;
-      payload: string;
+      payload: SortQuery;
     }
   | {
       type: ActionTypes.SET_USER_PROPERTIES;

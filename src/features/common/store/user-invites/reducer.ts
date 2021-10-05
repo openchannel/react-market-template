@@ -3,7 +3,7 @@ import { ActionTypes } from './action-types';
 
 const initialState = {
   listRoles: {},
-  sortQuery: '{"name": 1}',
+  sortQuery: { sortBy: 'name', sortOrder: 1 },
   userProperties: {
     data: {
       pageNumber: 1,
