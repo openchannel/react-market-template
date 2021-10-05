@@ -5,6 +5,7 @@ import {
   sessionReducer as session,
   oidcReducer as oidc,
   userTypesReducer as userTypes,
+  userInvitesReducer as userInvites,
 } from './features/common/store';
 import { appsReducer as apps } from './features/apps/store';
 
@@ -14,4 +15,5 @@ export const rootReducer = combineReducers({
   oidc,
   session,
   userTypes,
+  userInvites,
 });
