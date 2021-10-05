@@ -22,4 +22,7 @@ export type Action =
       payload: {
         userProperties: any;
       };
+    }
+  | {
+      type: ActionTypes.RESET_USER_PROPERTIES;
     };

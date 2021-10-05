@@ -39,6 +39,10 @@ export const userInvitesReducer = (state: UserInvites = initialState, action: Ac
       };
     }
 
+    case ActionTypes.RESET_USER_PROPERTIES: {
+      return { ...state, userProperties: initialState.userProperties };
+    }
+
     default:
       return state;
   }

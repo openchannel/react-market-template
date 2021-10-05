@@ -23,6 +23,7 @@ export const saveUserProperties = (payload: UsersGridParametersModel) => {
 export const saveUserSortQuery = (payload: SortQuery) => {
   return { type: ActionTypes.SET_SORT_QUERY, payload };
 };
+const resetUserProperties = () => ({ type: ActionTypes.RESET_USER_PROPERTIES });
 
 const getSortQuery = (sortBy: string, prevSortQuery: SortQuery): SortQuery => {
   return prevSortQuery.sortBy === sortBy
@@ -129,4 +130,8 @@ export const sortMyCompany = (sortBy: string) => async (dispatch: Dispatch, getS
       },
     }),
   );
+};
+
+export const clearUserProperties = () => (dispatch: Dispatch) => {
+  dispatch(resetUserProperties());
 };

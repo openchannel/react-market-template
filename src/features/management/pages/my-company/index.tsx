@@ -5,7 +5,7 @@ import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/di
 import { storage } from '@openchannel/react-common-services';
 import { page, pageIds } from './constants';
 import './styles.scss';
-import UserManagement from './userManagement';
+import UserManagement from './user-management';
 
 const Company = (): JSX.Element => {
   const [isSelectedPage, setSelectedPage] = React.useState(pageIds.company);

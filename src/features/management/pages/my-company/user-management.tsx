@@ -4,13 +4,13 @@ import { OcMenuUserGrid } from '@openchannel/react-common-components/dist/ui/man
 import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '../../../common/hooks';
 import { getAllUsers, sortMyCompany } from '../../../common/store/user-invites';
+import { clearUserProperties } from '../../../common/store/user-invites/actions';
 
 const UserManagement: React.FC = () => {
   const dispatch = useDispatch();
-  const { userProperties } = useTypedSelector(({ userInvites }) => userInvites);
+  const { userProperties, sortQuery } = useTypedSelector(({ userInvites }) => userInvites);
   const { data } = userProperties;
   const { pageNumber, pages, list } = data;
-  const { sortQuery } = useTypedSelector(({ userInvites }) => userInvites);
 
   const catchSortChanges = (sortBy: string) => {
     dispatch(sortMyCompany(sortBy));
@@ -22,6 +22,10 @@ const UserManagement: React.FC = () => {
 
   React.useEffect(() => {
     loadPage(pageNumber);
+
+    return () => {
+      dispatch(clearUserProperties());
+    };
   }, []);
 
   return (
@@ -32,11 +36,7 @@ const UserManagement: React.FC = () => {
         hasMore={pageNumber < pages}
         loader={null}
       >
-        <OcMenuUserGrid
-          onMenuClick={() => console.log('onMenuClick')}
-          onSort={catchSortChanges}
-          properties={userProperties}
-        />
+        <OcMenuUserGrid onMenuClick={() => {}} onSort={catchSortChanges} properties={userProperties} />
       </InfiniteScroll>
     </>
   );
