@@ -63,9 +63,13 @@ export const getAllUsers =
 
     let nextInvites: InviteUserModel[] = [];
     let nextAccount: UserAccount[] = [];
+    let userRoles: Record<string, string> = {};
 
-    if (invites.status === 'fulfilled' && accounts.status === 'fulfilled' && roles.status === 'fulfilled') {
-      const userRoles = getRoles(roles.value.data);
+    if (roles.status === 'fulfilled') {
+      userRoles = getRoles(roles.value.data);
+    }
+
+    if (invites.status === 'fulfilled') {
       nextInvites = invites.value.data.list.map((user: InviteUserModel) => mapToGridUserFromInvite(user, userRoles));
 
       if (pageNumber > 1) {
@@ -78,10 +82,12 @@ export const getAllUsers =
         }
       }
 
-      nextAccount = accounts.value.data.list.map((user: UserAccount) => mapToGridUserFromUser(user, userRoles));
-
       newProperties.data.pages = invites.value.data.pages;
       newProperties.data.pageNumber = invites.value.data.pageNumber;
+    }
+
+    if (accounts.status === 'fulfilled') {
+      nextAccount = accounts.value.data.list.map((user: UserAccount) => mapToGridUserFromUser(user, userRoles));
     }
 
     newProperties.data.list = [...nextInvites, ...nextAccount];
@@ -107,7 +113,7 @@ export const sortMyCompany = (sortBy: string) => async (dispatch: Dispatch, getS
 
   let nextInvites: InviteUserModel[] = [];
   let nextAccount: UserAccount[] = [];
-  let userRoles: Record<string, string>;
+  let userRoles: Record<string, string> = {};
 
   if (roles.status === 'fulfilled') {
     userRoles = getRoles(roles.value.data);
