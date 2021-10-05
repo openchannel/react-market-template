@@ -1,29 +1,15 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { MainTemplate } from '../../../common/templates';
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
 import { storage } from '@openchannel/react-common-services';
-import { OcMenuUserGrid } from '@openchannel/react-common-components/dist/ui/management/organisms';
-import { getAllUsers, sortMyCompany } from '../../../common/store/user-invites';
-import { useTypedSelector } from '../../../common/hooks';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { page, pageIds } from './constants';
 import './styles.scss';
+import UserManagement from './userManagement';
 
 const Company = (): JSX.Element => {
   const [isSelectedPage, setSelectedPage] = React.useState(pageIds.company);
-
-  const dispatch = useDispatch();
   const history = useHistory();
-  const { userProperties } = useTypedSelector(({ userInvites }) => userInvites);
-  const { data } = userProperties;
-  const { pageNumber, pages, list } = data;
-  const { sortQuery } = useTypedSelector(({ userInvites }) => userInvites);
-
-  const catchSortChanges = (sortBy: string) => {
-    dispatch(sortMyCompany(sortBy));
-  };
 
   const historyBack = React.useCallback(() => {
     history.goBack();
@@ -37,13 +23,6 @@ const Company = (): JSX.Element => {
     },
     [setSelectedPage],
   );
-  const loadPage = (page: number) => {
-    dispatch(getAllUsers(page, sortQuery, false));
-  };
-
-  React.useEffect(() => {
-    loadPage(pageNumber);
-  }, []);
 
   return (
     <MainTemplate>
@@ -71,22 +50,8 @@ const Company = (): JSX.Element => {
               ))}
             </ul>
           </div>
-
           <div className="col-md-9 col-lg-10 col-xl-9 pt-1">
-            {isSelectedPage === pageIds.profile && (
-              <InfiniteScroll
-                dataLength={list.length}
-                next={() => loadPage(pageNumber + 1)}
-                hasMore={pageNumber < pages}
-                loader={null}
-              >
-                <OcMenuUserGrid
-                  onMenuClick={() => console.log('onMenuClick')}
-                  onSort={catchSortChanges}
-                  properties={userProperties}
-                />
-              </InfiniteScroll>
-            )}
+            {isSelectedPage === pageIds.profile && <UserManagement />}
           </div>
         </div>
       </div>
