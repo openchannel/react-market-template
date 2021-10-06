@@ -1,7 +1,7 @@
 import { Action, UserInvites } from './types';
 import { ActionTypes } from './action-types';
 
-const initialState = {
+const initialState: UserInvites = {
   listRoles: {},
   sortQuery: { sortBy: 'name', sortOrder: 1 },
   userProperties: {

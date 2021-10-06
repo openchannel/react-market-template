@@ -1,20 +1,19 @@
-import { ActionTypes } from './action-types';
+import { Dispatch } from 'redux';
 import {
   InviteUserModel,
-  Page,
   UserAccount,
   userAccount,
   userInvites,
   userRole,
-  UserRoleResponse,
   UsersGridParametersModel,
 } from '@openchannel/react-common-services';
-import { Dispatch } from 'redux';
+import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { RootState } from '../../../../types';
-import { mapToGridUserFromInvite, mapToGridUserFromUser } from '../utils';
+import { mapRoles, mapToGridUserFromInvite, mapToGridUserFromUser, UserRoles } from '../utils';
+import { ActionTypes } from './action-types';
 import { SortQuery } from './types';
 
-export const saveRoles = (payload: Record<string, string>) => {
+export const setRoles = (payload: UserRoles) => {
   return { type: ActionTypes.SET_LIST_ROLES, payload };
 };
 export const saveUserProperties = (payload: UsersGridParametersModel) => {
@@ -29,13 +28,6 @@ const getSortQuery = (sortBy: string, prevSortQuery: SortQuery): SortQuery => {
   return prevSortQuery.sortBy === sortBy
     ? { sortBy, sortOrder: prevSortQuery.sortOrder * -1 }
     : { sortBy, sortOrder: 1 };
-};
-
-export const getRoles = (roles: Page<UserRoleResponse>): Record<string, string> => {
-  return roles.list.reduce((acc, val) => {
-    acc[val.userRoleId] = val.name;
-    return acc;
-  }, {} as Record<string, string>);
 };
 
 export const getAllUsers =
@@ -63,10 +55,11 @@ export const getAllUsers =
 
     let nextInvites: InviteUserModel[] = [];
     let nextAccount: UserAccount[] = [];
-    let userRoles: Record<string, string> = {};
+    let userRoles: UserRoles = {};
 
     if (roles.status === 'fulfilled') {
-      userRoles = getRoles(roles.value.data);
+      userRoles = mapRoles(roles.value.data);
+      dispatch(setRoles(userRoles));
     }
 
     if (invites.status === 'fulfilled') {
@@ -113,10 +106,11 @@ export const sortMyCompany = (sortBy: string) => async (dispatch: Dispatch, getS
 
   let nextInvites: InviteUserModel[] = [];
   let nextAccount: UserAccount[] = [];
-  let userRoles: Record<string, string> = {};
+  let userRoles: UserRoles = {};
 
   if (roles.status === 'fulfilled') {
-    userRoles = getRoles(roles.value.data);
+    userRoles = mapRoles(roles.value.data);
+    dispatch(setRoles(userRoles));
   }
 
   if (invites.status === 'fulfilled') {
@@ -126,6 +120,7 @@ export const sortMyCompany = (sortBy: string) => async (dispatch: Dispatch, getS
   if (accounts.status === 'fulfilled') {
     nextAccount = accounts.value.data.list.map((user) => mapToGridUserFromUser(user, userRoles));
   }
+
   dispatch(
     saveUserProperties({
       ...userProperties,
@@ -140,4 +135,15 @@ export const sortMyCompany = (sortBy: string) => async (dispatch: Dispatch, getS
 
 export const clearUserProperties = () => (dispatch: Dispatch) => {
   dispatch(resetUserProperties());
+};
+
+export const inviteUser = (formData: unknown) => async (dispatch: Dispatch, getState: () => RootState) => {
+  try {
+    await userInvites.sendUserInvite('', formData);
+
+    notify.success('Invitation sent');
+    getAllUsers(1, getState().userInvites.sortQuery)(dispatch, getState);
+  } catch {
+    // do nothing
+  }
 };
