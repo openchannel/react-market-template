@@ -1,15 +1,19 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { MainTemplate } from '../../../common/templates';
-import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
 import { storage } from '@openchannel/react-common-services';
-import { page, pageIds } from './constants';
-import './styles.scss';
-import UserManagement from './user-management';
+import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
 
-const Company = (): JSX.Element => {
-  const [isSelectedPage, setSelectedPage] = React.useState(pageIds.company);
+import { MainTemplate } from '../../../common/templates';
+import InviteUserModal from './components/invite-user-modal';
+
+import { page, pageIds } from './constants';
+import UserManagement from './user-management';
+import './styles.scss';
+
+const MyCompany = (): JSX.Element => {
   const history = useHistory();
+  const [selectedPage, setSelectedPage] = React.useState(pageIds.company);
+  const [isOpenInviteModal, setOpenInviteModal] = React.useState(false);
 
   const historyBack = React.useCallback(() => {
     history.goBack();
@@ -17,27 +21,40 @@ const Company = (): JSX.Element => {
 
   const filterPagesByUserType = page.filter((page) => storage.hasAnyPermission(page.permissions));
 
-  const onClickPass = React.useCallback(
-    (e) => {
-      setSelectedPage(e.target.dataset.link);
-    },
-    [setSelectedPage],
-  );
+  const onClickPass = React.useCallback((e) => {
+    setSelectedPage(e.target.dataset.link);
+  }, []);
+
+  const openInviteModal = React.useCallback(() => {
+    setOpenInviteModal(true);
+  }, []);
+
+  const closeInviteModal = React.useCallback(() => {
+    setOpenInviteModal(false);
+  }, []);
 
   return (
     <MainTemplate>
       <div className="bg-container height-unset">
-        <OcNavigationBreadcrumbs pageTitle="My company" navigateText="Back" navigateClick={historyBack} />
+        <OcNavigationBreadcrumbs
+          pageTitle="My company"
+          navigateText="Back"
+          navigateClick={historyBack}
+          buttonText={
+            // show button only if the selected page is a 'profile'
+            selectedPage === pageIds.profile ? 'Invite a member' : ''
+          }
+          buttonClick={openInviteModal}
+        />
       </div>
-
-      <div className="container">
+      <div className="container mb-8">
         <div className="row pt-5">
           <div className="col-md-3 col-lg-2 col-xl-3">
             <ul className="list-unstyled">
               {filterPagesByUserType.map((elem) => (
                 <li className="py-1" key={elem.pageId}>
                   <span
-                    className={`font-m ${isSelectedPage === elem.pageId ? 'active-link' : ''}`}
+                    className={`font-m ${selectedPage === elem.pageId ? 'active-link' : ''}`}
                     role="button"
                     tabIndex={0}
                     data-link={elem.pageId}
@@ -51,13 +68,14 @@ const Company = (): JSX.Element => {
             </ul>
           </div>
           <div className="col-md-9 col-lg-10 col-xl-9 pt-1">
-            {isSelectedPage === pageIds.profile && <UserManagement />}
+            {selectedPage === pageIds.profile && <UserManagement />}
           </div>
         </div>
       </div>
-      <div className="mt-8" />
+
+      <InviteUserModal isOpened={isOpenInviteModal} closeModal={closeInviteModal} />
     </MainTemplate>
   );
 };
 
-export default Company;
+export default MyCompany;
