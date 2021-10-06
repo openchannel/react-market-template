@@ -35,6 +35,7 @@ const UserManagement: React.FC = () => {
         next={() => loadPage(pageNumber + 1)}
         hasMore={pageNumber < pages}
         loader={null}
+        style={{ overflow: 'initial' }}
       >
         <OcMenuUserGrid onMenuClick={() => {}} onSort={catchSortChanges} properties={userProperties} />
       </InfiniteScroll>
