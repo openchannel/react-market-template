@@ -1,3 +1,5 @@
+import { InviteUserModel, UserAccount } from '@openchannel/react-common-services';
+
 interface ValidationError {
   field: string;
   message: string;
@@ -30,4 +32,40 @@ export const normalizeError = (error: ErrorResponse): NormalizedError => {
   }
 
   return { message };
+};
+
+type UserRoles = Record<string, string>;
+
+interface GridInviteUser extends InviteUserModel {
+  created?: number;
+  inviteId?: string;
+  inviteToken?: string;
+  inviteStatus: string;
+}
+
+interface GridUserAccount extends UserAccount {
+  inviteStatus: string;
+}
+
+export const mapToGridUserFromInvite = (user: InviteUserModel, listRoles: UserRoles): GridInviteUser => {
+  return {
+    ...user,
+    created: user.createdDate,
+    inviteId: user.userInviteId,
+    inviteToken: user.token,
+    inviteStatus: 'INVITED',
+    roles: toRoleName(listRoles, user.roles),
+  };
+};
+
+export const toRoleName = (listRoles: UserRoles, userRoles?: string[]): string[] => {
+  return userRoles?.map((r) => listRoles[r]) || [];
+};
+
+export const mapToGridUserFromUser = (user: UserAccount, listRoles: UserRoles): GridUserAccount => {
+  return {
+    ...user,
+    inviteStatus: 'ACTIVE',
+    roles: toRoleName(listRoles, user.roles),
+  };
 };
