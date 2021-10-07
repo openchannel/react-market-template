@@ -137,13 +137,14 @@ export const clearUserProperties = () => (dispatch: Dispatch) => {
   dispatch(resetUserProperties());
 };
 
-export const inviteUser = (formData: unknown) => async (dispatch: Dispatch, getState: () => RootState) => {
-  try {
-    await userInvites.sendUserInvite('', formData);
+export const inviteUser =
+  (formData: unknown, templateId?: string) => async (dispatch: Dispatch, getState: () => RootState) => {
+    try {
+      await userInvites.sendUserInvite('', formData, templateId);
 
-    notify.success('Invitation sent');
-    getAllUsers(1, getState().userInvites.sortQuery)(dispatch, getState);
-  } catch {
-    // do nothing
-  }
-};
+      notify.success('Invitation sent');
+      getAllUsers(1, getState().userInvites.sortQuery)(dispatch, getState);
+    } catch {
+      // do nothing
+    }
+  };

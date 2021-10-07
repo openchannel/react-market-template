@@ -6,6 +6,7 @@ import { OcInviteModal, inviteFormConfig } from '@openchannel/react-common-compo
 
 import { useTypedSelector } from '../../../../common/hooks';
 import { inviteUser } from '../../../../common/store/user-invites';
+import { inviteTemplateId } from '../constants';
 import { InviteUserModalProps } from '../types';
 
 const InviteUserModal: React.FC<InviteUserModalProps> = React.memo(({ isOpened, closeModal }) => {
@@ -39,7 +40,7 @@ const InviteUserModal: React.FC<InviteUserModalProps> = React.memo(({ isOpened, 
         },
       };
 
-      await dispatch(inviteUser(formData));
+      await dispatch(inviteUser(formData, inviteTemplateId));
       closeModal();
     },
     [listRoles, closeModal],
