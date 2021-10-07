@@ -1,12 +1,21 @@
 import * as React from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { OcMenuUserGrid } from '@openchannel/react-common-components/dist/ui/management/organisms';
 import { useDispatch } from 'react-redux';
-import { useTypedSelector } from '../../../common/hooks';
-import { getAllUsers, sortMyCompany } from '../../../common/store/user-invites';
-import { clearUserProperties } from '../../../common/store/user-invites/actions';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { UserGridActionModel } from '@openchannel/react-common-services';
+import { OcMenuUserGrid } from '@openchannel/react-common-components/dist/ui/management/organisms';
 
-const UserManagement: React.FC = () => {
+import { useTypedSelector } from '../../../common/hooks';
+import { getAllUsers, sortMyCompany, clearUserProperties } from '../../../common/store/user-invites';
+
+import { getUserByAction } from './utils';
+import InviteUserModal from './components/invite-user-modal';
+import { IndexedUserAccountGridModel, UserManagementProps } from './types';
+
+const UserManagement: React.FC<UserManagementProps> = ({
+  inviteModal,
+  openInviteModalWithUserData,
+  closeInviteModal,
+}) => {
   const dispatch = useDispatch();
   const { userProperties, sortQuery } = useTypedSelector(({ userInvites }) => userInvites);
   const { data } = userProperties;
@@ -28,8 +37,36 @@ const UserManagement: React.FC = () => {
     };
   }, []);
 
+  const editUser = (userAction: UserGridActionModel, user: IndexedUserAccountGridModel) => {
+    if (user?.inviteStatus === 'INVITED') {
+      openInviteModalWithUserData(user);
+    } else if (user?.inviteStatus === 'ACTIVE') {
+      // editUserAccount(userAccount);
+    } else {
+      console.error('Not implement edit type : ', user?.inviteStatus);
+    }
+  };
+
+  const onMenuClick = (userAction: UserGridActionModel) => {
+    const user = getUserByAction(userAction, list);
+    if (user) {
+      switch (userAction.action) {
+        case 'DELETE':
+          break;
+        case 'EDIT':
+          editUser(userAction, user);
+          break;
+        default:
+          console.error('Action is not implemented');
+      }
+    } else {
+      console.error("Can't find user from mail array by action");
+    }
+  };
+
   return (
     <>
+      <InviteUserModal userData={inviteModal.user} isOpened={inviteModal.isOpened} closeModal={closeInviteModal} />
       <InfiniteScroll
         dataLength={list.length}
         next={() => loadPage(pageNumber + 1)}
@@ -37,7 +74,7 @@ const UserManagement: React.FC = () => {
         loader={null}
         style={{ overflow: 'initial' }}
       >
-        <OcMenuUserGrid onMenuClick={() => {}} onSort={catchSortChanges} properties={userProperties} />
+        <OcMenuUserGrid onMenuClick={onMenuClick} onSort={catchSortChanges} properties={userProperties} />
       </InfiniteScroll>
     </>
   );

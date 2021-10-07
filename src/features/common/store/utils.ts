@@ -1,4 +1,12 @@
-import { InviteUserModel, Page, UserAccount, UserRoleResponse } from '@openchannel/react-common-services';
+import {
+  InviteUserModel,
+  Page,
+  UserAccount,
+  UserAccountGridModel,
+  UserGridActionModel,
+  UserRoleResponse,
+} from '@openchannel/react-common-services';
+import { IndexedUserAccountGridModel } from '../../management/pages/my-company/types';
 
 interface ValidationError {
   field: string;
@@ -76,3 +84,12 @@ export const mapRoles = (roles: Page<UserRoleResponse>): UserRoles => {
     return acc;
   }, {} as UserRoles);
 };
+
+// export const getAccountId = (userData: IndexedUserAccountGridModel): string => {
+// if (userData?.userAccountId) {
+//   return userData.userAccountId;
+// } else if (userData?.developerAccountId) {
+//   return userData.developerAccountId;
+// }
+// return null;
+// }

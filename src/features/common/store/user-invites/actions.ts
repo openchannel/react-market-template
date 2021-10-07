@@ -148,3 +148,15 @@ export const inviteUser =
       // do nothing
     }
   };
+
+export const updateUser =
+  (formData: unknown, templateId?: string) => async (dispatch: Dispatch, getState: () => RootState) => {
+    try {
+      await userInvites.sendUserInvite('', formData, templateId);
+
+      notify.success('Invitation sent');
+      getAllUsers(1, getState().userInvites.sortQuery)(dispatch, getState);
+    } catch {
+      // do nothing
+    }
+  };

@@ -4,16 +4,16 @@ import { storage } from '@openchannel/react-common-services';
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
 
 import { MainTemplate } from '../../../common/templates';
-import InviteUserModal from './components/invite-user-modal';
 
 import { page, pageIds } from './constants';
 import UserManagement from './user-management';
+import { IndexedUserAccountGridModel, InviteModalState } from './types';
 import './styles.scss';
 
 const MyCompany = (): JSX.Element => {
   const history = useHistory();
   const [selectedPage, setSelectedPage] = React.useState(pageIds.company);
-  const [isOpenInviteModal, setOpenInviteModal] = React.useState(false);
+  const [inviteModal, updateInviteModal] = React.useState<InviteModalState>({ isOpened: false, user: null });
 
   const historyBack = React.useCallback(() => {
     history.goBack();
@@ -26,11 +26,15 @@ const MyCompany = (): JSX.Element => {
   }, []);
 
   const openInviteModal = React.useCallback(() => {
-    setOpenInviteModal(true);
+    updateInviteModal({ isOpened: true, user: null });
+  }, []);
+
+  const openInviteModalWithUserData = React.useCallback((user: IndexedUserAccountGridModel) => {
+    updateInviteModal({ isOpened: true, user });
   }, []);
 
   const closeInviteModal = React.useCallback(() => {
-    setOpenInviteModal(false);
+    updateInviteModal({ isOpened: false, user: null });
   }, []);
 
   return (
@@ -68,12 +72,16 @@ const MyCompany = (): JSX.Element => {
             </ul>
           </div>
           <div className="col-md-9 col-lg-10 col-xl-9 pt-1">
-            {selectedPage === pageIds.profile && <UserManagement />}
+            {selectedPage === pageIds.profile && (
+              <UserManagement
+                inviteModal={inviteModal}
+                openInviteModalWithUserData={openInviteModalWithUserData}
+                closeInviteModal={closeInviteModal}
+              />
+            )}
           </div>
         </div>
       </div>
-
-      <InviteUserModal isOpened={isOpenInviteModal} closeModal={closeInviteModal} />
     </MainTemplate>
   );
 };
