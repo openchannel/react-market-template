@@ -6,6 +6,7 @@ export interface Reviews {
   isLoading: boolean;
   isLoaded: boolean;
   reviewsByApp: null | Page<OCReviewDetailsResponse>;
+  currentReview: any;
   sorts: [] | Option[];
 }
 
@@ -13,6 +14,10 @@ export type Action =
   | {
       type: ActionTypes.SET_REVIEWS_BY_APP;
       payload: Page<OCReviewDetailsResponse>;
+    }
+  | {
+      type: ActionTypes.SET_CURRENT_REVIEW;
+      payload: any;
     }
   | {
       type: ActionTypes.SET_REVIEWS_SORTS;

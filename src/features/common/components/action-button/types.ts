@@ -19,7 +19,7 @@ export interface DownloadButtonAction extends ButtonAction {
 }
 
 export interface ViewData {
-  message: ToasterMessages;
+  message: ToasterMessages | null;
   button: ButtonForm;
 }
 

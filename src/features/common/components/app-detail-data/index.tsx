@@ -13,7 +13,7 @@ import {
 import { OcImageGalleryComponent, OcVideoComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcRatingComponent } from '@openchannel/react-common-components/dist/ui/market/atoms';
 import { OcOverallRating } from '@openchannel/react-common-components/dist/ui/market/organisms';
-import { OcRecommendedAppsComponent } from '@openchannel/react-common-components/dist/ui/common/organisms';
+import { OcRecommendedAppsComponent, Modal } from '@openchannel/react-common-components/dist/ui/common/organisms';
 import { FullAppData } from '@openchannel/react-common-components';
 import { ReviewResponse } from '@openchannel/react-common-services';
 import { ActionButton } from '../action-button';
@@ -23,8 +23,16 @@ import InternetIcon from '../../../../../public/assets/img/internet.svg';
 import PadlockIcon from '../../../../../public/assets/img/padlock.svg';
 import EmailIcon from '../../../../../public/assets/img/icon-email.svg';
 import BubbleIcon from '../../../../../public/assets/img/speech-bubble.svg';
-import { fetchRecommendedApps } from '../../../apps/store/apps/actions';
-import { fetchReviewByAppId, fetchSorts, createReview, updateReview } from '../../../reviews/store/reviews/actions';
+import { fetchRecommendedApps, fetchSelectedApp } from '../../../apps/store/apps/actions';
+import DotsIcon from '../../../../../public/assets/img/dots-hr-icon.svg';
+import {
+  fetchReviewByAppId,
+  fetchSorts,
+  createReview,
+  updateReview,
+  deleteReview,
+  fetchCurrentReview,
+} from '../../../reviews/store/reviews/actions';
 import { fetchUserId } from '../../store/session/actions';
 import { useTypedSelector } from 'features/common/hooks';
 
@@ -53,15 +61,23 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     dispatch(fetchUserId());
   }, [app]);
   const { recommendedApps } = useTypedSelector(({ apps }) => apps);
-  const { reviewsByApp, sorts } = useTypedSelector(({ reviews }) => reviews);
+  const { reviewsByApp, sorts, currentReview } = useTypedSelector(({ reviews }) => reviews);
   const { userId } = useTypedSelector(({ session }) => session);
+  const [isModalOpened, setIsModalOpened] = React.useState(false);
   const [isWritingReview, setIsWritingReview] = React.useState(false);
   const [sortSelected, setSortSelected] = React.useState<Option | undefined>({ label: '', value: '' });
   const [filterSelected, setFilterSelected] = React.useState<Option | undefined>({ label: 'All Stars', value: null });
+  const [selectedAction, setSelectedAction] = React.useState<Option | undefined>({ label: 'Yee', value: 'yee' });
+
+  const dropdownMenuOptions = ['EDIT', 'DELETE'];
 
   const historyBack = React.useCallback(() => {
     history.goBack();
   }, [history]);
+
+  const onModalClose = React.useCallback(() => {
+    setIsModalOpened(false);
+  }, []);
 
   const handleDropdownClick = (appId: string, filter?: Option | undefined, sort?: Option | undefined) => {
     setSortSelected(sort);
@@ -69,9 +85,11 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     dispatch(fetchReviewByAppId(appId, sort?.value, filter?.value));
   };
 
-  const appGalleryImages = app?.customData?.images.map((imageUrl: string) => {
-    return { image: imageUrl, title: '', description: '' };
-  });
+  const appGalleryImages = app.customData
+    ? app?.customData?.images?.map((imageUrl: string) => {
+        return { image: imageUrl, title: '', description: '' };
+      })
+    : [];
 
   const overallReviews = React.useMemo(() => {
     const reviewList: Array<number> = reviewsByApp?.list?.map((rev) => Math.round(rev.rating / 100)) || [];
@@ -102,8 +120,39 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
       appId: app.appId,
     };
     dispatch(createReview(reviewData));
+    dispatch(fetchSelectedApp(app.safeName[0]));
+    dispatch(fetchReviewByAppId(app.appId));
     setIsWritingReview(false);
   };
+
+  const onChosenReviewActon = (option: 'EDIT' | 'DELETE'): void => {
+    switch (option) {
+      case 'EDIT':
+        editReview();
+        return;
+      case 'DELETE':
+        removeReview();
+        return;
+      default:
+        return;
+    }
+  };
+
+  const editReview = (): void => {
+    dispatch(fetchCurrentReview(currentReview.reviewId));
+    setIsWritingReview(true);
+  };
+
+  const removeReview = (): void => {
+    dispatch(deleteReview(currentReview.reviewId, app.appId));
+  };
+
+  // const renderActionButtonForm = () => {
+
+  //   return (
+
+  //   )
+  // }
 
   return (
     <>
@@ -137,10 +186,13 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                 {appListingActions?.length > 0 && (
                   <div className="actions-container">
                     {appListingActions?.map((action: any, index: number) => (
-                      <ActionButton viewData={action.unowned} inProcess={false} onClick={() => {}} key={index} />
+                      <ActionButton buttonAction={action} inProcess={false} key={index} />
                     ))}
                   </div>
                 )}
+                <Modal isOpened={isModalOpened} onClose={onModalClose}>
+                  {/* {renderActionButtonForm} */}
+                </Modal>
               </div>
             </div>
             {app?.video && <OcVideoComponent videoUrl={app?.video} />}
@@ -216,6 +268,12 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                 writeReviewPermission={app.ownership && !userReview}
                 writeReview={() => setIsWritingReview(!isWritingReview)}
                 reviewListTitle="Most recent reviews"
+                setSelectedAction={setSelectedAction}
+                currentUserId={userId}
+                selectedAction={selectedAction}
+                dropdownDefaultIcon={DotsIcon}
+                dropdownActiveIcon={DotsIcon}
+                dropdownMenuOptions={dropdownMenuOptions}
               >
                 <div>
                   <OcDropdown
@@ -249,7 +307,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                 heading="Write a review"
                 onSubmit={onReviewSubmit}
                 onReviewCancel={() => setIsWritingReview(false)}
-                // reviewData={userReview}
+                reviewData={currentReview}
                 enableButtons
               />
             )}
@@ -263,7 +321,9 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
               recommendedAppTitle="Recommended for you"
               appList={recommendedApps || []}
               routerLinkForOneApp="/details"
-              clickByAppCard={() => {}}
+              clickByAppCard={() => {
+                window.scroll(0, 0);
+              }}
             />
           </div>
         </div>

@@ -17,12 +17,14 @@ const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
 const setReviewsByApp = (payload: Page<OCReviewDetailsResponse>) => ({ type: ActionTypes.SET_REVIEWS_BY_APP, payload });
 const setSorts = (payload: Option[]) => ({ type: ActionTypes.SET_REVIEWS_SORTS, payload });
+const setCurrentReview = (payload: any) => ({ type: ActionTypes.SET_CURRENT_REVIEW });
 
 export const fetchReviewByAppId = (appId: string, sort?: string, filter?: string) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
-
   try {
     const { data } = await reviews.getReviewsByAppId(appId, sort, filter);
+    console.log('!!!!!!   REVIEWS   !!!!!!!!', data);
+
     dispatch(setReviewsByApp(data));
     dispatch(finishLoading());
   } catch (error) {
@@ -49,12 +51,13 @@ export const fetchSorts = () => async (dispatch: Dispatch) => {
   }
 };
 
-export const createReview = (reviewData: ReviewResponse) => async (dispatch: Dispatch) => {
+export const createReview = (reviewData: any) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
   try {
     const res = await reviews.createReview(reviewData);
     if (res) {
       const { data } = await reviews.getReviewsByAppId(reviewData.appId);
+
       dispatch(setReviewsByApp(data));
       dispatch(finishLoading());
     } else {
@@ -85,6 +88,7 @@ export const updateReview = (reviewData: ReviewResponse) => async (dispatch: Dis
     throw error;
   }
 };
+
 export const deleteReview = (reviewId: string, appId: string) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
   try {
@@ -97,6 +101,18 @@ export const deleteReview = (reviewId: string, appId: string) => async (dispatch
       dispatch(finishLoading());
       throw new Error();
     }
+  } catch (error) {
+    dispatch(finishLoading());
+    throw error;
+  }
+};
+
+export const fetchCurrentReview = (reviewId: string) => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+  try {
+    const { data } = await reviews.getOneReview(reviewId);
+    dispatch(setCurrentReview(data));
+    dispatch(finishLoading());
   } catch (error) {
     dispatch(finishLoading());
     throw error;

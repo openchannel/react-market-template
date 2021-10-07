@@ -17,6 +17,7 @@ export const DetailsPage: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchSelectedApp(appSafeName));
   }, [history.location, appSafeName]);
+
   const { selectedApp } = useTypedSelector(({ apps }) => apps);
 
   const getButtonActions = (config: any): ButtonAction[] => {

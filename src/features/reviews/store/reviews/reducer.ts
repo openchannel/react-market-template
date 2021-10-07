@@ -5,6 +5,7 @@ const initialState = {
   isLoading: false,
   isLoaded: false,
   reviewsByApp: null,
+  currentReview: {},
   sorts: [],
 };
 
@@ -36,6 +37,12 @@ export const reviewsReducer = (state: Reviews = initialState, action: Action): R
       return {
         ...state,
         sorts: action.payload,
+      };
+    }
+    case ActionTypes.SET_CURRENT_REVIEW: {
+      return {
+        ...state,
+        currentReview: action.payload,
       };
     }
     case ActionTypes.CREATE_REVIEW: {

@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import { apps, frontend, AppResponse } from '@openchannel/react-common-services';
+import { apps, frontend, AppResponse, formsService } from '@openchannel/react-common-services';
 import { Filter, FullAppData } from '@openchannel/react-common-components';
 
 import { MappedFilter, Gallery, Searchable } from '../../types';
@@ -7,6 +7,7 @@ import { mapAppData, mapFilters } from '../../lib/map';
 import { ActionTypes } from './action-types';
 import { SelectedFilters } from './types';
 import { RootState } from '../../../../types';
+import { FormButtonAction } from 'features/common/components/action-button/types';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
@@ -166,4 +167,29 @@ export const fetchRecommendedApps = () => async (dispatch: Dispatch) => {
 
     throw error;
   }
+};
+
+export const getForm = (formAction: FormButtonAction) => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+  try {
+    const { data } = await formsService.getForm(formAction?.formId);
+    console.log('~~~~', data);
+
+    dispatch(finishLoading());
+  } catch (error) {
+    dispatch(finishLoading());
+
+    throw error;
+  }
+};
+export const submitForm = (appId: string, result: any) => async (dispatch: Dispatch) => {
+  formsService.createFormSubmission(result.formId, {
+    name: result.name,
+    appId: appId,
+    userId: '',
+    email: result.email,
+    formData: {
+      ...result,
+    },
+  });
 };

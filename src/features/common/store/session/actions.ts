@@ -83,7 +83,7 @@ export const changePassword = (body: ChangePasswordRequest) => async (dispatch: 
     const { accessToken, refreshToken } = response.data;
     dispatch(setSession({ accessToken, refreshToken }));
   } catch (error) {
-    throw normalizeError(error);
+    // throw normalizeError(error);
   }
 };
 
@@ -91,7 +91,9 @@ export const fetchUserId = () => async (dispatch: Dispatch) => {
   dispatch(startLoading());
   try {
     const { data } = await userAccount.getUserAccount();
-    dispatch(setUserId(data.userAccountId));
+    console.log('data', data);
+
+    dispatch(setUserId(data.userId));
     dispatch(finishLoading());
   } catch (error) {
     dispatch(finishLoading());

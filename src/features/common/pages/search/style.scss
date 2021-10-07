@@ -1,7 +1,7 @@
 @import 'src/assets/styles/mixins';
 
 .container {
-  min-height: none;
+  min-height: 0;
   padding: 0;
   .navigation-container {
     margin: 24px 0 32px;
