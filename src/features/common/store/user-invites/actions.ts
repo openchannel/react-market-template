@@ -8,7 +8,8 @@ import {
   UsersGridParametersModel,
 } from '@openchannel/react-common-services';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
-import { RootState } from '../../../../types';
+import { GetState } from '../../../../types';
+import { UserData } from '../../../management/pages/my-company/types';
 import { mapRoles, mapToGridUserFromInvite, mapToGridUserFromUser, UserRoles } from '../utils';
 import { ActionTypes } from './action-types';
 import { SortQuery } from './types';
@@ -31,7 +32,7 @@ const getSortQuery = (sortBy: string, prevSortQuery: SortQuery): SortQuery => {
 };
 
 export const getAllUsers =
-  (pageNumber: number, sortQuery: SortQuery) => async (dispatch: Dispatch, getState: () => RootState) => {
+  (pageNumber: number, sortQuery: SortQuery) => async (dispatch: Dispatch, getState: GetState) => {
     const {
       userInvites: { userProperties },
     } = getState();
@@ -87,7 +88,7 @@ export const getAllUsers =
     dispatch(saveUserProperties(newProperties));
   };
 
-export const sortMyCompany = (sortBy: string) => async (dispatch: Dispatch, getState: () => RootState) => {
+export const sortMyCompany = (sortBy: string) => async (dispatch: Dispatch, getState: GetState) => {
   const {
     userInvites: { userProperties, sortQuery },
   } = getState();
@@ -138,7 +139,7 @@ export const clearUserProperties = () => (dispatch: Dispatch) => {
 };
 
 export const inviteUser =
-  (formData: unknown, templateId?: string) => async (dispatch: Dispatch, getState: () => RootState) => {
+  (formData: UserData, templateId?: string) => async (dispatch: Dispatch, getState: GetState) => {
     try {
       await userInvites.sendUserInvite('', formData, templateId);
 
@@ -149,14 +150,13 @@ export const inviteUser =
     }
   };
 
-export const updateUser =
-  (formData: unknown, templateId?: string) => async (dispatch: Dispatch, getState: () => RootState) => {
-    try {
-      await userInvites.sendUserInvite('', formData, templateId);
+export const updateUser = (inviteId: string, formData: UserData) => async (dispatch: Dispatch, getState: GetState) => {
+  try {
+    await userInvites.editUserInvite(inviteId, formData);
 
-      notify.success('Invitation sent');
-      getAllUsers(1, getState().userInvites.sortQuery)(dispatch, getState);
-    } catch {
-      // do nothing
-    }
-  };
+    notify.success('User details have been updated');
+    getAllUsers(1, getState().userInvites.sortQuery)(dispatch, getState);
+  } catch {
+    // do nothing
+  }
+};

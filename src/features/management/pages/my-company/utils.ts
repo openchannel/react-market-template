@@ -1,9 +1,9 @@
 import { find } from 'lodash';
 import { UserGridActionModel } from '@openchannel/react-common-services';
 
-import { IndexedUserAccountGridModel } from './types';
+import { UserData } from './types';
 
-export const getUserByAction = (userAction: UserGridActionModel, users: IndexedUserAccountGridModel[]) => {
+export const getUserByAction = (userAction: UserGridActionModel, users: UserData[]) => {
   if (users.length === 0) {
     return null;
   } else if (userAction?.inviteId) {

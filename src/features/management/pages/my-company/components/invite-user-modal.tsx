@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { update, cloneDeep, merge } from 'lodash';
 import { useDispatch } from 'react-redux';
+import { update, cloneDeep, merge } from 'lodash';
 import { OcFormValues, AppFormField } from '@openchannel/react-common-components';
 import { OcInviteModal, inviteFormConfig } from '@openchannel/react-common-components/dist/ui/common/organisms';
 
 import { useTypedSelector } from '../../../../common/hooks';
-import { inviteUser } from '../../../../common/store/user-invites';
+import { inviteUser, updateUser } from '../../../../common/store/user-invites';
 import { inviteTemplateId } from '../constants';
-import { InviteUserModalProps } from '../types';
+import { InviteUserModalProps, UserData } from '../types';
 
 const InviteUserModal: React.FC<InviteUserModalProps> = React.memo(({ userData, isOpened, closeModal }) => {
   const dispatch = useDispatch();
@@ -42,13 +42,13 @@ const InviteUserModal: React.FC<InviteUserModalProps> = React.memo(({ userData, 
     async (values: OcFormValues) => {
       // convert selected roles to correct format (['role']) before dispatch
       const roleIds = Object.entries(listRoles).reduce((list, [id, name]) => {
-        if (values.roles.includes(name)) {
+        if ((values.roles || []).includes(name)) {
           list.push(id);
         }
         return list;
       }, [] as string[]);
 
-      const payload = userData ? { ...userData } : {};
+      const payload = (userData ? cloneDeep(userData) : {}) as UserData;
       const formData = {
         name: values.name,
         email: values.email,
@@ -61,21 +61,30 @@ const InviteUserModal: React.FC<InviteUserModalProps> = React.memo(({ userData, 
       // override existed userData
       merge(payload, formData);
 
-      await dispatch(inviteUser(payload, inviteTemplateId));
+      if (userData) {
+        await dispatch(updateUser(userData.inviteId!, payload));
+      } else {
+        await dispatch(inviteUser(payload, inviteTemplateId));
+      }
+
       closeModal();
     },
-    [listRoles, closeModal],
+    [listRoles, userData, closeModal],
   );
+
+  const isEditing = Boolean(userData);
 
   return (
     <OcInviteModal
       size="sm"
-      modalTitle="Invite a member"
+      modalTitle={isEditing ? 'Edit invite' : 'Invite a member'}
+      buttonPosition="between"
+      // todo: uncomment when @openchannel/react-common-components@0.1.56 is installed
+      // successButtonText={isEditing ? 'Save' : 'Send Invite'}
       formConfig={updatedInviteFormConfig}
       isOpened={isOpened}
       onClose={closeModal}
       onSubmit={onSubmitInviteUser}
-      buttonPosition="between"
     />
   );
 });

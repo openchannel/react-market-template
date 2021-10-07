@@ -8,8 +8,8 @@ import { useTypedSelector } from '../../../common/hooks';
 import { getAllUsers, sortMyCompany, clearUserProperties } from '../../../common/store/user-invites';
 
 import { getUserByAction } from './utils';
+import { UserData, UserManagementProps } from './types';
 import InviteUserModal from './components/invite-user-modal';
-import { IndexedUserAccountGridModel, UserManagementProps } from './types';
 
 const UserManagement: React.FC<UserManagementProps> = ({
   inviteModal,
@@ -37,7 +37,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
     };
   }, []);
 
-  const editUser = (userAction: UserGridActionModel, user: IndexedUserAccountGridModel) => {
+  const editUser = (userAction: UserGridActionModel, user: UserData) => {
     if (user?.inviteStatus === 'INVITED') {
       openInviteModalWithUserData(user);
     } else if (user?.inviteStatus === 'ACTIVE') {

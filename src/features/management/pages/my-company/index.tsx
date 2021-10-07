@@ -7,7 +7,7 @@ import { MainTemplate } from '../../../common/templates';
 
 import { page, pageIds } from './constants';
 import UserManagement from './user-management';
-import { IndexedUserAccountGridModel, InviteModalState } from './types';
+import { InviteModalState, UserData } from './types';
 import './styles.scss';
 
 const MyCompany = (): JSX.Element => {
@@ -29,7 +29,7 @@ const MyCompany = (): JSX.Element => {
     updateInviteModal({ isOpened: true, user: null });
   }, []);
 
-  const openInviteModalWithUserData = React.useCallback((user: IndexedUserAccountGridModel) => {
+  const openInviteModalWithUserData = React.useCallback((user: UserData) => {
     updateInviteModal({ isOpened: true, user });
   }, []);
 
