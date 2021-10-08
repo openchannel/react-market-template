@@ -1,4 +1,5 @@
 import { InviteUserModel, Page, UserAccount, UserRoleResponse } from '@openchannel/react-common-services';
+import { UserData } from '../../management/pages/my-company/types';
 
 interface ValidationError {
   field: string;
@@ -77,11 +78,11 @@ export const mapRoles = (roles: Page<UserRoleResponse>): UserRoles => {
   }, {} as UserRoles);
 };
 
-// export const getAccountId = (userData: UserData): string => {
-//   if (userData?.userAccountId) {
-//     return (userData.userAccountId as string);
-//   } else if (userData?.developerAccountId) {
-//     return (userData.developerAccountId as string);
-//   }
-//   return '';
-// }
+export const getAccountId = (userData: UserData): string => {
+  if (userData?.userAccountId) {
+    return userData.userAccountId;
+  } else if (userData?.developerAccountId) {
+    return userData.developerAccountId as string;
+  }
+  return '';
+};

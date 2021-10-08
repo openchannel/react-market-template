@@ -62,8 +62,10 @@ const InviteUserModal: React.FC<InviteUserModalProps> = React.memo(({ userData, 
       merge(payload, formData);
 
       if (userData) {
-        await dispatch(updateUser(userData.inviteId!, payload));
+        // update account user data or invite data
+        await dispatch(updateUser(payload, userData.inviteId));
       } else {
+        // send new invite
         await dispatch(inviteUser(payload, inviteTemplateId));
       }
 
@@ -72,15 +74,20 @@ const InviteUserModal: React.FC<InviteUserModalProps> = React.memo(({ userData, 
     [listRoles, userData, closeModal],
   );
 
-  const isEditing = Boolean(userData);
+  const modalProps = React.useMemo(() => {
+    if (userData?.inviteStatus === 'INVITED') {
+      return { modalTitle: 'Edit invite', successButtonText: 'Save' };
+    } else if (userData?.inviteStatus === 'ACTIVE') {
+      return { modalTitle: 'Edit member', successButtonText: 'Save' };
+    }
+    return { modalTitle: 'Invite a member', successButtonText: 'Send Invite' };
+  }, [userData]);
 
   return (
     <OcInviteModal
+      {...modalProps}
       size="sm"
-      modalTitle={isEditing ? 'Edit invite' : 'Invite a member'}
       buttonPosition="between"
-      // todo: uncomment when @openchannel/react-common-components@0.1.56 is installed
-      // successButtonText={isEditing ? 'Save' : 'Send Invite'}
       formConfig={updatedInviteFormConfig}
       isOpened={isOpened}
       onClose={closeModal}

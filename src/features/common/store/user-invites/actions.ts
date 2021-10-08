@@ -10,7 +10,7 @@ import {
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { GetState } from '../../../../types';
 import { UserData } from '../../../management/pages/my-company/types';
-import { mapRoles, mapToGridUserFromInvite, mapToGridUserFromUser, UserRoles } from '../utils';
+import { getAccountId, mapRoles, mapToGridUserFromInvite, mapToGridUserFromUser, UserRoles } from '../utils';
 import { ActionTypes } from './action-types';
 import { SortQuery } from './types';
 
@@ -139,9 +139,9 @@ export const clearUserProperties = () => (dispatch: Dispatch) => {
 };
 
 export const inviteUser =
-  (formData: UserData, templateId?: string) => async (dispatch: Dispatch, getState: GetState) => {
+  (userData: UserData, templateId?: string) => async (dispatch: Dispatch, getState: GetState) => {
     try {
-      await userInvites.sendUserInvite('', formData, templateId);
+      await userInvites.sendUserInvite('', userData, templateId);
 
       notify.success('Invitation sent');
       getAllUsers(1, getState().userInvites.sortQuery)(dispatch, getState);
@@ -150,9 +150,13 @@ export const inviteUser =
     }
   };
 
-export const updateUser = (inviteId: string, formData: UserData) => async (dispatch: Dispatch, getState: GetState) => {
+export const updateUser = (userData: UserData, inviteId?: string) => async (dispatch: Dispatch, getState: GetState) => {
   try {
-    await userInvites.editUserInvite(inviteId, formData);
+    if (inviteId) {
+      await userInvites.editUserInvite(inviteId, userData);
+    } else {
+      await userAccount.updateUserAccountFieldsForAnotherUser(getAccountId(userData), true, userData);
+    }
 
     notify.success('User details have been updated');
     getAllUsers(1, getState().userInvites.sortQuery)(dispatch, getState);

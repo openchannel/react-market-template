@@ -8,7 +8,7 @@ import { useTypedSelector } from '../../../common/hooks';
 import { getAllUsers, sortMyCompany, clearUserProperties } from '../../../common/store/user-invites';
 
 import { getUserByAction } from './utils';
-import { UserData, UserManagementProps } from './types';
+import { UserManagementProps } from './types';
 import InviteUserModal from './components/invite-user-modal';
 
 const UserManagement: React.FC<UserManagementProps> = ({
@@ -37,16 +37,6 @@ const UserManagement: React.FC<UserManagementProps> = ({
     };
   }, []);
 
-  const editUser = (userAction: UserGridActionModel, user: UserData) => {
-    if (user?.inviteStatus === 'INVITED') {
-      openInviteModalWithUserData(user);
-    } else if (user?.inviteStatus === 'ACTIVE') {
-      // editUserAccount(userAccount);
-    } else {
-      console.error('Not implement edit type : ', user?.inviteStatus);
-    }
-  };
-
   const onMenuClick = (userAction: UserGridActionModel) => {
     const user = getUserByAction(userAction, list);
     if (user) {
@@ -54,7 +44,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
         case 'DELETE':
           break;
         case 'EDIT':
-          editUser(userAction, user);
+          openInviteModalWithUserData(user);
           break;
         default:
           console.error('Action is not implemented');
@@ -67,6 +57,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
   return (
     <>
       <InviteUserModal userData={inviteModal.user} isOpened={inviteModal.isOpened} closeModal={closeInviteModal} />
+
       <InfiniteScroll
         dataLength={list.length}
         next={() => loadPage(pageNumber + 1)}
