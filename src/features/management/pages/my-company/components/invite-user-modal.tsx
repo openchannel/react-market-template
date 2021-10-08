@@ -30,7 +30,7 @@ const InviteUserModal: React.FC<InviteUserModalProps> = React.memo(({ userData, 
       update(config, 'fields', (fields: AppFormField[]) => {
         return fields.map((f) => ({
           ...f,
-          defaultValue: f.id === 'roles' ? { '': userData[f.id] } : userData[f.id],
+          defaultValue: f.id === 'roles' ? userData[f.id]![0] : userData[f.id],
         }));
       });
     }
