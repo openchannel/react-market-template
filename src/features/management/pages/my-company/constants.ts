@@ -2,8 +2,6 @@ import { AccessLevel, PermissionType } from '@openchannel/react-common-services'
 
 import { Page } from './types';
 
-export const inviteTemplateId = '5fc663f2217876017548dc25';
-
 export const pageIds = {
   company: 'company',
   profile: 'profile',
