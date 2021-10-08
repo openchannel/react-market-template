@@ -27,8 +27,8 @@ const process401Error = async <T>(config: T) => {
       // @ts-ignore
       store.dispatch(removeSession());
       isRefreshing = false;
-      //navigate
-      throw error;
+
+      window.location.replace('/login');
     }
   } else {
     return axiosRequest(config);
@@ -42,20 +42,26 @@ const isCsrfError = ({ response }: InterceptorError) => {
 const processError = (response: InterceptorError['response']) => {
   if (!response) return null;
 
-  let errorMessage: string;
+  let errorMessages: string[];
   const { data, status } = response;
 
-  if (data.error?.message) {
-    errorMessage = `Error Code: ${data.status}\nMessage: ${response.data.message}`;
+  if (data.errors?.length > 0) {
+    errorMessages = data.errors.map(
+      ({ message }: { message: string }) => `Error Code: ${data.status}\nMessage: ${message}`,
+    );
+  } else if (data.error?.message) {
+    errorMessages = [`Error Code: ${data.status}\nMessage: ${response.data.message}`];
   } else if (status === 403) {
-    errorMessage = `Error Code: ${status}\nYou are not authorized to perform this action`;
+    errorMessages = [`Error Code: ${status}\nYou are not authorized to perform this action`];
   } else {
-    errorMessage = `Error Code: ${status}\nMessage: ${data.message}`;
+    errorMessages = [`Error Code: ${status}\nMessage: ${data.message}`];
   }
 
   skipByErrorCode = [];
 
-  notify.error(errorMessage);
+  errorMessages.forEach((message) => {
+    notify.error(message);
+  });
 };
 
 // eslint-disable-next-line
