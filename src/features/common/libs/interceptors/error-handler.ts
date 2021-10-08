@@ -39,6 +39,16 @@ const isCsrfError = ({ response }: InterceptorError) => {
   return response?.status === 403 && response?.data?.error?.toLowerCase()?.includes('csrf');
 };
 
+const reInitCSRF = async <T>(config: T) => {
+  try {
+    await auth.initCsrf();
+
+    return axiosRequest(config);
+  } catch (error) {
+    throw error;
+  }
+};
+
 const processError = (response: InterceptorError['response']) => {
   if (!response) return null;
 
@@ -70,15 +80,15 @@ const errorHandler = (error: InterceptorError): Promise<any> | InterceptorError 
   const config = error.response?.config;
   const status = error.response?.status;
 
+  if (isCsrfError(error)) {
+    return reInitCSRF<typeof config>(config);
+  }
+
   if (status === 401 && !config?.url?.includes('refresh')) {
     return process401Error<typeof config>(config);
   }
 
   if (data?.['validation-errors'] || (data?.errors?.length >= 1 && data?.errors[0]?.field)) {
-    throw error;
-  }
-
-  if (isCsrfError(error)) {
     throw error;
   }
 
