@@ -84,7 +84,7 @@ export const MyAppsPage: React.FC = () => {
   return (
     <MainTemplate>
       <div className="my-apps">
-        <div className="bg-container min-height-auto header-padding">
+        <div className="bg-container min-height-auto">
           <OcNavigationBreadcrumbs pageTitle="My apps" navigateText="Back" navigateClick={historyBack} />
         </div>
         <div className="container">
