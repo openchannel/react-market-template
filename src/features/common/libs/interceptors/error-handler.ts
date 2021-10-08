@@ -40,13 +40,9 @@ const isCsrfError = ({ response }: InterceptorError) => {
 };
 
 const reInitCSRF = async <T>(config: T) => {
-  try {
-    await auth.initCsrf();
+  await auth.initCsrf();
 
-    return axiosRequest(config);
-  } catch (error) {
-    throw error;
-  }
+  return axiosRequest(config);
 };
 
 const processError = (response: InterceptorError['response']) => {
