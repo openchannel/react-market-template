@@ -2,10 +2,6 @@
 @import '/src/theme.scss';
 @import '/src/assets/styles/mixins';
 
-.bg-container {
-  min-height: auto;
-}
-
 .active-link {
   color: #537cfd !important;
   @include font-medium();
