@@ -2,8 +2,10 @@ import * as React from 'react';
 import { get } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { Modal } from '@openchannel/react-common-components/dist/ui/common/organisms';
 import { notify, OcButtonComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { auth, fileService, ownershipService, statisticService } from '@openchannel/react-common-services';
+import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import {
   ButtonAction,
   ButtonForm,
@@ -16,6 +18,7 @@ import {
 import { getForm, submitForm } from '../../../apps/store/apps/actions';
 import { useTypedSelector } from 'features/common/hooks';
 import { isUserLoggedIn } from '../header/utils';
+import { ReactComponent as CloseIcon } from '../../../../../public/assets/img/close-icon.svg';
 
 import './style.scss';
 
@@ -33,6 +36,20 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
     actionType: null,
     viewData: null,
   });
+  const [isModalOpened, setIsModalOpened] = React.useState(false);
+  const [currentForm, setCurrentForm] = React.useState<any>({});
+
+  const onModalClose = React.useCallback(() => {
+    setIsModalOpened(false);
+  }, []);
+
+  const onFormSubmit = React.useCallback(
+    (values) => {
+      dispatch(submitForm(selectedApp!.appId, values));
+      setIsModalOpened(false);
+    },
+    [selectedApp],
+  );
 
   React.useEffect(() => {
     switch (buttonAction.type) {
@@ -76,9 +93,10 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
     }
   };
 
-  const processForm = (formAction: FormButtonAction): void => {
-    dispatch(getForm(formAction));
-    // dispatch(submitForm())
+  const processForm = async (formAction: FormButtonAction) => {
+    const form = await dispatch(getForm(formAction));
+    setCurrentForm(form);
+    setIsModalOpened(true);
   };
 
   const processOwnership = (): void => {
@@ -150,6 +168,21 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
         disabled={inProcess}
         onClick={handleButtonClick}
       />
+      <Modal isOpened={isModalOpened} onClose={onModalClose} className="modal-content" size="sm">
+        <div className="action-button_modal">
+          <div className="action-button_modal__header header">
+            <h2 className="action-button_modal__header-heading">{currentForm.name || ''}</h2>
+            <CloseIcon
+              aria-label="close button"
+              className="action-button_modal__header-close-icon"
+              onClick={onModalClose}
+            />
+          </div>
+          <div className="action-button_modal__modal-body">
+            <OcForm formJsonData={currentForm} onSubmit={onFormSubmit} />
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { Dispatch } from 'redux';
 import { apps, frontend, AppResponse, formsService } from '@openchannel/react-common-services';
 import { Filter, FullAppData } from '@openchannel/react-common-components';
+import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
 import { MappedFilter, Gallery, Searchable } from '../../types';
 import { mapAppData, mapFilters } from '../../lib/map';
@@ -173,9 +174,8 @@ export const getForm = (formAction: FormButtonAction) => async (dispatch: Dispat
   dispatch(startLoading());
   try {
     const { data } = await formsService.getForm(formAction?.formId);
-    console.log('~~~~', data);
-
     dispatch(finishLoading());
+    return data;
   } catch (error) {
     dispatch(finishLoading());
 
@@ -183,13 +183,23 @@ export const getForm = (formAction: FormButtonAction) => async (dispatch: Dispat
   }
 };
 export const submitForm = (appId: string, result: any) => async (dispatch: Dispatch) => {
-  formsService.createFormSubmission(result.formId, {
-    name: result.name,
-    appId: appId,
-    userId: '',
-    email: result.email,
-    formData: {
-      ...result,
-    },
-  });
+  dispatch(startLoading());
+  try {
+    const res = await formsService.createFormSubmission(result.formId, {
+      name: result.name,
+      appId: appId,
+      userId: '',
+      email: result.email,
+      formData: {
+        ...result,
+      },
+    });
+    if (Object.keys(res).length > 0) {
+      notify.success('Form submitted');
+      dispatch(finishLoading());
+    }
+  } catch (error) {
+    dispatch(finishLoading());
+    throw error;
+  }
 };

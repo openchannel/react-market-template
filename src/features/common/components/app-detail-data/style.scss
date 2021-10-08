@@ -137,7 +137,15 @@
   width: initial;
 }
 
-.review-list__one-review-head {
-  display: flex;
-  justify-content: flex-end;
+.review-list__one-review {
+  &-head {
+    display: flex;
+    justify-content: space-between;
+  }
+  &-heading {
+    font-weight: 500;
+    font-style: bold;
+    line-height: 5rem;
+    font-size: 20px;
+  }
 }

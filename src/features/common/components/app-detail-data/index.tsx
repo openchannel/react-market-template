@@ -13,7 +13,7 @@ import {
 import { OcImageGalleryComponent, OcVideoComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcRatingComponent } from '@openchannel/react-common-components/dist/ui/market/atoms';
 import { OcOverallRating } from '@openchannel/react-common-components/dist/ui/market/organisms';
-import { OcRecommendedAppsComponent, Modal } from '@openchannel/react-common-components/dist/ui/common/organisms';
+import { OcRecommendedAppsComponent } from '@openchannel/react-common-components/dist/ui/common/organisms';
 import { FullAppData } from '@openchannel/react-common-components';
 import { ReviewResponse } from '@openchannel/react-common-services';
 import { ActionButton } from '../action-button';
@@ -63,21 +63,31 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   const { recommendedApps } = useTypedSelector(({ apps }) => apps);
   const { reviewsByApp, sorts, currentReview } = useTypedSelector(({ reviews }) => reviews);
   const { userId } = useTypedSelector(({ session }) => session);
-  const [isModalOpened, setIsModalOpened] = React.useState(false);
   const [isWritingReview, setIsWritingReview] = React.useState(false);
   const [sortSelected, setSortSelected] = React.useState<Option | undefined>({ label: '', value: '' });
   const [filterSelected, setFilterSelected] = React.useState<Option | undefined>({ label: 'All Stars', value: null });
-  const [selectedAction, setSelectedAction] = React.useState<Option | undefined>({ label: 'Yee', value: 'yee' });
+  const [selectedAction, setSelectedAction] = React.useState<Option | undefined>({ label: '', value: '' });
+  const [currentEditReview, setCurrentEditReview] = React.useState(undefined);
+  console.log('!!!!!!!!!!!!!!!', selectedAction);
+
+  React.useEffect(() => {
+    switch (selectedAction!.value) {
+      case 'EDIT':
+        editReview();
+        return;
+      case 'DELETE':
+        removeReview();
+        return;
+      default:
+        return;
+    }
+  }, [selectedAction]);
 
   const dropdownMenuOptions = ['EDIT', 'DELETE'];
 
   const historyBack = React.useCallback(() => {
     history.goBack();
   }, [history]);
-
-  const onModalClose = React.useCallback(() => {
-    setIsModalOpened(false);
-  }, []);
 
   const handleDropdownClick = (appId: string, filter?: Option | undefined, sort?: Option | undefined) => {
     setSortSelected(sort);
@@ -114,45 +124,43 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   }, [reviewsByApp]);
 
   const onReviewSubmit = (review: ReviewResponse): void => {
-    // reviewSubmitInProgress = true;
-    const reviewData: ReviewResponse = {
-      ...review,
-      appId: app.appId,
-    };
-    dispatch(createReview(reviewData));
-    dispatch(fetchSelectedApp(app.safeName[0]));
-    dispatch(fetchReviewByAppId(app.appId));
-    setIsWritingReview(false);
-  };
-
-  const onChosenReviewActon = (option: 'EDIT' | 'DELETE'): void => {
-    switch (option) {
-      case 'EDIT':
-        editReview();
-        return;
-      case 'DELETE':
-        removeReview();
-        return;
-      default:
-        return;
+    if (selectedAction!.value === 'EDIT') {
+      const reviewData: ReviewResponse = {
+        ...review,
+        appId: app.appId,
+      };
+      dispatch(updateReview(reviewData));
+      dispatch(fetchSelectedApp(app.safeName[0]));
+      dispatch(fetchReviewByAppId(app.appId));
+      setIsWritingReview(false);
+      setCurrentEditReview(undefined);
+    } else {
+      const reviewData: ReviewResponse = {
+        ...review,
+        appId: app.appId,
+      };
+      dispatch(createReview(reviewData));
+      dispatch(fetchSelectedApp(app.safeName[0]));
+      dispatch(fetchReviewByAppId(app.appId));
+      setIsWritingReview(false);
+      setCurrentEditReview(undefined);
     }
   };
 
   const editReview = (): void => {
-    dispatch(fetchCurrentReview(currentReview.reviewId));
+    const review: any = find(reviewsByApp!.list, ['userId', userId]);
+    dispatch(fetchCurrentReview(review!.reviewId));
+    setCurrentEditReview(review);
     setIsWritingReview(true);
   };
 
   const removeReview = (): void => {
-    dispatch(deleteReview(currentReview.reviewId, app.appId));
+    const review: any = find(reviewsByApp!.list, ['userId', userId]);
+    dispatch(deleteReview(review.reviewId, app.appId));
+    setCurrentEditReview(undefined);
+    dispatch(fetchSelectedApp(app.safeName[0]));
+    dispatch(fetchReviewByAppId(app.appId));
   };
-
-  // const renderActionButtonForm = () => {
-
-  //   return (
-
-  //   )
-  // }
 
   return (
     <>
@@ -190,9 +198,6 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                     ))}
                   </div>
                 )}
-                <Modal isOpened={isModalOpened} onClose={onModalClose}>
-                  {/* {renderActionButtonForm} */}
-                </Modal>
               </div>
             </div>
             {app?.video && <OcVideoComponent videoUrl={app?.video} />}
@@ -307,7 +312,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                 heading="Write a review"
                 onSubmit={onReviewSubmit}
                 onReviewCancel={() => setIsWritingReview(false)}
-                reviewData={currentReview}
+                reviewData={currentEditReview}
                 enableButtons
               />
             )}
