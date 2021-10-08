@@ -1,5 +1,7 @@
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { UserGridActionModel } from '@openchannel/react-common-services';
 import { OcMenuUserGrid } from '@openchannel/react-common-components/dist/ui/management/organisms';
 import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '../../../common/hooks';
@@ -14,8 +16,17 @@ import {
 } from '@openchannel/react-common-services';
 import { OcConfirmationModalComponent } from '@openchannel/react-common-components/dist/ui/common/organisms';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
+import { getAllUsers, sortMyCompany, clearUserProperties } from '../../../common/store/user-invites';
 
-const UserManagement: React.FC = () => {
+import { getUserByAction } from './utils';
+import { UserManagementProps } from './types';
+import InviteUserModal from './components/invite-user-modal';
+
+const UserManagement: React.FC<UserManagementProps> = ({
+  inviteModal,
+  openInviteModalWithUserData,
+  closeInviteModal,
+}) => {
   const dispatch = useDispatch();
   const [state, setState] = React.useState({
     isOpened: false,
@@ -55,6 +66,23 @@ const UserManagement: React.FC = () => {
       dispatch(clearUserProperties());
     };
   }, []);
+
+  const onMenuClick = (userAction: UserGridActionModel) => {
+    const user = getUserByAction(userAction, list);
+    if (user) {
+      switch (userAction.action) {
+        case 'DELETE':
+          break;
+        case 'EDIT':
+          openInviteModalWithUserData(user);
+          break;
+        default:
+          console.error('Action is not implemented');
+      }
+    } else {
+      console.error("Can't find user from mail array by action");
+    }
+  };
 
   const userAction = (userAction: UserGridActionModel): void => {
     const user = findUserByAction(userAction);
@@ -224,6 +252,8 @@ const UserManagement: React.FC = () => {
   // const danger = 'danger'
   return (
     <>
+      <InviteUserModal userData={inviteModal.user} isOpened={inviteModal.isOpened} closeModal={closeInviteModal} />
+
       <InfiniteScroll
         dataLength={list.length}
         next={() => loadPage(pageNumber + 1)}
@@ -232,10 +262,7 @@ const UserManagement: React.FC = () => {
         style={{ overflow: 'initial' }}
       >
         <OcMenuUserGrid
-          onMenuClick={(e) => {
-            console.log('e', e);
-            userAction(e);
-          }}
+          onMenuClick={onMenuClick}
           onSort={catchSortChanges}
           properties={userProperties}
         />
@@ -256,6 +283,7 @@ const UserManagement: React.FC = () => {
           // @ts-ignore
           confirmButtonType={state.confirmButtonType}
         />
+        <OcMenuUserGrid onMenuClick={onMenuClick} onSort={catchSortChanges} properties={userProperties} />
       </InfiniteScroll>
     </>
   );

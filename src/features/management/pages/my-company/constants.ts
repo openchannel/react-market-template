@@ -1,10 +1,6 @@
-import { AccessLevel, Permission, PermissionType } from '@openchannel/react-common-services';
+import { AccessLevel, PermissionType } from '@openchannel/react-common-services';
 
-export interface Page {
-  pageId: string;
-  placeholder: string;
-  permissions: Permission[];
-}
+import { Page } from './types';
 
 export const pageIds = {
   company: 'company',
