@@ -177,25 +177,27 @@ const deleteUserFromResultArray = (user: UserAccountGridModel) => (dispatch: Dis
       newUserProperties.data.list.splice(userIndex, 1);
     }
   }
-  saveUserProperties(newUserProperties);
+  dispatch(saveUserProperties(newUserProperties));
 };
 
-export const deleteUserInvite = async (user: UserAccountGridModel, userId: string) => {
-  try {
-    await userInvites.deleteUserInvite(userId);
-    notify.success('Invite has been deleted');
-    deleteUserFromResultArray(user);
-  } catch {
-    // do nothing
-  }
-};
+export const deleteUserInvite =
+  (user: UserAccountGridModel, userId: string) => async (dispatch: Dispatch, getState: GetState) => {
+    try {
+      await userInvites.deleteUserInvite(userId);
+      notify.success('Invite has been deleted');
+      deleteUserFromResultArray(user)(dispatch, getState);
+    } catch {
+      // do nothing
+    }
+  };
 
-export const deleteUserAccount = async (user: UserAccountGridModel, userId: string) => {
-  try {
-    await userAccount.deleteUserAccount(userId);
-    notify.success('User has been deleted from your organization');
-    deleteUserFromResultArray(user);
-  } catch {
-    // do nothing
-  }
-};
+export const deleteUserAccount =
+  (user: UserAccountGridModel, userId: string) => async (dispatch: Dispatch, getState: GetState) => {
+    try {
+      await userAccount.deleteUserAccount(userId);
+      notify.success('User has been deleted from your organization');
+      deleteUserFromResultArray(user)(dispatch, getState);
+    } catch {
+      // do nothing
+    }
+  };

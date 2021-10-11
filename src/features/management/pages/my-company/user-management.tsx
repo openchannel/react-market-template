@@ -108,12 +108,12 @@ const UserManagement: React.FC<UserManagementProps> = ({
 
   const deleteUserInModal = async () => {
     if (state.type === 'invite') {
-      await deleteUserInvite(state.user, state.userId!);
+      await dispatch(deleteUserInvite(state.user, state.userId!));
     }
 
     if (state.type === 'user') {
       if (state?.user?.userAccountId !== storage.getUserDetails()?.individualId) {
-        await deleteUserAccount(state.user, state.userId!);
+        await dispatch(deleteUserAccount(state.user, state.userId!));
       }
     }
 
