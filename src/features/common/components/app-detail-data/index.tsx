@@ -33,7 +33,7 @@ import {
   deleteReview,
   fetchCurrentReview,
 } from '../../../reviews/store/reviews/actions';
-import { fetchUserId } from '../../store/session/actions';
+import { fetchUserId } from '../../store/session';
 import { useTypedSelector } from 'features/common/hooks';
 import { ButtonAction } from '../action-button/types';
 
@@ -291,7 +291,6 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                 reviewListTitle="Most recent reviews"
                 setSelectedAction={setSelectedAction}
                 currentUserId={userId}
-                selectedAction={selectedAction}
                 dropdownDefaultIcon={DotsIcon}
                 dropdownActiveIcon={DotsIcon}
                 dropdownMenuOptions={dropdownMenuOptions}
