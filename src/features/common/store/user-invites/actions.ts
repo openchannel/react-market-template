@@ -3,6 +3,7 @@ import {
   InviteUserModel,
   UserAccount,
   userAccount,
+  UserAccountGridModel,
   userInvites,
   userRole,
   UsersGridParametersModel,
@@ -54,7 +55,7 @@ export const getAllUsers =
 
     const [invites, accounts, roles] = fetchData;
 
-    let nextInvites: InviteUserModel[] = [];
+    let nextInvites: UserAccountGridModel[] = [];
     let nextAccount: UserAccount[] = [];
     let userRoles: UserRoles = {};
 
@@ -62,7 +63,6 @@ export const getAllUsers =
       userRoles = mapRoles(roles.value.data);
       dispatch(setRoles(userRoles));
     }
-
     if (invites.status === 'fulfilled') {
       nextInvites = invites.value.data.list.map((user: InviteUserModel) => mapToGridUserFromInvite(user, userRoles));
 
@@ -105,7 +105,7 @@ export const sortMyCompany = (sortBy: string) => async (dispatch: Dispatch, getS
 
   const [invites, accounts, roles] = fetchDataSort;
 
-  let nextInvites: InviteUserModel[] = [];
+  let nextInvites: UserAccountGridModel[] = [];
   let nextAccount: UserAccount[] = [];
   let userRoles: UserRoles = {};
 
@@ -160,6 +160,41 @@ export const updateUser = (userData: UserData, inviteId?: string) => async (disp
 
     notify.success('User details have been updated');
     getAllUsers(1, getState().userInvites.sortQuery)(dispatch, getState);
+  } catch {
+    // do nothing
+  }
+};
+
+const deleteUserFromResultArray = (user: UserAccountGridModel) => (dispatch: Dispatch, getState: GetState) => {
+  const {
+    userInvites: { userProperties },
+  } = getState();
+
+  const newUserProperties = { ...userProperties };
+  if (newUserProperties.data.list?.length > 0) {
+    const userIndex = newUserProperties.data.list.indexOf(user);
+    if (userIndex >= 0) {
+      newUserProperties.data.list.splice(userIndex, 1);
+    }
+  }
+  saveUserProperties(newUserProperties);
+};
+
+export const deleteUserInvite = async (user: UserAccountGridModel, userId: string) => {
+  try {
+    await userInvites.deleteUserInvite(userId);
+    notify.success('Invite has been deleted');
+    deleteUserFromResultArray(user);
+  } catch {
+    // do nothing
+  }
+};
+
+export const deleteUserAccount = async (user: UserAccountGridModel, userId: string) => {
+  try {
+    await userAccount.deleteUserAccount(userId);
+    notify.success('User has been deleted from your organization');
+    deleteUserFromResultArray(user);
   } catch {
     // do nothing
   }

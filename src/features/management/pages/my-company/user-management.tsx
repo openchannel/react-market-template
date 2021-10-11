@@ -1,26 +1,22 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { UserGridActionModel } from '@openchannel/react-common-services';
 import { OcMenuUserGrid } from '@openchannel/react-common-components/dist/ui/management/organisms';
-import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '../../../common/hooks';
-import { getAllUsers, sortMyCompany } from '../../../common/store/user-invites';
-import { clearUserProperties } from '../../../common/store/user-invites/actions';
-import {
-  storage,
-  userAccount,
-  UserAccountGridModel,
-  UserGridActionModel,
-  userInvites,
-} from '@openchannel/react-common-services';
+import { storage, UserAccountGridModel, UserGridActionModel } from '@openchannel/react-common-services';
 import { OcConfirmationModalComponent } from '@openchannel/react-common-components/dist/ui/common/organisms';
-import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
-import { getAllUsers, sortMyCompany, clearUserProperties } from '../../../common/store/user-invites';
+import {
+  getAllUsers,
+  sortMyCompany,
+  clearUserProperties,
+  deleteUserInvite,
+  deleteUserAccount,
+} from '../../../common/store/user-invites';
 
 import { getUserByAction } from './utils';
-import { UserManagementProps } from './types';
+import { ConfirmDeleteUserModal, UserManagementProps } from './types';
 import InviteUserModal from './components/invite-user-modal';
+import { initialConfirmDeleteUserModal } from './constants';
 
 const UserManagement: React.FC<UserManagementProps> = ({
   inviteModal,
@@ -28,24 +24,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
   closeInviteModal,
 }) => {
   const dispatch = useDispatch();
-  const [state, setState] = React.useState({
-    isOpened: false,
-    type: '',
-    modalTitle: 'Delete invite',
-    modalText: 'Are you sure you want to delete this invite?',
-    confirmButtonText: 'Yes, delete invite',
-    confirmButtonType: 'danger',
-    userId: '',
-  });
-  console.log('state', state);
-  const [isOpenInviteModal, setOpenInviteModal] = React.useState(false);
-  const openInviteModal = React.useCallback(() => {
-    setOpenInviteModal(true);
-  }, []);
-
-  const closeInviteModal = React.useCallback(() => {
-    setOpenInviteModal(false);
-  }, []);
+  const [state, setState] = React.useState<ConfirmDeleteUserModal>(initialConfirmDeleteUserModal);
 
   const { userProperties, sortQuery } = useTypedSelector(({ userInvites }) => userInvites);
   const { data } = userProperties;
@@ -72,6 +51,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
     if (user) {
       switch (userAction.action) {
         case 'DELETE':
+          openConfirmModal(user);
           break;
         case 'EDIT':
           openInviteModalWithUserData(user);
@@ -84,175 +64,76 @@ const UserManagement: React.FC<UserManagementProps> = ({
     }
   };
 
-  const userAction = (userAction: UserGridActionModel): void => {
-    const user = findUserByAction(userAction);
-    console.log('userAction.user', user);
-    // if (user) {
-    if (userAction.action) {
-      switch (userAction.action) {
-        case 'DELETE':
-          console.log('switch.DELETE');
-          deleteUser(userAction, user);
-          break;
-        case 'EDIT':
-          console.log('switch.EDIT');
-          // editUser(userAction, user);
-          break;
-        default:
-          // tslint:disable-next-line:no-console
-          console.error('Not implement');
-      }
-    } else {
-      // tslint:disable-next-line:no-console
-      console.error("Can't find user from mail array by action");
-    }
+  const closeConfirmModal = () => {
+    setState(initialConfirmDeleteUserModal);
   };
 
-  const findUserByAction = (userAction: UserGridActionModel): UserAccountGridModel => {
-    if (userProperties.data.list?.length > 0) {
-      if (userAction?.inviteId) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        return userProperties.data.list.filter((developer) => developer?.inviteId === userAction.inviteId)[0];
-      } else {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        return userProperties.data.list.filter((developer) => developer?.userAccountId === userAction.userAccountId)[0];
-      }
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return null;
-  };
-
-  const deleteUser = (userAction: UserGridActionModel, user: UserAccountGridModel): void => {
+  const openConfirmModal = (user: UserAccountGridModel) => {
+    console.log('user', user);
     if (user?.inviteStatus === 'INVITED') {
-      deleteInvite(user);
+      setState({
+        isOpened: true,
+        type: 'invite',
+        modalTitle: 'Delete invite',
+        modalText: 'Are you sure you want to delete this invite?',
+        confirmButtonText: 'Yes, delete invite',
+        userId: user.inviteId,
+        user: user,
+      });
     } else if (user?.inviteStatus === 'ACTIVE') {
-      deleteAccount(user);
-    } else {
-      // tslint:disable-next-line:no-console
-      console.error('Not implement edit type : ', user?.inviteStatus);
+      if (user.userAccountId === storage.getUserDetails()?.individualId) {
+        setState({
+          isOpened: true,
+          type: 'user',
+          modalTitle: 'Delete user',
+          modalText: "You can't delete yourself!",
+          confirmButtonText: 'Ok',
+          rejectButtonText: 'Close',
+          userId: user.userAccountId,
+          user: user,
+        });
+      } else {
+        setState({
+          isOpened: true,
+          type: 'user',
+          modalTitle: 'Delete user',
+          modalText: 'Delete this user from the marketplace now?',
+          confirmButtonText: 'Yes, delete user',
+          userId: user.userAccountId,
+          user: user,
+        });
+      }
     }
   };
 
-  const deleteInvite = (user: UserAccountGridModel) => {
-    console.log('const deleteInvite = (user', user);
-    openInviteModal();
-    setState({
-      isOpened: true,
-      type: 'invite',
-      modalTitle: 'Delete invite invite',
-      modalText: 'Are you sure you want to delete this inviteinvite?',
-      confirmButtonText: 'Yes, delete invite',
-      confirmButtonType: 'danger',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      userId: user.inviteId,
-    });
-  };
-
-  const deleteUserInviteInModal = async (user: UserAccountGridModel) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    await userInvites.deleteUserInvite(user?.inviteId);
-    deleteUserFromResultArray(user);
-    notify.success('Invite has been deleted');
-  };
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  console.log('storage.getUserDetails.individualId', storage.getUserDetails.individualId);
-
-  const deleteAccount = (user: UserAccountGridModel): void => {
-    // if (user.userAccountId === authHolderService.userDetails.individualId) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (user.userAccountId === storage.getUserDetails.individualId) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      openDeleteModal('Delete user', "You can't delete yourself!", 'Ok', null, 'Close');
-    } else {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      openDeleteModal(
-        'Delete user',
-        'Delete this user from the marketplace now?',
-        'Yes, delete user',
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        deleteUserAccountInModal(user),
-      );
-    }
-  };
-
-  const deleteUserInModal = async (user: UserAccountGridModel) => {
-    console.log('const deleteUserInModal state', state);
+  const deleteUserInModal = async () => {
     if (state.type === 'invite') {
-      console.log('const deleteUserInModal = async (user', user);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      await userInvites.deleteUserInvite(state.userId);
-      deleteUserFromResultArray(user);
-      notify.success('Invite has been deleted');
-      console.log('const deleteUserInModal = async');
-      closeInviteModal();
+      await deleteUserInvite(state.user, state.userId!);
     }
 
     if (state.type === 'user') {
-      // dispatch
-      // await userAccount.deleteUserAccount(user?.userAccountId);
-      // deleteUserFromResultArray(user);
-      // notify.success('User has been deleted from your organization');
-
-      closeInviteModal();
-    }
-  };
-
-  const openDeleteModal = (
-    modalTitle: string,
-    modalText: string,
-    confirmText: string,
-    deleteCallback: () => void,
-    cancelText?: string,
-  ): void => {
-    // const modalSuspendRef = (
-    //   <OcConfirmationModalComponent
-    //     isOpened={true}
-    //     onSubmit={deleteCallback}
-    //     onClose={deleteCallback}
-    //     onCancel={deleteCallback}
-    //     modalTitle={modalTitle}
-    //     modalText={modalText}
-    //     confirmButtonText={confirmText}
-    //   />
-    // );
-    // const modalSuspendRef = modal.open(OcConfirmationModalComponent, { size: 'md' });
-    // modalSuspendRef.componentInstance.modalTitle = modalTitle;
-    // modalSuspendRef.componentInstance.modalText = modalText;
-    // modalSuspendRef.componentInstance.confirmButtonText = confirmText;
-    // modalSuspendRef.componentInstance.confirmButtonType = 'danger';
-    if (cancelText) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      modalSuspendRef.componentInstance.rejectButtonText = cancelText;
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // modalSuspendRef.result.then(deleteCallback, () => {});
-  };
-
-  const deleteUserFromResultArray = (user: UserAccountGridModel): void => {
-    if (userProperties.data.list?.length > 0) {
-      const userIndex = userProperties.data.list.indexOf(user);
-      if (userIndex >= 0) {
-        userProperties.data.list.splice(userIndex, 1);
+      if (state?.user?.userAccountId !== storage.getUserDetails()?.individualId) {
+        await deleteUserAccount(state.user, state.userId!);
       }
     }
+
+    closeConfirmModal();
   };
-  // const danger = 'danger'
+
   return (
     <>
       <InviteUserModal userData={inviteModal.user} isOpened={inviteModal.isOpened} closeModal={closeInviteModal} />
+      <OcConfirmationModalComponent
+        isOpened={state.isOpened}
+        onSubmit={deleteUserInModal}
+        onClose={closeConfirmModal}
+        onCancel={closeConfirmModal}
+        modalTitle={state.modalTitle}
+        modalText={state.modalText}
+        confirmButtonText={state.confirmButtonText}
+        confirmButtonType="danger"
+        rejectButtonText={state.rejectButtonText}
+      />
 
       <InfiniteScroll
         dataLength={list.length}
@@ -261,28 +142,6 @@ const UserManagement: React.FC<UserManagementProps> = ({
         loader={null}
         style={{ overflow: 'initial' }}
       >
-        <OcMenuUserGrid
-          onMenuClick={onMenuClick}
-          onSort={catchSortChanges}
-          properties={userProperties}
-        />
-        <OcConfirmationModalComponent
-          isOpened={isOpenInviteModal}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          onSubmit={deleteUserInModal}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          onClose={closeInviteModal}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          onCancel={closeInviteModal}
-          modalTitle={state.modalTitle}
-          modalText={state.modalText}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          confirmButtonType={state.confirmButtonType}
-        />
         <OcMenuUserGrid onMenuClick={onMenuClick} onSort={catchSortChanges} properties={userProperties} />
       </InfiniteScroll>
     </>
