@@ -29,8 +29,7 @@ const InviteUserModal: React.FC<InviteUserModalProps> = React.memo(({ userData, 
       update(config, 'fields', (fields: AppFormField[]) => {
         return fields.map((f) => ({
           ...f,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
+          // eslint-disable-next-line
           defaultValue: f.id === 'roles' ? userData[f.id]![0] : (userData as any)[f.id],
         }));
       });
