@@ -1,4 +1,10 @@
-import { InviteUserModel, Page, UserAccount, UserRoleResponse } from '@openchannel/react-common-services';
+import {
+  InviteUserModel,
+  Page,
+  UserAccount,
+  UserAccountGridModel,
+  UserRoleResponse,
+} from '@openchannel/react-common-services';
 import { UserData } from '../../management/pages/my-company/types';
 
 interface ValidationError {
@@ -37,26 +43,19 @@ export const normalizeError = (error: ErrorResponse): NormalizedError => {
 
 export type UserRoles = Record<string, string>;
 
-interface GridInviteUser extends InviteUserModel {
-  created?: number;
-  inviteId?: string;
-  inviteToken?: string;
-  inviteStatus: string;
-}
-
 interface GridUserAccount extends UserAccount {
   inviteStatus: string;
 }
 
-export const mapToGridUserFromInvite = (user: InviteUserModel, listRoles: UserRoles): GridInviteUser => {
+export const mapToGridUserFromInvite = (user: InviteUserModel, listRoles: UserRoles) => {
   return {
     ...user,
-    created: user.createdDate,
+    created: user.createdDate!,
     inviteId: user.userInviteId,
     inviteToken: user.token,
     inviteStatus: 'INVITED',
     roles: toRoleName(listRoles, user.roles),
-  };
+  } as UserAccountGridModel;
 };
 
 export const toRoleName = (listRoles: UserRoles, userRoles?: string[]): string[] => {

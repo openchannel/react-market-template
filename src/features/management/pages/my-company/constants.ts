@@ -1,6 +1,6 @@
-import { AccessLevel, PermissionType } from '@openchannel/react-common-services';
+import { AccessLevel, PermissionType, UserAccountGridModel } from '@openchannel/react-common-services';
 
-import { Page } from './types';
+import { ConfirmDeleteUserModal, Page } from './types';
 
 export const pageIds = {
   company: 'company',
@@ -29,3 +29,14 @@ export const page: Page[] = [
     ],
   },
 ];
+
+export const initialConfirmDeleteUserModal: ConfirmDeleteUserModal = {
+  isOpened: false,
+  type: '',
+  modalTitle: '',
+  modalText: '',
+  confirmButtonText: '',
+  rejectButtonText: '',
+  userId: '',
+  user: {} as UserAccountGridModel,
+};
