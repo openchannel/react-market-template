@@ -20,6 +20,7 @@ export const DetailsPage: React.FC = () => {
 
   const { selectedApp } = useTypedSelector(({ apps }) => apps);
 
+  // eslint-disable-next-line
   const getButtonActions = (config: any): ButtonAction[] => {
     const buttonActions = config?.appDetailsPage['listing-actions'];
 

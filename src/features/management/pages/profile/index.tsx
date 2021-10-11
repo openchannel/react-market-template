@@ -43,6 +43,7 @@ const Profile = (): JSX.Element => {
       await dispatch(changePassword(value as ChangePasswordRequest));
       resetForm();
       notify.success('Password has been updated');
+      // eslint-disable-next-line
     } catch (e: any) {
       if (e.errors != null) {
         setErrors(e.errors);
@@ -58,6 +59,7 @@ const Profile = (): JSX.Element => {
     try {
       await dispatch(saveUserData(next));
       notify.success('Your profile has been updated');
+      // eslint-disable-next-line
     } catch (e: any) {
       if (e.errors != null) {
         setErrors(e.errors);

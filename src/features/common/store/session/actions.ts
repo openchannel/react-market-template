@@ -82,6 +82,7 @@ export const changePassword = (body: ChangePasswordRequest) => async (dispatch: 
     const response = await native.changePassword({ ...body, jwtRefreshToken: storage.getRefreshToken() });
     const { accessToken, refreshToken } = response.data;
     dispatch(setSession({ accessToken, refreshToken }));
+    // eslint-disable-next-line
   } catch (error: any) {
     throw normalizeError(error);
   }

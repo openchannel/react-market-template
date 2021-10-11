@@ -8,6 +8,8 @@ import {
   frontend,
   SortValueResponse,
   ReviewResponse,
+  CreateReviewRequest,
+  Review,
 } from '@openchannel/react-common-services';
 import { ActionTypes } from './action-types';
 import { Option } from '../../../common/components/app-detail-data';
@@ -17,7 +19,7 @@ const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
 const setReviewsByApp = (payload: Page<OCReviewDetailsResponse>) => ({ type: ActionTypes.SET_REVIEWS_BY_APP, payload });
 const setSorts = (payload: Option[]) => ({ type: ActionTypes.SET_REVIEWS_SORTS, payload });
-const setCurrentReview = (payload: any) => ({ type: ActionTypes.SET_CURRENT_REVIEW, payload });
+const setCurrentReview = (payload: Review) => ({ type: ActionTypes.SET_CURRENT_REVIEW, payload });
 
 export const fetchReviewByAppId = (appId: string, sort?: string, filter?: string) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
@@ -49,7 +51,7 @@ export const fetchSorts = () => async (dispatch: Dispatch) => {
   }
 };
 
-export const createReview = (reviewData: any) => async (dispatch: Dispatch) => {
+export const createReview = (reviewData: ReviewResponse | CreateReviewRequest) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
   try {
     const res = await reviews.createReview(reviewData);
@@ -59,8 +61,10 @@ export const createReview = (reviewData: any) => async (dispatch: Dispatch) => {
       dispatch(setReviewsByApp(data));
       dispatch(finishLoading());
     }
+    //eslint-disable-next-line
   } catch (error: any) {
     dispatch(finishLoading());
+    //eslint-disable-next-line
     error.response.data.errors.forEach((err: any) => notify.error(err.message));
   }
 };

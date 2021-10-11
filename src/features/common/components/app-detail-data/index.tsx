@@ -15,7 +15,7 @@ import { OcRatingComponent } from '@openchannel/react-common-components/dist/ui/
 import { OcOverallRating } from '@openchannel/react-common-components/dist/ui/market/organisms';
 import { OcRecommendedAppsComponent } from '@openchannel/react-common-components/dist/ui/common/organisms';
 import { FullAppData } from '@openchannel/react-common-components';
-import { ReviewResponse } from '@openchannel/react-common-services';
+import { CreateReviewRequest, ReviewResponse, Review } from '@openchannel/react-common-services';
 import { ActionButton } from '../action-button';
 
 import HelpIcon from '../../../../../public/assets/img/icon-help.svg';
@@ -35,13 +35,14 @@ import {
 } from '../../../reviews/store/reviews/actions';
 import { fetchUserId } from '../../store/session/actions';
 import { useTypedSelector } from 'features/common/hooks';
+import { ButtonAction } from '../action-button/types';
 
 import './style.scss';
 
 export interface AppDetailsProps {
   app: FullAppData;
   price?: number;
-  appListingActions?: any;
+  appListingActions?: ButtonAction[];
 }
 export interface Option {
   label: string;
@@ -133,9 +134,9 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     return hasUserReview;
   }, [reviewsByApp]);
 
-  const onReviewSubmit = (review: ReviewResponse): void => {
+  const onReviewSubmit = (review: Review | ReviewResponse): void => {
     if (selectedAction!.value === 'EDIT') {
-      const reviewData: ReviewResponse = {
+      const reviewData: Review = {
         ...review,
         appId: app.appId,
       };
@@ -145,7 +146,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
       setIsWritingReview(false);
       setCurrentEditReview(undefined);
     } else {
-      const reviewData: ReviewResponse = {
+      const reviewData: ReviewResponse | CreateReviewRequest = {
         ...review,
         appId: app.appId,
       };
@@ -158,6 +159,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   };
 
   const editReview = (): void => {
+    //eslint-disable-next-line
     const review: any = find(reviewsByApp!.list, ['userId', userId]);
     dispatch(fetchCurrentReview(review!.reviewId));
     setCurrentEditReview(review);
@@ -165,6 +167,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   };
 
   const removeReview = (): void => {
+    //eslint-disable-next-line
     const review: any = find(reviewsByApp!.list, ['userId', userId]);
     dispatch(deleteReview(review.reviewId, app.appId));
     setCurrentEditReview(undefined);
@@ -203,9 +206,12 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                 />
                 {appListingActions?.length > 0 && (
                   <div className="actions-container">
-                    {appListingActions?.map((action: any, index: number) => (
-                      <ActionButton buttonAction={action} inProcess={false} key={index} />
-                    ))}
+                    {
+                      //eslint-disable-next-line
+                      appListingActions?.map((action: any, index: number) => (
+                        <ActionButton buttonAction={action} inProcess={false} key={index} />
+                      ))
+                    }
                   </div>
                 )}
               </div>

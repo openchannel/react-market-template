@@ -13,6 +13,7 @@ import { isUserLoggedIn } from '../header/utils';
 import { ReactComponent as CloseIcon } from '../../../../../public/assets/img/close-icon.svg';
 
 import './style.scss';
+import { AppFormModel } from '@openchannel/react-common-components';
 
 export interface ActionButtonProps {
   buttonAction: ButtonAction;
@@ -34,7 +35,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
     viewData: null,
   });
   const [isModalOpened, setIsModalOpened] = React.useState(false);
-  const [currentForm, setCurrentForm] = React.useState<any>({});
+  const [currentForm, setCurrentForm] = React.useState<AppFormModel>({});
 
   const onModalClose = React.useCallback(() => {
     setIsModalOpened(false);
@@ -91,7 +92,8 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   };
 
   const processForm = async (formAction: FormButtonAction) => {
-    const form = await dispatch(getForm(formAction));
+    // eslint-disable-next-line
+    const form: any = await dispatch(getForm(formAction));
     setCurrentForm(form);
     setIsModalOpened(true);
   };

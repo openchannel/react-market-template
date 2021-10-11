@@ -10,6 +10,15 @@ import { SelectedFilters } from './types';
 import { RootState } from '../../../../types';
 import { FormButtonAction } from 'features/common/components/action-button/types';
 
+export interface CreateFormSubmissionModel {
+  formId: string;
+  name: string;
+  appId: string;
+  userId: string;
+  email: string;
+  formData: unknown;
+}
+
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
 const resetSearchPayload = () => ({ type: ActionTypes.RESET_SELECTED_FILTERS });
@@ -182,7 +191,7 @@ export const getForm = (formAction: FormButtonAction) => async (dispatch: Dispat
     throw error;
   }
 };
-export const submitForm = (appId: string, result: any) => async (dispatch: Dispatch) => {
+export const submitForm = (appId: string, result: CreateFormSubmissionModel) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
   try {
     const res = await formsService.createFormSubmission(result.formId, {
