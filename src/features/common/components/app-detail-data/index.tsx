@@ -45,7 +45,7 @@ export interface AppDetailsProps {
 }
 export interface Option {
   label: string;
-  [key: string]: any;
+  [key: string]: string | undefined;
 }
 const dropdownMenuOptions = ['EDIT', 'DELETE'];
 
@@ -64,18 +64,21 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   const history = useHistory();
   React.useEffect(() => {
     setSortSelected({ label: '', value: '' });
-    setFilterSelected({ label: 'All Stars', value: null });
+    setFilterSelected({ label: 'All Stars', value: undefined });
     dispatch(fetchRecommendedApps());
     dispatch(fetchSorts());
     dispatch(fetchReviewByAppId(app.appId));
     dispatch(fetchUserId());
   }, [app]);
   const { recommendedApps } = useTypedSelector(({ apps }) => apps);
-  const { reviewsByApp, sorts, currentReview } = useTypedSelector(({ reviews }) => reviews);
+  const { reviewsByApp, sorts } = useTypedSelector(({ reviews }) => reviews);
   const { userId } = useTypedSelector(({ session }) => session);
   const [isWritingReview, setIsWritingReview] = React.useState(false);
   const [sortSelected, setSortSelected] = React.useState<Option | undefined>({ label: '', value: '' });
-  const [filterSelected, setFilterSelected] = React.useState<Option | undefined>({ label: 'All Stars', value: null });
+  const [filterSelected, setFilterSelected] = React.useState<Option | undefined>({
+    label: 'All Stars',
+    value: undefined,
+  });
   const [selectedAction, setSelectedAction] = React.useState<Option | undefined>({ label: '', value: '' });
   const [currentEditReview, setCurrentEditReview] = React.useState(undefined);
 
