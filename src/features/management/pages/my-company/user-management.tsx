@@ -69,7 +69,6 @@ const UserManagement: React.FC<UserManagementProps> = ({
   };
 
   const openConfirmModal = (user: UserAccountGridModel) => {
-    console.log('user', user);
     if (user?.inviteStatus === 'INVITED') {
       setState({
         isOpened: true,
