@@ -105,7 +105,7 @@ export const MyAppsPage: React.FC = () => {
                   customDropdown={
                     <OcDropdownButton options={appOptions} onSelect={handleAppAction}>
                       <button className="btn btn-outline-info menu-button">
-                        <img alt="Button with dots" className="user-table__menu-icon-dots" src={dots} />
+                        <img alt="Three dots" src={dots} />
                       </button>
                     </OcDropdownButton>
                   }
