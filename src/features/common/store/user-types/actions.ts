@@ -114,7 +114,7 @@ export const saveUserData = (accountData: OcEditUserResult) => async (dispatch: 
   try {
     const { data: savedUser } = await userAccount.updateUserAccount(accountData);
     dispatch(saveAccount(savedUser));
-  } catch (error) {
+  } catch (error: any) {
     throw normalizeError(error);
   }
 };

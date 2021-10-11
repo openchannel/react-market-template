@@ -23,6 +23,7 @@ const AppList: React.FC = () => {
             appGalleryDescription={gallery.description}
             seeAllUrl={`/browse/${gallery.filterId}/${gallery.valueId}`}
             routerLinkForOneApp="/details"
+            appNavigationParam="safeName[0]"
           />
         </div>
       ))}

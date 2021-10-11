@@ -220,7 +220,12 @@ export const SearchPage: React.FC = () => {
                 <OcTagElement title={selectedFilters.searchStr} onIconClick={handleTagDelete} />
               )}
             </div>
-            <OcAppListGrid appList={filteredApps} defaultAppIcon={defaultAppIcon} />
+            <OcAppListGrid
+              appList={filteredApps}
+              defaultAppIcon={defaultAppIcon}
+              baseLinkForOneApp="/details"
+              appNavigationParam="safeName[0]"
+            />
           </div>
         </div>
       </div>

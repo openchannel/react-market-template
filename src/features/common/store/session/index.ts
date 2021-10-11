@@ -1,2 +1,2 @@
 export { sessionReducer } from './reducer';
-export { nativeLogin, loginWithSSOTokens, tryLoginByRefreshToken } from './actions';
+export { nativeLogin, loginWithSSOTokens, tryLoginByRefreshToken, fetchUserId } from './actions';

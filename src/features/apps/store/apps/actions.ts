@@ -1,12 +1,14 @@
 import { Dispatch } from 'redux';
-import { apps, frontend, AppResponse } from '@openchannel/react-common-services';
+import { apps, frontend, AppResponse, formsService } from '@openchannel/react-common-services';
 import { Filter, FullAppData } from '@openchannel/react-common-components';
+import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
 import { MappedFilter, Gallery, Searchable } from '../../types';
 import { mapAppData, mapFilters } from '../../lib/map';
 import { ActionTypes } from './action-types';
 import { SelectedFilters } from './types';
 import { RootState } from '../../../../types';
+import { FormButtonAction } from 'features/common/components/action-button/types';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
@@ -20,6 +22,8 @@ const updateSearchPayload = (payload: SelectedFilters) => ({
   payload,
 });
 const setFilteredApps = (payload: AppResponse[]) => ({ type: ActionTypes.SET_FILTERED_APPS, payload });
+const setSelectedApp = (payload: FullAppData) => ({ type: ActionTypes.SET_SELECTED_APP, payload });
+const setRecommendedApps = (payload: FullAppData[]) => ({ type: ActionTypes.SET_RECOMMENDED_APPS, payload });
 const resetFilteredApps = () => ({ type: ActionTypes.RESET_FILTERED_APPS });
 
 const getApps = async (pageNumber: number, limit: number, sort?: string, filter?: string): Promise<AppResponse[]> => {
@@ -135,4 +139,67 @@ export const fetchMyApps = (pageNumber: number, limit: number, sort: string) => 
 
 export const clearMyApps = () => (dispatch: Dispatch) => {
   dispatch(resetMyApps());
+};
+
+export const fetchSelectedApp = (safename: string) => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+
+  try {
+    const { data } = await apps.getAppBySafeName(safename);
+    dispatch(setSelectedApp(data));
+    dispatch(finishLoading());
+  } catch (error) {
+    dispatch(finishLoading());
+
+    throw error;
+  }
+};
+
+export const fetchRecommendedApps = () => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+
+  try {
+    const { data } = await apps.getApps(1, 3, '{randomize: 1}', "{'status.value':'approved'}");
+    const recApps = data.list.map((app) => mapAppData(app));
+    dispatch(setRecommendedApps(recApps));
+    dispatch(finishLoading());
+  } catch (error) {
+    dispatch(finishLoading());
+
+    throw error;
+  }
+};
+
+export const getForm = (formAction: FormButtonAction) => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+  try {
+    const { data } = await formsService.getForm(formAction?.formId);
+    dispatch(finishLoading());
+    return data;
+  } catch (error) {
+    dispatch(finishLoading());
+
+    throw error;
+  }
+};
+export const submitForm = (appId: string, result: any) => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+  try {
+    const res = await formsService.createFormSubmission(result.formId, {
+      name: result.name,
+      appId: appId,
+      userId: '',
+      email: result.email,
+      formData: {
+        ...result,
+      },
+    });
+    if (Object.keys(res).length > 0) {
+      notify.success('Form submitted');
+      dispatch(finishLoading());
+    }
+  } catch (error) {
+    dispatch(finishLoading());
+    throw error;
+  }
 };
