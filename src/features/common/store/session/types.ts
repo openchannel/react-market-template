@@ -1,11 +1,12 @@
 import { ActionTypes } from './action-types';
 
-export type Session = {
+export interface Session {
   isLoading: boolean;
   isExist: boolean;
   accessToken: string;
   refreshToken: string;
-};
+  userId: string;
+}
 
 export type Action =
   | {
@@ -23,4 +24,8 @@ export type Action =
     }
   | {
       type: ActionTypes.REMOVE;
+    }
+  | {
+      type: ActionTypes.SET_USER_ID;
+      payload: string;
     };

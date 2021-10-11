@@ -40,6 +40,7 @@ export const pageConfig = {
           class: 'oc-button_primary',
           text: 'Buy now',
         },
+        statistic: 'installs',
       },
       {
         type: 'form',
@@ -53,6 +54,7 @@ export const pageConfig = {
           class: 'oc-button_secondary',
           text: 'Contact',
         },
+        statistic: 'leads',
       },
       {
         type: 'install',
@@ -77,6 +79,7 @@ export const pageConfig = {
             text: 'Uninstall',
           },
         },
+        statistic: 'installs',
       },
       {
         type: 'download',
@@ -86,6 +89,7 @@ export const pageConfig = {
           class: 'oc-button_primary',
           text: 'Download',
         },
+        statistic: 'downloads',
       },
     ],
   },

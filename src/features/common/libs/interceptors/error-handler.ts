@@ -17,7 +17,8 @@ const process401Error = async <T>(config: T) => {
       const {
         data: { accessToken, refreshToken },
       } = await auth.refreshToken({ refreshToken: storage.getRefreshToken() });
-
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       store.dispatch(setSession({ accessToken, refreshToken }));
       isRefreshing = false;
 
@@ -37,6 +38,12 @@ const process401Error = async <T>(config: T) => {
 
 const isCsrfError = ({ response }: InterceptorError) => {
   return response?.status === 403 && response?.data?.error?.toLowerCase()?.includes('csrf');
+};
+
+const reInitCSRF = async <T>(config: T) => {
+  await auth.initCsrf();
+
+  return axiosRequest(config);
 };
 
 const processError = (response: InterceptorError['response']) => {
@@ -70,15 +77,15 @@ const errorHandler = (error: InterceptorError): Promise<any> | InterceptorError 
   const config = error.response?.config;
   const status = error.response?.status;
 
+  if (isCsrfError(error)) {
+    return reInitCSRF<typeof config>(config);
+  }
+
   if (status === 401 && !config?.url?.includes('refresh')) {
     return process401Error<typeof config>(config);
   }
 
   if (data?.['validation-errors'] || (data?.errors?.length >= 1 && data?.errors[0]?.field)) {
-    throw error;
-  }
-
-  if (isCsrfError(error)) {
     throw error;
   }
 
