@@ -4,9 +4,9 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Modal } from '@openchannel/react-common-components/dist/ui/common/organisms';
 import { notify, OcButtonComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
-import { auth, fileService, ownershipService, statisticService } from '@openchannel/react-common-services';
+import { fileService, ownershipService, statisticService } from '@openchannel/react-common-services';
 import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
-import { ButtonAction, DownloadButtonAction, FormButtonAction, OwnershipButtonAction } from './types';
+import { ButtonAction, DownloadButtonAction, FormButtonAction, OwnershipButtonAction, ViewData } from './types';
 import { getForm, submitForm } from '../../../apps/store/apps/actions';
 import { useTypedSelector } from 'features/common/hooks';
 import { isUserLoggedIn } from '../header/utils';
@@ -19,12 +19,17 @@ export interface ActionButtonProps {
   inProcess: boolean;
 }
 
+interface IViewDataSelected {
+  actionType: null | string;
+  viewData: null | ViewData;
+}
+
 export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   const { buttonAction, inProcess } = props;
   const dispatch = useDispatch();
   const history = useHistory();
   const { selectedApp } = useTypedSelector(({ apps }) => apps);
-  const [viewData, setViewData] = React.useState<any>({
+  const [viewData, setViewData] = React.useState<IViewDataSelected>({
     actionType: null,
     viewData: null,
   });
@@ -115,7 +120,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
       window.open(file);
     } else {
       const fileDetails = await fileService.downloadFileDetails(file, {});
-      const fileUrl = fileService.getFileUrl(fileDetails.data.fileId).then((res) => window.open(res.data.url));
+      fileService.getFileUrl(fileDetails.data.fileId).then((res) => window.open(res.data.url));
 
       if (buttonAction.statistic) {
         statisticService.record(buttonAction.statistic, selectedApp!.appId);
