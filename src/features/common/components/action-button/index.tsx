@@ -6,15 +6,7 @@ import { Modal } from '@openchannel/react-common-components/dist/ui/common/organ
 import { notify, OcButtonComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { auth, fileService, ownershipService, statisticService } from '@openchannel/react-common-services';
 import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
-import {
-  ButtonAction,
-  ButtonForm,
-  DownloadButtonAction,
-  FormButtonAction,
-  OwnershipButtonAction,
-  ToasterMessages,
-  ViewData,
-} from './types';
+import { ButtonAction, DownloadButtonAction, FormButtonAction, OwnershipButtonAction } from './types';
 import { getForm, submitForm } from '../../../apps/store/apps/actions';
 import { useTypedSelector } from 'features/common/hooks';
 import { isUserLoggedIn } from '../header/utils';

@@ -141,6 +141,9 @@
   &-head {
     display: flex;
     justify-content: space-between;
+    .dropdown-item {
+      padding: 14px 42px;
+    }
   }
   &-heading {
     font-weight: 500;

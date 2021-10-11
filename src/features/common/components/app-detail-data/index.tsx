@@ -47,6 +47,16 @@ export interface Option {
   label: string;
   [key: string]: any;
 }
+const dropdownMenuOptions = ['EDIT', 'DELETE'];
+
+const dropdownSortOptions = [
+  { label: 'All Stars', value: null },
+  { label: '5 Stars', value: `{'rating': 500}` },
+  { label: '4 Stars', value: `{'rating': 400}` },
+  { label: '3 Stars', value: `{'rating': 300}` },
+  { label: '2 Stars', value: `{'rating': 200}` },
+  { label: '1 Stars', value: `{'rating': 100}` },
+];
 
 export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   const { app, price = 0, appListingActions = [] } = props;
@@ -68,7 +78,6 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   const [filterSelected, setFilterSelected] = React.useState<Option | undefined>({ label: 'All Stars', value: null });
   const [selectedAction, setSelectedAction] = React.useState<Option | undefined>({ label: '', value: '' });
   const [currentEditReview, setCurrentEditReview] = React.useState(undefined);
-  console.log('!!!!!!!!!!!!!!!', selectedAction);
 
   React.useEffect(() => {
     switch (selectedAction!.value) {
@@ -82,8 +91,6 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
         return;
     }
   }, [selectedAction]);
-
-  const dropdownMenuOptions = ['EDIT', 'DELETE'];
 
   const historyBack = React.useCallback(() => {
     history.goBack();
@@ -290,14 +297,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                     selected={sortSelected}
                   />
                   <OcDropdown
-                    options={[
-                      { label: 'All Stars', value: null },
-                      { label: '5 Stars', value: `{'rating': 500}` },
-                      { label: '4 Stars', value: `{'rating': 400}` },
-                      { label: '3 Stars', value: `{'rating': 300}` },
-                      { label: '2 Stars', value: `{'rating': 200}` },
-                      { label: '1 Stars', value: `{'rating': 100}` },
-                    ]}
+                    options={dropdownSortOptions}
                     title="Show"
                     onSelect={(selectedFilter: Option | undefined) =>
                       handleDropdownClick(app.appId, selectedFilter, sortSelected)

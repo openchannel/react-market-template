@@ -82,8 +82,8 @@ export const changePassword = (body: ChangePasswordRequest) => async (dispatch: 
     const response = await native.changePassword({ ...body, jwtRefreshToken: storage.getRefreshToken() });
     const { accessToken, refreshToken } = response.data;
     dispatch(setSession({ accessToken, refreshToken }));
-  } catch (error) {
-    // throw normalizeError(error);
+  } catch (error: any) {
+    throw normalizeError(error);
   }
 };
 

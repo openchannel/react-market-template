@@ -62,17 +62,13 @@ export const createReview = (reviewData: any) => async (dispatch: Dispatch) => {
   } catch (error: any) {
     dispatch(finishLoading());
     error.response.data.errors.forEach((err: any) => notify.error(err.message));
-    throw error;
   }
 };
 
 export const updateReview = (reviewData: ReviewResponse) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
   try {
-    console.log('reviewData', reviewData);
     const res = await reviews.updateReview(reviewData);
-    console.log('res', res);
-
     if (res) {
       const { data } = await reviews.getReviewsByAppId(reviewData.appId);
       dispatch(setReviewsByApp(data));
