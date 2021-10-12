@@ -29,20 +29,6 @@ export const commonRoutes = [
     Component: ChartPage,
   },
   {
-    path: '/env',
-    exact: true,
-    private: true,
-    Component: () => (
-      <div>
-        {['NODE_ENV', 'REACT_APP_PRODUCTION', 'REACT_APP_API_URL', 'REACT_APP_MARKETPLACE_NAME'].map((key) => (
-          <p key={key}>
-            {key}: {process.env[key]}
-          </p>
-        ))}
-      </div>
-    ),
-  },
-  {
     path: '/',
     exact: true,
     Component: HomePage,

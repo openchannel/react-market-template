@@ -5,10 +5,10 @@ export interface UserData extends UserAccountGridModel {
   [index: string]: string | string[] | number | boolean | UserAccountInviteStatusTypeModel | undefined;
 }
 
-export type InviteModalState = { isOpened: boolean; user: UserData | null };
+export type InviteModalState = { isOpened: boolean; user: UserAccountGridModel | null };
 
 export interface InviteUserModalProps {
-  userData: UserData | null;
+  userData: UserAccountGridModel | null;
   isOpened: boolean;
   closeModal(): void;
 }
@@ -21,6 +21,17 @@ export interface Page {
 
 export interface UserManagementProps {
   inviteModal: InviteModalState;
-  openInviteModalWithUserData(user: UserData): void;
+  openInviteModalWithUserData(user: UserAccountGridModel): void;
   closeInviteModal(): void;
+}
+
+export interface ConfirmDeleteUserModal {
+  isOpened: boolean;
+  type: string;
+  modalTitle: string;
+  modalText: string;
+  confirmButtonText: string;
+  rejectButtonText?: string;
+  userId: string | undefined;
+  user: UserAccountGridModel;
 }

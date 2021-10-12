@@ -1,15 +1,22 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { UserGridActionModel } from '@openchannel/react-common-services';
 import { OcMenuUserGrid } from '@openchannel/react-common-components/dist/ui/management/organisms';
-
 import { useTypedSelector } from '../../../common/hooks';
-import { getAllUsers, sortMyCompany, clearUserProperties } from '../../../common/store/user-invites';
+import { storage, UserAccountGridModel, UserGridActionModel } from '@openchannel/react-common-services';
+import { OcConfirmationModalComponent } from '@openchannel/react-common-components/dist/ui/common/organisms';
+import {
+  getAllUsers,
+  sortMyCompany,
+  clearUserProperties,
+  deleteUserInvite,
+  deleteUserAccount,
+} from '../../../common/store/user-invites';
 
 import { getUserByAction } from './utils';
-import { UserManagementProps } from './types';
+import { ConfirmDeleteUserModal, UserManagementProps } from './types';
 import InviteUserModal from './components/invite-user-modal';
+import { initialConfirmDeleteUserModal } from './constants';
 
 const UserManagement: React.FC<UserManagementProps> = ({
   inviteModal,
@@ -17,6 +24,8 @@ const UserManagement: React.FC<UserManagementProps> = ({
   closeInviteModal,
 }) => {
   const dispatch = useDispatch();
+  const [state, setState] = React.useState<ConfirmDeleteUserModal>(initialConfirmDeleteUserModal);
+
   const { userProperties, sortQuery } = useTypedSelector(({ userInvites }) => userInvites);
   const { data } = userProperties;
   const { pageNumber, pages, list } = data;
@@ -42,6 +51,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
     if (user) {
       switch (userAction.action) {
         case 'DELETE':
+          openConfirmModal(user);
           break;
         case 'EDIT':
           openInviteModalWithUserData(user);
@@ -54,9 +64,75 @@ const UserManagement: React.FC<UserManagementProps> = ({
     }
   };
 
+  const closeConfirmModal = () => {
+    setState(initialConfirmDeleteUserModal);
+  };
+
+  const openConfirmModal = (user: UserAccountGridModel) => {
+    if (user?.inviteStatus === 'INVITED') {
+      setState({
+        isOpened: true,
+        type: 'invite',
+        modalTitle: 'Delete invite',
+        modalText: 'Are you sure you want to delete this invite?',
+        confirmButtonText: 'Yes, delete invite',
+        userId: user.inviteId,
+        user: user,
+      });
+    } else if (user?.inviteStatus === 'ACTIVE') {
+      if (user.userAccountId === storage.getUserDetails()?.individualId) {
+        setState({
+          isOpened: true,
+          type: 'user',
+          modalTitle: 'Delete user',
+          modalText: "You can't delete yourself!",
+          confirmButtonText: 'Ok',
+          rejectButtonText: 'Close',
+          userId: user.userAccountId,
+          user: user,
+        });
+      } else {
+        setState({
+          isOpened: true,
+          type: 'user',
+          modalTitle: 'Delete user',
+          modalText: 'Delete this user from the marketplace now?',
+          confirmButtonText: 'Yes, delete user',
+          userId: user.userAccountId,
+          user: user,
+        });
+      }
+    }
+  };
+
+  const deleteUserInModal = async () => {
+    if (state.type === 'invite') {
+      await dispatch(deleteUserInvite(state.user, state.userId!));
+    }
+
+    if (state.type === 'user') {
+      if (state?.user?.userAccountId !== storage.getUserDetails()?.individualId) {
+        await dispatch(deleteUserAccount(state.user, state.userId!));
+      }
+    }
+
+    closeConfirmModal();
+  };
+
   return (
     <>
       <InviteUserModal userData={inviteModal.user} isOpened={inviteModal.isOpened} closeModal={closeInviteModal} />
+      <OcConfirmationModalComponent
+        isOpened={state.isOpened}
+        onSubmit={deleteUserInModal}
+        onClose={closeConfirmModal}
+        onCancel={closeConfirmModal}
+        modalTitle={state.modalTitle}
+        modalText={state.modalText}
+        confirmButtonText={state.confirmButtonText}
+        confirmButtonType="danger"
+        rejectButtonText={state.rejectButtonText}
+      />
 
       <InfiniteScroll
         dataLength={list.length}

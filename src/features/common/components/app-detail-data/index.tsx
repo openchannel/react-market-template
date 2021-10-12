@@ -33,7 +33,7 @@ import {
   deleteReview,
   fetchCurrentReview,
 } from '../../../reviews/store/reviews/actions';
-import { fetchUserId } from '../../store/session/actions';
+import { fetchUserId } from '../../store/session';
 import { useTypedSelector } from 'features/common/hooks';
 import { ButtonAction } from '../action-button/types';
 
