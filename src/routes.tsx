@@ -9,6 +9,26 @@ import { managementRoutes } from './features/management';
 // commonRoutes must be last in the array
 const routes = [...joinRoutes, ...managementRoutes, ...commonRoutes];
 
+interface IRoute {
+  path: string;
+  exact: boolean;
+  private: boolean;
+  Component: React.LazyExoticComponent<React.FC<{}>>;
+  children?: IRoute;
+}
+
+const RouteWithChildren = (route: IRoute) => {
+  return (
+    <Route
+      path={route.path}
+      render={(props) => (
+        // pass the sub-routes down to keep nesting
+        <route.Component {...props} children={route.children} />
+      )}
+    />
+  );
+};
+
 export const Routes = (): JSX.Element => (
   <React.Suspense fallback={<div className="bg-container">Loading...</div>}>
     <Switch>

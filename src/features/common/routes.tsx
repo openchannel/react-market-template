@@ -11,6 +11,10 @@ export const commonRoutes = [
     exact: false,
     private: false,
     Component: DetailsPage,
+    children: [
+      { path: '/:appId/:appVersion', component: AppDetailComponent },
+      { path: '/:safeName', component: AppDetailComponent },
+    ],
   },
   {
     path: '/browse',

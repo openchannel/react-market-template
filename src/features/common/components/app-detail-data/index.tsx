@@ -291,7 +291,6 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                 reviewListTitle="Most recent reviews"
                 setSelectedAction={setSelectedAction}
                 currentUserId={userId}
-                selectedAction={selectedAction}
                 dropdownDefaultIcon={DotsIcon}
                 dropdownActiveIcon={DotsIcon}
                 dropdownMenuOptions={dropdownMenuOptions}
