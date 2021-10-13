@@ -33,9 +33,9 @@ import {
   deleteReview,
   fetchCurrentReview,
 } from '../../../reviews/store/reviews/actions';
-import { fetchUserId } from '../../store/session';
-import { useTypedSelector } from 'features/common/hooks';
+import { fetchUserId } from '../../store/session/actions';
 import { ButtonAction } from '../action-button/types';
+import { useTypedSelector } from 'features/common/hooks';
 
 import './style.scss';
 
@@ -69,11 +69,10 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     dispatch(fetchRecommendedApps());
     dispatch(fetchSorts());
     dispatch(fetchReviewByAppId(app.appId));
-    dispatch(fetchUserId());
   }, [app]);
   const { recommendedApps } = useTypedSelector(({ apps }) => apps);
   const { reviewsByApp, sorts } = useTypedSelector(({ reviews }) => reviews);
-  const { userId } = useTypedSelector(({ session }) => session);
+  const { userId, isExist } = useTypedSelector(({ session }) => session);
   const [isWritingReview, setIsWritingReview] = React.useState(false);
   const [sortSelected, setSortSelected] = React.useState<Option | undefined>({ label: '', value: '' });
   const [filterSelected, setFilterSelected] = React.useState<Option | undefined>({
@@ -82,6 +81,10 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   });
   const [selectedAction, setSelectedAction] = React.useState<Option | undefined>({ label: '', value: '' });
   const [currentEditReview, setCurrentEditReview] = React.useState(undefined);
+
+  React.useEffect(() => {
+    isExist ? dispatch(fetchUserId()) : undefined;
+  }, [isExist]);
 
   React.useEffect(() => {
     switch (selectedAction!.value) {
@@ -127,7 +130,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     // @ts-ignore
     reviewList.forEach((review) => countedReviews[review]++);
     return countedReviews;
-  }, [reviewsByApp]);
+  }, []);
 
   const userReview = React.useMemo(() => {
     const hasUserReview = reviewsByApp ? !!find(reviewsByApp.list, ['userId', userId]) : false;
