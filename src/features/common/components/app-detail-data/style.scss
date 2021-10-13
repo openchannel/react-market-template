@@ -129,10 +129,6 @@
   }
 }
 
-.oc-card__content {
-  width: 75%;
-}
-
 .dropdown-button__menu {
   width: initial;
 }
@@ -150,5 +146,11 @@
     font-style: bold;
     line-height: 5rem;
     font-size: 20px;
+  }
+}
+
+.recommended-apps {
+  .oc-card__content {
+    width: 75% !important;
   }
 }
