@@ -15,6 +15,10 @@ export const DetailsPage: React.FC = () => {
   const appSafeName = React.useMemo(() => history.location.pathname.split('/')[2], [history.location]);
 
   React.useEffect(() => {
+    window.scroll(0, 0);
+  }, []);
+
+  React.useEffect(() => {
     dispatch(fetchSelectedApp(appSafeName));
   }, [history.location, appSafeName]);
 
@@ -35,7 +39,7 @@ export const DetailsPage: React.FC = () => {
     }
     return [];
   };
-  const actions = getButtonActions(pageConfig);
+  const actions = React.useMemo(() => getButtonActions(pageConfig), [selectedApp]);
 
   return (
     <MainTemplate>{selectedApp && <AppDetails appListingActions={actions} price={0} app={selectedApp} />}</MainTemplate>

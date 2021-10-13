@@ -4,16 +4,16 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Modal } from '@openchannel/react-common-components/dist/ui/common/organisms';
 import { notify, OcButtonComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
-import { fileService, ownershipService, statisticService } from '@openchannel/react-common-services';
+import { fileService, statisticService } from '@openchannel/react-common-services';
 import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { ButtonAction, DownloadButtonAction, FormButtonAction, OwnershipButtonAction, ViewData } from './types';
-import { getForm, submitForm } from '../../../apps/store/apps/actions';
+import { getForm, installApplication, submitForm, uninstallApplication } from '../../../apps/store/apps/actions';
 import { useTypedSelector } from 'features/common/hooks';
 import { isUserLoggedIn } from '../header/utils';
 import { ReactComponent as CloseIcon } from '../../../../../public/assets/img/close-icon.svg';
+import { AppFormModel } from '@openchannel/react-common-components';
 
 import './style.scss';
-import { AppFormModel } from '@openchannel/react-common-components';
 
 export interface ActionButtonProps {
   buttonAction: ButtonAction;
@@ -27,6 +27,7 @@ interface IViewDataSelected {
 
 export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   const { buttonAction, inProcess } = props;
+
   const dispatch = useDispatch();
   const history = useHistory();
   const { selectedApp } = useTypedSelector(({ apps }) => apps);
@@ -73,7 +74,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
       default:
         notify.error(`Error: invalid button type: ${buttonAction.type}`);
     }
-  }, []);
+  }, [selectedApp]);
 
   const handleButtonClick = (): void => {
     switch (buttonAction.type) {
@@ -100,7 +101,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
 
   const processOwnership = (): void => {
     if (isUserLoggedIn()) {
-      switch (buttonAction.type) {
+      switch (viewData.actionType) {
         case 'OWNED':
           uninstallOwnership();
           break;
@@ -133,16 +134,19 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   const installOwnership = (): void => {
     if (selectedApp && selectedApp?.model?.length > 0) {
       try {
-        ownershipService.installOwnership(
-          {
-            appId: selectedApp.appId,
-            modelId: selectedApp?.model[0].modelId,
-          },
-          { 'x-handle-error': '403, 500' },
+        dispatch(
+          installApplication(
+            {
+              appId: selectedApp.appId,
+              modelId: selectedApp?.model[0].modelId,
+            },
+            selectedApp.safeName[0],
+          ),
         );
       } catch (error) {
-        notify.error('You don’t have permission to install this app');
+        notify.error(viewData.viewData!.message!.fail);
       }
+      notify.success(viewData.viewData!.message!.success);
     } else {
       notify.error('Missed any models for creating ownership.');
     }
@@ -151,10 +155,11 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   const uninstallOwnership = (): void => {
     if (selectedApp && selectedApp.ownership) {
       try {
-        ownershipService.uninstallOwnership(selectedApp.ownership.ownershipId, { 'x-handle-error': '403, 500' });
+        dispatch(uninstallApplication(selectedApp.ownership.ownershipId, selectedApp.safeName[0]));
       } catch (error) {
-        notify.error('You don’t have permission to uninstall this app');
+        notify.error(viewData.viewData!.message!.fail);
       }
+      notify.success(viewData.viewData!.message!.success);
     }
   };
   return (

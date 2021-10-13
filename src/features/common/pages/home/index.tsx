@@ -42,7 +42,6 @@ export const HomePage: React.FC = () => {
     if (searchStr && searchStr.length > 0) {
       path += `?search=${searchStr}`;
     }
-
     history.push(path);
   }, []);
 

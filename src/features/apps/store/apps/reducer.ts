@@ -99,7 +99,6 @@ export const appsReducer = (state: Apps = initialState, action: Action): Apps =>
         recommendedApps: action.payload,
       };
     }
-
     default:
       return state;
   }
