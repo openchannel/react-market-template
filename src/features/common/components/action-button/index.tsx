@@ -6,7 +6,14 @@ import { Modal } from '@openchannel/react-common-components/dist/ui/common/organ
 import { notify, OcButtonComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { fileService, statisticService } from '@openchannel/react-common-services';
 import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
-import { ButtonAction, DownloadButtonAction, FormButtonAction, OwnershipButtonAction, ViewData } from './types';
+import {
+  ButtonAction,
+  DownloadButtonAction,
+  FormButtonAction,
+  IAppToInstall,
+  OwnershipButtonAction,
+  ViewData,
+} from './types';
 import { getForm, installApplication, submitForm, uninstallApplication } from '../../../apps/store/apps/actions';
 import { useTypedSelector } from 'features/common/hooks';
 import { isUserLoggedIn } from '../header/utils';
@@ -134,21 +141,21 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
 
   const installOwnership = (): void => {
     if (selectedApp && selectedApp?.model?.length > 0) {
+      const appToInstall: IAppToInstall = {
+        ownership: {
+          appId: selectedApp.appId,
+          modelId: selectedApp?.model[0].modelId,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        safeName: selectedApp.safeName[0],
+      };
       try {
-        dispatch(
-          installApplication(
-            {
-              appId: selectedApp.appId,
-              modelId: selectedApp?.model[0].modelId,
-            },
-            {
-              Authorization: `Bearer ${accessToken}`,
-            },
-            selectedApp.safeName[0],
-          ),
-        );
+        dispatch(installApplication(appToInstall));
+        notify.success(viewData.viewData!.message!.success);
       } catch (error) {
-        notify.error('You don’t have permission to install this app');
+        notify.error(viewData.viewData!.message!.fail);
       }
     } else {
       notify.error('Missed any models for creating ownership.');
@@ -157,18 +164,20 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
 
   const uninstallOwnership = (): void => {
     if (selectedApp && selectedApp.ownership) {
+      const appToInstall: IAppToInstall = {
+        ownership: {
+          ownershipId: selectedApp.ownership.ownershipId,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        safeName: selectedApp.safeName[0],
+      };
       try {
-        dispatch(
-          uninstallApplication(
-            selectedApp.ownership.ownershipId,
-            {
-              Authorization: `Bearer ${accessToken}`,
-            },
-            selectedApp.safeName[0],
-          ),
-        );
+        dispatch(uninstallApplication(appToInstall));
+        notify.success(viewData.viewData!.message!.success);
       } catch (error) {
-        notify.error('You don’t have permission to uninstall this app');
+        notify.error(viewData.viewData!.message!.fail);
       }
     }
   };

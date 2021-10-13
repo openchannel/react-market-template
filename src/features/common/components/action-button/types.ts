@@ -32,3 +32,15 @@ export interface ButtonForm {
   class: string;
   text: string;
 }
+
+export interface IAppToInstall {
+  ownership: {
+    appId?: string;
+    modelId?: string;
+    ownershipId?: string;
+  };
+  headers: {
+    Authorization: string;
+  };
+  safeName: string;
+}
