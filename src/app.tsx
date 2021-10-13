@@ -9,13 +9,17 @@ import { CsrfWrapper } from './features/common/hocs';
 import { Helmet } from './features/common/molecules';
 import { Routes } from './routes';
 import { store } from './store';
+import settings from './settings';
 
 import './features/common/libs/interceptors';
 import '@openchannel/react-common-components'; // it's styles
 import './theme.scss';
 import './styles.scss';
 
-instance.init({ url: process.env.REACT_APP_API_URL || '', headerName: 'X-CSRF-TOKEN' });
+instance.init({
+  url: settings.PRODUCTION ? settings.API_URL : settings.API_URL_DEVELOPMENT,
+  headerName: 'X-CSRF-TOKEN',
+});
 initProgressBar();
 
 export const App = (): JSX.Element => {
