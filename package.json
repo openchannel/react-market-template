@@ -31,7 +31,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier src/**/*.{ts,tsx,js,jsx} --write",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "update-openchannel-pkgs": "npm i @openchannel/react-common-components@latest @openchannel/react-common-services@latest"
   },
   "eslintConfig": {
     "extends": [
