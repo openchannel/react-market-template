@@ -101,7 +101,7 @@ export const fetchUserId = () => async (dispatch: Dispatch) => {
   }
 };
 
-export const resetPassword = async (email: string) => {
+export const resetPassword = (email: string) => async () => {
   try {
     await native.sendResetCode(email);
     // eslint-disable-next-line
