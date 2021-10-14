@@ -138,7 +138,7 @@
     display: flex;
     justify-content: space-between;
     .dropdown-item {
-      padding: 14px 42px;
+      padding: 14px 42px !important;
     }
   }
   &-heading {
