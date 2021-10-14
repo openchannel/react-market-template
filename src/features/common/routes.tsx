@@ -7,14 +7,16 @@ const DetailsPage = React.lazy(() => import('./pages/details'));
 
 export const commonRoutes = [
   {
-    path: '/details',
-    exact: false,
+    path: '/details/:safeName',
+    exact: true,
     private: false,
     Component: DetailsPage,
-    children: [
-      { path: '/:appId/:appVersion', component: AppDetailComponent },
-      { path: '/:safeName', component: AppDetailComponent },
-    ],
+  },
+  {
+    path: '/details/:appId/:appVersion',
+    exact: true,
+    private: true,
+    Component: DetailsPage,
   },
   {
     path: '/browse',
