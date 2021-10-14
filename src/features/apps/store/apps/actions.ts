@@ -1,5 +1,13 @@
 import { Dispatch } from 'redux';
-import { apps, frontend, AppResponse, formsService } from '@openchannel/react-common-services';
+import {
+  apps,
+  frontend,
+  AppResponse,
+  formsService,
+  ownershipService,
+  CreateOwnershipModel,
+  ReqHeaders,
+} from '@openchannel/react-common-services';
 import { Filter, FullAppData } from '@openchannel/react-common-components';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
@@ -34,10 +42,8 @@ const setFilteredApps = (payload: AppResponse[]) => ({ type: ActionTypes.SET_FIL
 const setSelectedApp = (payload: FullAppData) => ({ type: ActionTypes.SET_SELECTED_APP, payload });
 const setRecommendedApps = (payload: FullAppData[]) => ({ type: ActionTypes.SET_RECOMMENDED_APPS, payload });
 const resetFilteredApps = () => ({ type: ActionTypes.RESET_FILTERED_APPS });
-
 const getApps = async (pageNumber: number, limit: number, sort?: string, filter?: string): Promise<AppResponse[]> => {
   const { data } = await apps.getApps(pageNumber, limit, sort, filter);
-
   return data.list;
 };
 
@@ -55,7 +61,6 @@ const getAppsByFilters = async (filters: MappedFilter[]) => {
 export const fetchFilteredApps =
   (searchText: string, fields: string[], query?: string) => async (dispatch: Dispatch) => {
     dispatch(startLoading());
-
     try {
       const { data } = await apps.searchApp(searchText, query, fields);
       dispatch(setFilteredApps(data.list));
@@ -174,7 +179,6 @@ export const fetchRecommendedApps = () => async (dispatch: Dispatch) => {
     dispatch(finishLoading());
   } catch (error) {
     dispatch(finishLoading());
-
     throw error;
   }
 };
@@ -187,7 +191,6 @@ export const getForm = (formAction: FormButtonAction) => async (dispatch: Dispat
     return data;
   } catch (error) {
     dispatch(finishLoading());
-
     throw error;
   }
 };
@@ -212,3 +215,33 @@ export const submitForm = (appId: string, result: CreateFormSubmissionModel) => 
     throw error;
   }
 };
+
+export const installApplication =
+  (ownership: CreateOwnershipModel, safename: string, headers?: ReqHeaders) => async (dispatch: Dispatch) => {
+    dispatch(startLoading());
+    try {
+      const res = await ownershipService.installOwnership(ownership, headers);
+      if (res.data) {
+        const { data } = await apps.getAppBySafeName(safename);
+        dispatch(setSelectedApp(data));
+      }
+      dispatch(finishLoading());
+    } catch (error) {
+      dispatch(finishLoading());
+    }
+  };
+
+export const uninstallApplication =
+  (ownershipId: string, safename: string, headers?: ReqHeaders) => async (dispatch: Dispatch) => {
+    dispatch(startLoading());
+    try {
+      const res = await ownershipService.uninstallOwnership(ownershipId, headers);
+      if (res.data) {
+        const { data } = await apps.getAppBySafeName(safename);
+        dispatch(setSelectedApp(data));
+      }
+      dispatch(finishLoading());
+    } catch (error) {
+      dispatch(finishLoading());
+    }
+  };

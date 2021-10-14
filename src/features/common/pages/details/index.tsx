@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { get } from 'lodash';
 import { ButtonAction, DownloadButtonAction, FormButtonAction } from '../../components/action-button/types';
 import { pageConfig } from '../../../../assets/config/configData';
-import { useTypedSelector } from '../../hooks';
+import { useAuth, useTypedSelector } from '../../hooks';
 import { fetchSelectedApp } from '../../../apps/store/apps/actions';
 import { MainTemplate } from '../../templates';
 import AppDetails from '../../components/app-detail-data';
@@ -12,7 +12,32 @@ import AppDetails from '../../components/app-detail-data';
 export const DetailsPage: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const { checkSession, getAuthConfig, isConfigLoaded } = useAuth();
   const appSafeName = React.useMemo(() => history.location.pathname.split('/')[2], [history.location]);
+
+  React.useEffect(() => {
+    window.scroll(0, 0);
+  }, []);
+
+  React.useEffect(() => {
+    const init = async () => {
+      try {
+        checkSession();
+      } catch {
+        /*do nothing*/
+      }
+
+      if (!isConfigLoaded) {
+        try {
+          getAuthConfig();
+        } catch {
+          /*do nothing*/
+        }
+      }
+    };
+
+    init();
+  }, []);
 
   React.useEffect(() => {
     dispatch(fetchSelectedApp(appSafeName));
@@ -35,7 +60,7 @@ export const DetailsPage: React.FC = () => {
     }
     return [];
   };
-  const actions = getButtonActions(pageConfig);
+  const actions = React.useMemo(() => getButtonActions(pageConfig), [selectedApp]);
 
   return (
     <MainTemplate>{selectedApp && <AppDetails appListingActions={actions} price={0} app={selectedApp} />}</MainTemplate>

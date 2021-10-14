@@ -33,9 +33,9 @@ import {
   deleteReview,
   fetchCurrentReview,
 } from '../../../reviews/store/reviews/actions';
-import { fetchUserId } from '../../store/session';
-import { useTypedSelector } from 'features/common/hooks';
+import { fetchUserId } from '../../store/session/actions';
 import { ButtonAction } from '../action-button/types';
+import { useTypedSelector } from 'features/common/hooks';
 
 import './style.scss';
 
@@ -64,16 +64,15 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
   React.useEffect(() => {
+    dispatch(fetchReviewByAppId(app.appId));
     setSortSelected({ label: '', value: '' });
     setFilterSelected({ label: 'All Stars', value: undefined });
     dispatch(fetchRecommendedApps());
     dispatch(fetchSorts());
-    dispatch(fetchReviewByAppId(app.appId));
-    dispatch(fetchUserId());
   }, [app]);
-  const { recommendedApps } = useTypedSelector(({ apps }) => apps);
+  const { recommendedApps, selectedApp } = useTypedSelector(({ apps }) => apps);
   const { reviewsByApp, sorts } = useTypedSelector(({ reviews }) => reviews);
-  const { userId } = useTypedSelector(({ session }) => session);
+  const { userId, isExist } = useTypedSelector(({ session }) => session);
   const [isWritingReview, setIsWritingReview] = React.useState(false);
   const [sortSelected, setSortSelected] = React.useState<Option | undefined>({ label: '', value: '' });
   const [filterSelected, setFilterSelected] = React.useState<Option | undefined>({
@@ -82,6 +81,10 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   });
   const [selectedAction, setSelectedAction] = React.useState<Option | undefined>({ label: '', value: '' });
   const [currentEditReview, setCurrentEditReview] = React.useState(undefined);
+
+  React.useEffect(() => {
+    isExist ? dispatch(fetchUserId()) : undefined;
+  }, [isExist]);
 
   React.useEffect(() => {
     switch (selectedAction!.value) {
@@ -106,6 +109,9 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     dispatch(fetchReviewByAppId(appId, sort?.value, filter?.value));
   };
 
+  const appRating = React.useMemo(() => selectedApp!.rating / 100, [selectedApp]);
+  const appReviewCount = React.useMemo(() => selectedApp!.reviewCount, [selectedApp]);
+
   const appGalleryImages = app.customData
     ? app?.customData?.images?.map((imageUrl: string) => {
         return { image: imageUrl, title: '', description: '' };
@@ -113,10 +119,10 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     : [];
 
   const overallReviews = React.useMemo(() => {
-    const reviewList: Array<number> = reviewsByApp?.list?.map((rev) => Math.round(rev.rating / 100)) || [];
+    const reviewList: Array<number> = reviewsByApp?.list.map((rev) => Math.round(rev.rating / 100)) || [];
     const countedReviews = {
-      rating: app.rating / 100 || 0,
-      reviewCount: reviewsByApp?.count || 0,
+      rating: appRating,
+      reviewCount: appReviewCount,
       1: 0,
       2: 0,
       3: 0,
@@ -134,6 +140,10 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     return hasUserReview;
   }, [reviewsByApp]);
 
+  const hasWriteReviewPermission = React.useMemo(
+    () => app.ownership && !userReview && isExist,
+    [app.ownership, userReview],
+  );
   const onReviewSubmit = (review: Review | ReviewResponse): void => {
     if (selectedAction!.value === 'EDIT') {
       const reviewData: Review = {
@@ -197,8 +207,8 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                 <div className="text-secondary mt-1">{app?.customData.summary}</div>
                 <OcRatingComponent
                   className="mb-3"
-                  rating={app?.rating / 100 || 0}
-                  reviewCount={app?.reviewCount || 0}
+                  rating={appRating}
+                  reviewCount={appReviewCount}
                   label="reviews"
                   labelClass="medium"
                   type="single-star"
@@ -286,7 +296,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
             {!isWritingReview && (
               <OcReviewListComponent
                 reviewList={reviewsByApp?.list || []}
-                writeReviewPermission={app.ownership && !userReview}
+                writeReviewPermission={hasWriteReviewPermission}
                 writeReview={() => setIsWritingReview(!isWritingReview)}
                 reviewListTitle="Most recent reviews"
                 setSelectedAction={setSelectedAction}
