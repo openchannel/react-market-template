@@ -2,7 +2,7 @@ import * as React from 'react';
 import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
 import forgotPasswordDoneIcon from '../../../../../public/assets/img/forgot-password-complete-icon.svg';
 import { OcForgotPasswordComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
-import { errorMessages, email, required } from '@openchannel/react-common-components/dist/ui/form/lib';
+import { errorMessages, email, isEmptyInputValue } from '@openchannel/react-common-components/dist/ui/form/lib';
 import { resetPassword } from '../../../common/store/session/actions';
 import './styles.scss';
 
@@ -12,23 +12,29 @@ const ForgotPassword = (): JSX.Element => {
   const [showResultPage, setShowResultPage] = React.useState(false);
 
   const invalidMassage = () => errorMessages.email();
+  const requiredMassage = () => errorMessages.required();
   const validateEmail = () => email();
-  const requiredField = () => required();
 
-  const onChange = (e: any) => {
+  const onChange = (e: { target: HTMLInputElement }) => {
     setInputValue(e.target.value);
     if (validateEmail()(e.target.value) !== null) {
       setInputError(invalidMassage);
     } else {
       setInputError('');
     }
+    if (isEmptyInputValue(e.target.value)) {
+      setInputError(requiredMassage);
+    }
   };
 
   const onSubmit = async () => {
-    if (validateEmail()(inputValue) === null) {
+    if (validateEmail()(inputValue) === null && !isEmptyInputValue(inputValue)) {
       await resetPassword(inputValue);
       setShowResultPage(true);
       setInputValue('');
+    }
+    if (isEmptyInputValue(inputValue)) {
+      setInputError(requiredMassage);
     }
   };
 
