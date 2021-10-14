@@ -64,13 +64,13 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
   React.useEffect(() => {
+    dispatch(fetchReviewByAppId(app.appId));
     setSortSelected({ label: '', value: '' });
     setFilterSelected({ label: 'All Stars', value: undefined });
     dispatch(fetchRecommendedApps());
     dispatch(fetchSorts());
-    dispatch(fetchReviewByAppId(app.appId));
   }, [app]);
-  const { recommendedApps } = useTypedSelector(({ apps }) => apps);
+  const { recommendedApps, selectedApp } = useTypedSelector(({ apps }) => apps);
   const { reviewsByApp, sorts } = useTypedSelector(({ reviews }) => reviews);
   const { userId, isExist } = useTypedSelector(({ session }) => session);
   const [isWritingReview, setIsWritingReview] = React.useState(false);
@@ -109,6 +109,9 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     dispatch(fetchReviewByAppId(appId, sort?.value, filter?.value));
   };
 
+  const appRating = React.useMemo(() => selectedApp!.rating / 100, [selectedApp]);
+  const appReviewCount = React.useMemo(() => selectedApp!.reviewCount, [selectedApp]);
+
   const appGalleryImages = app.customData
     ? app?.customData?.images?.map((imageUrl: string) => {
         return { image: imageUrl, title: '', description: '' };
@@ -116,10 +119,10 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     : [];
 
   const overallReviews = React.useMemo(() => {
-    const reviewList: Array<number> = reviewsByApp?.list?.map((rev) => Math.round(rev.rating / 100)) || [];
+    const reviewList: Array<number> = reviewsByApp?.list.map((rev) => Math.round(rev.rating / 100)) || [];
     const countedReviews = {
-      rating: app.rating / 100 || 0,
-      reviewCount: reviewsByApp?.count || 0,
+      rating: appRating,
+      reviewCount: appReviewCount,
       1: 0,
       2: 0,
       3: 0,
@@ -130,13 +133,17 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     // @ts-ignore
     reviewList.forEach((review) => countedReviews[review]++);
     return countedReviews;
-  }, []);
+  }, [reviewsByApp]);
 
   const userReview = React.useMemo(() => {
     const hasUserReview = reviewsByApp ? !!find(reviewsByApp.list, ['userId', userId]) : false;
     return hasUserReview;
   }, [reviewsByApp]);
 
+  const hasWriteReviewPermission = React.useMemo(
+    () => app.ownership && !userReview && isExist,
+    [app.ownership, userReview],
+  );
   const onReviewSubmit = (review: Review | ReviewResponse): void => {
     if (selectedAction!.value === 'EDIT') {
       const reviewData: Review = {
@@ -200,8 +207,8 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                 <div className="text-secondary mt-1">{app?.customData.summary}</div>
                 <OcRatingComponent
                   className="mb-3"
-                  rating={app?.rating / 100 || 0}
-                  reviewCount={app?.reviewCount || 0}
+                  rating={appRating}
+                  reviewCount={appReviewCount}
                   label="reviews"
                   labelClass="medium"
                   type="single-star"
@@ -289,7 +296,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
             {!isWritingReview && (
               <OcReviewListComponent
                 reviewList={reviewsByApp?.list || []}
-                writeReviewPermission={app.ownership && !userReview}
+                writeReviewPermission={hasWriteReviewPermission}
                 writeReview={() => setIsWritingReview(!isWritingReview)}
                 reviewListTitle="Most recent reviews"
                 setSelectedAction={setSelectedAction}
