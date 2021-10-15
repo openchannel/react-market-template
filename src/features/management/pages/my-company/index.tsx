@@ -7,6 +7,7 @@ import { MainTemplate } from '../../../common/templates';
 
 import { page, pageIds } from './constants';
 import UserManagement from './user-management';
+import CompanyDetails from './company-details';
 import { InviteModalState, UserData } from './types';
 import './styles.scss';
 
@@ -72,6 +73,7 @@ const MyCompany = (): JSX.Element => {
             </ul>
           </div>
           <div className="col-md-9 col-lg-10 col-xl-9 pt-1">
+            {selectedPage === pageIds.company && <CompanyDetails />}
             {selectedPage === pageIds.profile && (
               <UserManagement
                 inviteModal={inviteModal}
