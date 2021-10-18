@@ -61,15 +61,19 @@ export const AuthWrapper: React.FC = ({ children }) => {
 
   React.useEffect(() => {
     const init = async () => {
+      const joinPaths = joinRoutes.map(({ path }) => path);
+
       try {
         await checkSession();
 
-        const joinPaths = joinRoutes.map(({ path }) => path);
         if (joinPaths.includes(location.pathname)) {
           history.replace('/');
         }
       } catch {
-        await checkAuthType();
+        // if session is not exist and location is not 'join' -> call checkAuthType
+        if (!joinPaths.includes(location.pathname)) {
+          await checkAuthType();
+        }
       }
     };
 

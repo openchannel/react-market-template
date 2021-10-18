@@ -99,3 +99,7 @@ export const fetchUserId = () => async (dispatch: Dispatch) => {
     throw error;
   }
 };
+
+export const resetPassword = (email: string) => async () => {
+  await native.sendResetCode(email);
+};
