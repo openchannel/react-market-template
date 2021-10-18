@@ -19,21 +19,27 @@ const ForgotPassword = (): JSX.Element => {
     setInputValue(e.target.value);
     if (validateEmail()(e.target.value) !== null) {
       setInputError(invalidMassage);
+      setLoadingRequest(false);
     } else {
       setInputError('');
     }
     if (isEmptyInputValue(e.target.value)) {
       setInputError(requiredField);
+      setLoadingRequest(false);
     }
   }, []);
 
   const onSubmit = React.useCallback(async () => {
-    setLoadingRequest(true);
     if (validateEmail()(inputValue) === null && !isEmptyInputValue(inputValue)) {
-      await dispatch(resetPassword(inputValue));
-      setShowResultPage(true);
-      setInputValue('');
-      setLoadingRequest(false);
+      try {
+        setLoadingRequest(true);
+        await dispatch(resetPassword(inputValue));
+        setShowResultPage(true);
+        setInputValue('');
+        setLoadingRequest(false);
+      } catch {
+        setLoadingRequest(false);
+      }
     }
     if (isEmptyInputValue(inputValue)) {
       setInputError(requiredField);

@@ -11,7 +11,6 @@ import {
 import { ActionTypes } from './action-types';
 import { RootState } from '../../../../types';
 import { normalizeError } from '../utils';
-import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
@@ -102,10 +101,5 @@ export const fetchUserId = () => async (dispatch: Dispatch) => {
 };
 
 export const resetPassword = (email: string) => async () => {
-  try {
-    await native.sendResetCode(email);
-    // eslint-disable-next-line
-  } catch (error: any) {
-    notify.error(error.response.data.message);
-  }
+  await native.sendResetCode(email);
 };
