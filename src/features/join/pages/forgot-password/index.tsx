@@ -3,9 +3,9 @@ import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
 import forgotPasswordDoneIcon from '../../../../../public/assets/img/forgot-password-complete-icon.svg';
 import { OcForgotPasswordComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 import { isEmptyInputValue } from '@openchannel/react-common-components/dist/ui/form/lib';
-import { resetPassword } from '../../../common/store/session/actions';
+import { forgotPassword } from '../../../common/store/session/actions';
 import { useDispatch } from 'react-redux';
-import { invalidMassage, requiredField, validateEmail } from './constants';
+import { invalidMassageEmail, requiredField, validateEmail } from '../constants';
 import './styles.scss';
 
 const ForgotPassword = (): JSX.Element => {
@@ -18,7 +18,7 @@ const ForgotPassword = (): JSX.Element => {
   const onChange = React.useCallback((e: { target: HTMLInputElement }) => {
     setInputValue(e.target.value);
     if (validateEmail()(e.target.value) !== null) {
-      setInputError(invalidMassage);
+      setInputError(invalidMassageEmail);
     } else {
       setInputError('');
     }
@@ -31,7 +31,7 @@ const ForgotPassword = (): JSX.Element => {
     if (validateEmail()(inputValue) === null && !isEmptyInputValue(inputValue)) {
       try {
         setLoadingRequest(true);
-        await dispatch(resetPassword(inputValue));
+        await dispatch(forgotPassword(inputValue));
         setShowResultPage(true);
         setInputValue('');
         setLoadingRequest(false);
