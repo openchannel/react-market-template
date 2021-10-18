@@ -2,9 +2,10 @@ import * as React from 'react';
 import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
 import forgotPasswordDoneIcon from '../../../../../public/assets/img/forgot-password-complete-icon.svg';
 import { OcForgotPasswordComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
-import { errorMessages, email, isEmptyInputValue } from '@openchannel/react-common-components/dist/ui/form/lib';
+import { isEmptyInputValue } from '@openchannel/react-common-components/dist/ui/form/lib';
 import { resetPassword } from '../../../common/store/session/actions';
 import { useDispatch } from 'react-redux';
+import { invalidMassage, requiredField, validateEmail } from './constants';
 import './styles.scss';
 
 const ForgotPassword = (): JSX.Element => {
@@ -14,11 +15,7 @@ const ForgotPassword = (): JSX.Element => {
   const [loadingRequest, setLoadingRequest] = React.useState(false);
   const dispatch = useDispatch();
 
-  const invalidMassage = React.useCallback(() => errorMessages.email(), []);
-  const requiredMassage = React.useCallback(() => errorMessages.required(), []);
-  const validateEmail = React.useCallback(() => email(), []);
-
-  const onChange = (e: { target: HTMLInputElement }) => {
+  const onChange = React.useCallback((e: { target: HTMLInputElement }) => {
     setInputValue(e.target.value);
     if (validateEmail()(e.target.value) !== null) {
       setInputError(invalidMassage);
@@ -26,22 +23,22 @@ const ForgotPassword = (): JSX.Element => {
       setInputError('');
     }
     if (isEmptyInputValue(e.target.value)) {
-      setInputError(requiredMassage);
+      setInputError(requiredField);
     }
-  };
+  }, []);
 
-  const onSubmit = async () => {
+  const onSubmit = React.useCallback(async () => {
     setLoadingRequest(true);
     if (validateEmail()(inputValue) === null && !isEmptyInputValue(inputValue)) {
       await dispatch(resetPassword(inputValue));
       setShowResultPage(true);
       setInputValue('');
+      setLoadingRequest(false);
     }
     if (isEmptyInputValue(inputValue)) {
-      setInputError(requiredMassage);
+      setInputError(requiredField);
     }
-    setLoadingRequest(false);
-  };
+  }, [inputValue]);
 
   return (
     <div className="bg-container pt-sm-5">
