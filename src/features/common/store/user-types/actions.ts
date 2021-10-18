@@ -5,10 +5,12 @@ import {
   TypeFieldModel,
   TypeModel,
 } from '@openchannel/react-common-components';
-import { userAccount, userAccountTypes, users } from '@openchannel/react-common-services';
+import { TypeMapperUtils, userAccount, userAccountTypes, users } from '@openchannel/react-common-services';
 import { Dispatch } from 'redux';
 import { cloneDeep, keyBy } from 'lodash';
 import { normalizeError } from '../utils';
+import { defaultFormConfig } from './constants';
+import { FormikValues } from 'formik';
 
 const EMPTY_TYPE_RESPONSE = {
   list: [],
@@ -21,6 +23,11 @@ const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
 const saveConfig = (configs: OcEditUserFormConfig[]) => ({ type: ActionTypes.GET_USER_CONFIG, payload: { configs } });
 const saveAccount = (account: OcEditUserResult) => ({ type: ActionTypes.GET_USER_ACCOUNT, payload: { account } });
+const saveCompanyForm = (companyForm: TypeModel<TypeFieldModel>) => ({
+  type: ActionTypes.GET_USER_COMPANY_FORM,
+  payload: { companyForm },
+});
+const resetCompanyForm = () => ({ type: ActionTypes.RESET_USER_COMPANY_FORM });
 
 export const getUserTypes = async (injectOrganizationType: boolean, configs: OcEditUserFormConfig[]) => {
   if (injectOrganizationType) {
@@ -124,4 +131,46 @@ export const getUserAccount = async () => {
   const { data: account } = await userAccount.getUserAccount();
 
   return account;
+};
+
+export const getUserCompanyForm = () => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+
+  try {
+    const { data: company } = await users.getUserCompany();
+    let formConfig: TypeModel<TypeFieldModel>;
+
+    try {
+      if (company.type != null) {
+        const { data: typeDefinition } = await users.getUserTypeDefinition(company.type);
+        formConfig = TypeMapperUtils.createFormConfig(typeDefinition, company);
+      } else {
+        formConfig = TypeMapperUtils.createFormConfig(defaultFormConfig, company);
+      }
+    } catch (e) {
+      formConfig = TypeMapperUtils.createFormConfig(defaultFormConfig, company);
+    }
+
+    dispatch(saveCompanyForm(formConfig));
+    dispatch(finishLoading());
+  } catch (error) {
+    dispatch(finishLoading());
+    throw error;
+  }
+};
+
+export const clearUserCompanyForm = () => (dispatch: Dispatch) => dispatch(resetCompanyForm());
+
+export const saveUserCompany = (value: FormikValues) => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+
+  try {
+    const valueForSaving = TypeMapperUtils.buildDataForSaving(value);
+    await users.updateUserCompany(valueForSaving);
+    dispatch(finishLoading());
+    // eslint-disable-next-line
+  } catch (error: any) {
+    dispatch(finishLoading());
+    throw normalizeError(error);
+  }
 };
