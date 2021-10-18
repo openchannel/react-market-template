@@ -19,13 +19,11 @@ const ForgotPassword = (): JSX.Element => {
     setInputValue(e.target.value);
     if (validateEmail()(e.target.value) !== null) {
       setInputError(invalidMassage);
-      setLoadingRequest(false);
     } else {
       setInputError('');
     }
     if (isEmptyInputValue(e.target.value)) {
       setInputError(requiredField);
-      setLoadingRequest(false);
     }
   }, []);
 
