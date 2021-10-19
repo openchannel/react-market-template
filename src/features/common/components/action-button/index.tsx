@@ -30,25 +30,16 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
 
   const dispatch = useDispatch();
   const history = useHistory();
-  const { selectedApp } = useTypedSelector(({ apps }) => apps);
+  const { selectedApp, currentForm } = useTypedSelector(({ apps }) => apps);
   const [viewData, setViewData] = React.useState<IViewDataSelected>({
     actionType: null,
     viewData: null,
   });
   const [isModalOpened, setIsModalOpened] = React.useState(false);
-  const [currentForm, setCurrentForm] = React.useState<AppFormModel>({});
 
   const onModalClose = React.useCallback(() => {
     setIsModalOpened(false);
   }, []);
-
-  const onFormSubmit = React.useCallback(
-    (values) => {
-      dispatch(submitForm(selectedApp!.appId, values));
-      setIsModalOpened(false);
-    },
-    [selectedApp],
-  );
 
   React.useEffect(() => {
     switch (buttonAction.type) {
@@ -76,10 +67,10 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
     }
   }, [selectedApp]);
 
-  const handleButtonClick = (): void => {
+  const handleButtonClick = async () => {
     switch (buttonAction.type) {
       case 'form':
-        processForm(buttonAction as FormButtonAction);
+        await processForm(buttonAction as FormButtonAction);
         break;
       case 'install':
         processOwnership();
@@ -93,12 +84,16 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   };
 
   const processForm = async (formAction: FormButtonAction) => {
-    // eslint-disable-next-line
-    const form: any = await dispatch(getForm(formAction));
-    setCurrentForm(form);
+    await dispatch(getForm(formAction));
     setIsModalOpened(true);
   };
-
+  //eslint-disable-next-line
+  const onFormSubmit = async (values: any) => {
+    if (currentForm !== null) {
+      await dispatch(submitForm(selectedApp!.appId, { ...values, formId: currentForm.formId }));
+      setIsModalOpened(false);
+    }
+  };
   const processOwnership = (): void => {
     if (isUserLoggedIn()) {
       switch (viewData.actionType) {
@@ -112,7 +107,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
           notify.error(`Error: invalid owned button type: ${buttonAction.type}`);
       }
     } else {
-      history.push(`/login?${window.location.pathname}`);
+      history.push(`/login?returnUrl=${window.location.pathname}`);
     }
   };
 
@@ -125,8 +120,8 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
       const fileDetails = await fileService.downloadFileDetails(file, {});
       fileService.getFileUrl(fileDetails.data.fileId).then((res) => window.open(res.data.url));
 
-      if (buttonAction.statistic) {
-        statisticService.record(buttonAction.statistic, selectedApp!.appId);
+      if (buttonAction.statistic && selectedApp) {
+        statisticService.record(buttonAction.statistic, selectedApp.appId, 1);
       }
     }
   };
@@ -155,13 +150,23 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   const uninstallOwnership = (): void => {
     if (selectedApp && selectedApp.ownership) {
       try {
-        dispatch(uninstallApplication(selectedApp.ownership.ownershipId, selectedApp.safeName[0]));
+        dispatch(
+          uninstallApplication(
+            { ownershipId: selectedApp.ownership.ownershipId, appId: selectedApp.appId },
+            selectedApp.safeName[0],
+          ),
+        );
       } catch (error) {
         notify.error(viewData.viewData!.message!.fail);
       }
       notify.success(viewData.viewData!.message!.success);
     }
   };
+  // const fa: any = currentForm;
+  // fa.fields.splice(3, 1);
+  // console.log('new fields', fa);
+  // console.log('current form', currentForm);
+
   return (
     <div className="action-button">
       <OcButtonComponent
@@ -175,7 +180,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
       <Modal isOpened={isModalOpened} onClose={onModalClose} className="modal-content" size="sm">
         <div className="action-button_modal">
           <div className="action-button_modal__header header">
-            <h2 className="action-button_modal__header-heading">{currentForm.name || ''}</h2>
+            <h2 className="action-button_modal__header-heading">{currentForm!.name || ''}</h2>
             <CloseIcon
               aria-label="close button"
               className="action-button_modal__header-close-icon"
@@ -183,7 +188,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
             />
           </div>
           <div className="action-button_modal__modal-body">
-            <OcForm formJsonData={currentForm} onSubmit={onFormSubmit} />
+            <OcForm formJsonData={currentForm as AppFormModel} onSubmit={onFormSubmit} />
           </div>
         </div>
       </Modal>

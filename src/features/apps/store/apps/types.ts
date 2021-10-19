@@ -1,6 +1,7 @@
 import { Gallery, Searchable } from '../../types';
 import { ActionTypes } from './action-types';
 import { Filter, FullAppData, SidebarItem } from '@openchannel/react-common-components';
+import { AppFormModelResponse } from '@openchannel/react-common-services';
 
 export interface SelectedFilter extends SidebarItem {
   id: string;
@@ -20,9 +21,14 @@ export interface Apps {
   filteredApps: [] | FullAppData[];
   selectedApp: null | FullAppData;
   recommendedApps: null | FullAppData[];
+  currentForm: null | AppFormModelResponse;
 }
 
 export type Action =
+  | {
+      type: ActionTypes.SET_CURRENT_FORM;
+      payload: AppFormModelResponse;
+    }
   | {
       type: ActionTypes.SET_RECOMMENDED_APPS;
       payload: FullAppData[];

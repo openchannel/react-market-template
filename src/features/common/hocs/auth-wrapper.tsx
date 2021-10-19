@@ -51,7 +51,7 @@ export const AuthWrapper: React.FC = ({ children }) => {
 
   const checkAuthType = async () => {
     if (!userManager || !isSsoLogin) {
-      history.replace('/login');
+      // history.replace('/login'); //!!!!
       return;
     }
 
