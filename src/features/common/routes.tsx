@@ -4,11 +4,18 @@ const ChartPage = React.lazy(() => import('./pages/chart'));
 const HomePage = React.lazy(() => import('./pages/home'));
 const SearchPage = React.lazy(() => import('./pages/search'));
 const DetailsPage = React.lazy(() => import('./pages/details'));
+const AppVersionPage = React.lazy(() => import('./pages/app-version'));
 
 export const commonRoutes = [
   {
-    path: '/details',
-    exact: false,
+    path: '/details/:appId/:appVersion',
+    exact: true,
+    private: false,
+    Component: AppVersionPage,
+  },
+  {
+    path: '/details/:safeName',
+    exact: true,
     private: false,
     Component: DetailsPage,
   },

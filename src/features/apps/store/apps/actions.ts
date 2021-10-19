@@ -168,10 +168,11 @@ export const clearMyApps = () => (dispatch: Dispatch) => {
   dispatch(resetMyApps());
 };
 
-export const fetchSelectedApp = (safename: string) => async (dispatch: Dispatch) => {
+export const fetchSelectedApp = (safename: string, appId?: string) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
   try {
-    const { data } = await apps.getAppBySafeName(safename);
+    const { data } =
+      appId && appId.length > 0 && !safename ? await apps.getAppById(appId) : await apps.getAppBySafeName(safename);
     dispatch(setSelectedApp(data));
     dispatch(finishLoading());
   } catch (error) {
