@@ -17,9 +17,18 @@ const ResetPassword = (): JSX.Element => {
   const dispatch = useDispatch();
   const location = useLocation();
   const history = useHistory();
-  const paramsString = location.search;
-  const searchParams = new URLSearchParams(paramsString);
-  const testToken = searchParams.get('token');
+
+  const getUserToken = React.useCallback(() => {
+    const paramsString = location.search;
+    const searchParams = new URLSearchParams(paramsString);
+    return searchParams.get('token');
+  }, []);
+
+  React.useEffect(() => {
+    if (!getUserToken()) {
+      history.replace('/login');
+    }
+  }, []);
 
   const onChange = React.useCallback((e) => {
     setInputValue(e.target.value);
@@ -38,7 +47,7 @@ const ResetPassword = (): JSX.Element => {
         setLoadingRequest(true);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        await dispatch(resetPassword({ newPassword: inputValue, code: testToken }));
+        await dispatch(resetPassword({ newPassword: inputValue, code: getUserToken() }));
         history.replace('/login');
         setInputValue('');
         setLoadingRequest(false);
