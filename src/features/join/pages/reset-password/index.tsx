@@ -3,8 +3,9 @@ import { OcResetPasswordComponent } from '@openchannel/react-common-components/d
 import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
 import { invalidMassagePassword, validatePassword } from '../constants';
 import { useDispatch } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { resetPassword } from '../../../common/store/session/actions';
+import { isEmptyInputValue } from '@openchannel/react-common-components/dist/ui/form/lib';
 import './styles.scss';
 
 const ResetPassword = (): JSX.Element => {
@@ -12,10 +13,13 @@ const ResetPassword = (): JSX.Element => {
   const [inputValue, setInputValue] = React.useState('');
   const [inputError, setInputError] = React.useState('');
   const [validationError, setValidationError] = React.useState(false);
+
   const dispatch = useDispatch();
   const location = useLocation();
-
-  console.log('inputValue', inputValue);
+  const history = useHistory();
+  const paramsString = location.search;
+  const searchParams = new URLSearchParams(paramsString);
+  const testToken = searchParams.get('token');
 
   const onChange = React.useCallback((e) => {
     setInputValue(e.target.value);
@@ -28,16 +32,20 @@ const ResetPassword = (): JSX.Element => {
     }
   }, []);
 
-  const paramsString = location.search;
-  const searchParams = new URLSearchParams(paramsString);
-
-  const testToken = searchParams.get('token');
-  console.log('testToken', testToken);
-
   const onSubmit = React.useCallback(async () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    await dispatch(resetPassword({ newPassword: inputValue, code: testToken }));
+    if (validatePassword()(inputValue) === null && !isEmptyInputValue(inputValue)) {
+      try {
+        setLoadingRequest(true);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        await dispatch(resetPassword({ newPassword: inputValue, code: testToken }));
+        history.replace('/login');
+        setInputValue('');
+        setLoadingRequest(false);
+      } catch {
+        setLoadingRequest(false);
+      }
+    }
   }, [inputValue]);
   return (
     <div className="bg-container pt-sm-5 ">
