@@ -22,7 +22,7 @@ const ResetPassword = (): JSX.Element => {
     const paramsString = location.search;
     const searchParams = new URLSearchParams(paramsString);
     return searchParams.get('token');
-  }, []);
+  }, [location.search]);
 
   React.useEffect(() => {
     if (!getUserToken()) {
@@ -55,7 +55,7 @@ const ResetPassword = (): JSX.Element => {
         setLoadingRequest(false);
       }
     }
-  }, [inputValue]);
+  }, [inputValue, getUserToken]);
   return (
     <div className="bg-container pt-sm-5 ">
       <div className="reset-position">
