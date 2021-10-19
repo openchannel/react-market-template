@@ -101,7 +101,7 @@ export const fetchUserId = () => async (dispatch: Dispatch) => {
   }
 };
 
-export const forgotPassword = (email: string) => async () => {
+export const sendResetPassword = (email: string) => async () => {
   await native.sendResetCode(email);
 };
 

@@ -3,7 +3,7 @@ import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
 import forgotPasswordDoneIcon from '../../../../../public/assets/img/forgot-password-complete-icon.svg';
 import { OcForgotPasswordComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 import { isEmptyInputValue } from '@openchannel/react-common-components/dist/ui/form/lib';
-import { forgotPassword } from '../../../common/store/session/actions';
+import { sendResetPassword } from '../../../common/store/session/actions';
 import { useDispatch } from 'react-redux';
 import { invalidMassageEmail, requiredField, validateEmail } from '../constants';
 import './styles.scss';
@@ -31,7 +31,7 @@ const ForgotPassword = (): JSX.Element => {
     if (validateEmail()(inputValue) === null && !isEmptyInputValue(inputValue)) {
       try {
         setLoadingRequest(true);
-        await dispatch(forgotPassword(inputValue));
+        await dispatch(sendResetPassword(inputValue));
         setShowResultPage(true);
         setInputValue('');
         setLoadingRequest(false);
