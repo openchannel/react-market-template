@@ -162,10 +162,6 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
       notify.success(viewData.viewData!.message!.success);
     }
   };
-  // const fa: any = currentForm;
-  // fa.fields.splice(3, 1);
-  // console.log('new fields', fa);
-  // console.log('current form', currentForm);
 
   return (
     <div className="action-button">
