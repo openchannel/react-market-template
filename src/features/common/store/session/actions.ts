@@ -108,3 +108,7 @@ export const sendResetPassword = (email: string) => async () => {
 export const resetPassword = (body: UserResetPassword) => async () => {
   await native.resetPassword(body);
 };
+
+export const activeUserAccount = (activationModel: string) => async () => {
+  await native.activate(activationModel);
+};
