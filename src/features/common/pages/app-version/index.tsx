@@ -13,11 +13,10 @@ export const AppVersionPage: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { checkSession, getAuthConfig, isConfigLoaded } = useAuth();
+  const { selectedApp } = useTypedSelector(({ apps }) => apps);
+
   const params: { [key: string]: string } = useParams();
   const appId = params.appId;
-  console.log('appId 123', appId);
-
-  const { selectedApp } = useTypedSelector(({ apps }) => apps);
 
   React.useEffect(() => {
     window.scroll(0, 0);
