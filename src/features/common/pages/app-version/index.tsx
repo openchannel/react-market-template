@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { get } from 'lodash';
 import { ButtonAction, DownloadButtonAction, FormButtonAction } from '../../components/action-button/types';
@@ -13,10 +13,14 @@ export const AppVersionPage: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { checkSession, getAuthConfig, isConfigLoaded } = useAuth();
-  const appId = React.useMemo(() => history.location.pathname.split('/')[2], [history.location]);
+  const params: { [key: string]: string } = useParams();
+  const appId = params.appId;
+  console.log('appId 123', appId);
+
   const { selectedApp } = useTypedSelector(({ apps }) => apps);
 
   React.useEffect(() => {
+    window.scroll(0, 0);
     const init = async () => {
       try {
         checkSession();
@@ -35,11 +39,6 @@ export const AppVersionPage: React.FC = () => {
 
     init();
   }, []);
-
-  React.useEffect(() => {
-    window.scroll(0, 0);
-  }, []);
-  console.log('appId', appId);
 
   React.useEffect(() => {
     dispatch(fetchSelectedApp('', appId));
