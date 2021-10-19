@@ -45,9 +45,8 @@ const ResetPassword = (): JSX.Element => {
     if (validatePassword()(inputValue) === null && !isEmptyInputValue(inputValue)) {
       try {
         setLoadingRequest(true);
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        await dispatch(resetPassword({ newPassword: inputValue, code: getUserToken() }));
+        const userToken = getUserToken() || '';
+        await dispatch(resetPassword({ newPassword: inputValue, code: userToken }));
         history.replace('/login');
         setInputValue('');
         setLoadingRequest(false);
