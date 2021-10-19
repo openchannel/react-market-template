@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@openchannel/react-common-components": "^0.1.67",
-    "@openchannel/react-common-services": "^0.1.60",
+    "@openchannel/react-common-components": "^0.1.68",
+    "@openchannel/react-common-services": "^0.1.61",
     "lodash.isempty": "^4.4.0",
     "oidc-client": "^1.11.5",
     "react": "^17.0.2",

@@ -5,6 +5,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { joinRoutes } from '../../join';
 import { useAuth, useTypedSelector } from '../hooks';
+import { getSearchParams } from '../libs/helpers';
 import { loginWithSSOTokens } from '../store/session';
 
 export const AuthWrapper: React.FC = ({ children }) => {
@@ -14,6 +15,7 @@ export const AuthWrapper: React.FC = ({ children }) => {
   const dispatch = useDispatch();
   const { isSessionLoading, checkSession } = useAuth();
   const { isLoading: isOidcLoading, userManager, isSsoLogin } = useTypedSelector((state) => state.oidc);
+  const searchParams = React.useMemo(() => getSearchParams(window.location.search), []);
 
   const loginWithOidcTokens = React.useCallback(
     async ({ id_token, access_token }: User) => {
@@ -51,7 +53,7 @@ export const AuthWrapper: React.FC = ({ children }) => {
 
   const checkAuthType = async () => {
     if (!userManager || !isSsoLogin) {
-      history.replace('/login');
+      Object.keys(searchParams).includes('returnUrl') ? history.push(searchParams.returnUrl) : history.push('/');
       return;
     }
 

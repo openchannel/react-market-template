@@ -14,12 +14,10 @@ export const DetailsPage: React.FC = () => {
   const dispatch = useDispatch();
   const { checkSession, getAuthConfig, isConfigLoaded } = useAuth();
   const appSafeName = React.useMemo(() => history.location.pathname.split('/')[2], [history.location]);
+  const { selectedApp } = useTypedSelector(({ apps }) => apps);
 
   React.useEffect(() => {
     window.scroll(0, 0);
-  }, []);
-
-  React.useEffect(() => {
     const init = async () => {
       try {
         checkSession();
@@ -42,8 +40,6 @@ export const DetailsPage: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchSelectedApp(appSafeName));
   }, [history.location, appSafeName]);
-
-  const { selectedApp } = useTypedSelector(({ apps }) => apps);
 
   // eslint-disable-next-line
   const getButtonActions = (config: any): ButtonAction[] => {
