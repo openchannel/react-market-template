@@ -6,6 +6,7 @@ import {
   storage,
   UserLoginModel,
   userAccount,
+  UserResetPassword,
 } from '@openchannel/react-common-services';
 
 import { ActionTypes } from './action-types';
@@ -98,4 +99,12 @@ export const fetchUserId = () => async (dispatch: Dispatch) => {
     dispatch(finishLoading());
     throw error;
   }
+};
+
+export const sendResetPassword = (email: string) => async () => {
+  await native.sendResetCode(email);
+};
+
+export const resetPassword = (body: UserResetPassword) => async () => {
+  await native.resetPassword(body);
 };

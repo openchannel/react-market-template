@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import queryString from 'querystring';
 import { debounce } from 'lodash';
 
 import { MainTemplate } from 'features/common/templates';
@@ -23,6 +22,7 @@ import { OcTagElement } from '@openchannel/react-common-components/dist/ui/commo
 import { QueryUtil } from '@openchannel/react-common-services';
 import { SelectedFilter, SelectedFilters } from 'features/apps/store/apps/types';
 import defaultAppIcon from '../../../../../public/assets/img/default-app-icon.svg';
+import { getSearchParams } from '../../libs/helpers';
 
 import './style.scss';
 
@@ -45,7 +45,7 @@ export const SearchPage: React.FC = () => {
     }
 
     const { pathname: path, search } = history.location;
-    const parsedSearch = queryString.parse(search.replace(/^\?/, ''));
+    const parsedSearch = getSearchParams(search);
     const [id, parentId] = path.split('/').filter((p) => p !== BROWSE && !!p);
     const searchPayload: Partial<SelectedFilters> = { filters: [], searchStr: '' };
 

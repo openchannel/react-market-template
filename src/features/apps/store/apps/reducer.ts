@@ -19,6 +19,12 @@ const initialState = {
   filteredApps: [],
   selectedApp: null,
   recommendedApps: null,
+  currentForm: {
+    formId: '',
+    name: '',
+    createdDate: 0,
+    fields: [],
+  },
 };
 
 export const appsReducer = (state: Apps = initialState, action: Action): Apps => {
@@ -43,6 +49,13 @@ export const appsReducer = (state: Apps = initialState, action: Action): Apps =>
       return {
         ...state,
         galleries: action.payload,
+      };
+    }
+
+    case ActionTypes.SET_CURRENT_FORM: {
+      return {
+        ...state,
+        currentForm: action.payload,
       };
     }
 
