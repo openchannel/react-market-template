@@ -115,20 +115,15 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     dispatch(fetchReviewByAppId(appId, sort?.value, filter?.value));
   };
 
-  const appRating = React.useMemo(() => {
-    if (selectedApp && selectedApp.rating) {
-      return selectedApp.rating / 100;
-    } else {
-      return 0;
-    }
-  }, [selectedApp]);
-  const appReviewCount = React.useMemo(() => {
-    if (selectedApp && selectedApp.rating) {
-      return selectedApp.reviewCount / 100;
-    } else {
-      return 0;
-    }
-  }, [selectedApp]);
+  const appRating = React.useMemo(
+    () => (selectedApp && selectedApp.rating ? selectedApp.rating / 100 : 0),
+    [selectedApp],
+  );
+
+  const appReviewCount = React.useMemo(
+    () => (selectedApp && selectedApp.reviewCount ? selectedApp.rating / 100 : 0),
+    [selectedApp],
+  );
 
   const appGalleryImages = app.customData
     ? app?.customData?.images?.map((imageUrl: string) => {
