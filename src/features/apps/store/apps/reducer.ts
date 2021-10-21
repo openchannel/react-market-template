@@ -18,6 +18,7 @@ const initialState = {
   },
   filteredApps: [],
   selectedApp: null,
+  appByVersion: null,
   recommendedApps: null,
   currentForm: {
     formId: '',
@@ -104,6 +105,12 @@ export const appsReducer = (state: Apps = initialState, action: Action): Apps =>
       return {
         ...state,
         selectedApp: action.payload,
+      };
+    }
+    case ActionTypes.SET_APP_BY_VERSION: {
+      return {
+        ...state,
+        appByVersion: action.payload,
       };
     }
     case ActionTypes.SET_RECOMMENDED_APPS: {

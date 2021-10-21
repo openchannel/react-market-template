@@ -20,11 +20,16 @@ export interface Apps {
   selectedFilters: SelectedFilters;
   filteredApps: [] | FullAppData[];
   selectedApp: null | FullAppData;
+  appByVersion: null | FullAppData;
   recommendedApps: null | FullAppData[];
   currentForm: null | AppFormModelResponse;
 }
 
 export type Action =
+  | {
+      type: ActionTypes.SET_APP_BY_VERSION;
+      payload: FullAppData;
+    }
   | {
       type: ActionTypes.SET_CURRENT_FORM;
       payload: AppFormModelResponse;
