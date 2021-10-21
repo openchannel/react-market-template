@@ -267,7 +267,6 @@ export const getAppByVersion = (appId: string, version: number) => async (dispat
   dispatch(startLoading());
   try {
     const { data } = await AppVersionService.getAppByVersion(appId, version);
-    console.log('app By Version', data);
     dispatch(setAppByVersion(data));
     dispatch(finishLoading());
     return data;
