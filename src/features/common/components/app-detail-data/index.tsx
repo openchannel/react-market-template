@@ -225,7 +225,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                     {
                       //eslint-disable-next-line
                       appListingActions?.map((action: any, index: number) => (
-                        <ActionButton buttonAction={action} inProcess={false} key={index} />
+                        <ActionButton buttonAction={action} key={index} />
                       ))
                     }
                   </div>

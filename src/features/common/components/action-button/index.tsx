@@ -17,7 +17,6 @@ import './style.scss';
 
 export interface ActionButtonProps {
   buttonAction: ButtonAction;
-  inProcess: boolean;
 }
 
 interface IViewDataSelected {
@@ -26,7 +25,7 @@ interface IViewDataSelected {
 }
 
 export const ActionButton: React.FC<ActionButtonProps> = (props) => {
-  const { buttonAction, inProcess } = props;
+  const { buttonAction } = props;
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -36,6 +35,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
     viewData: null,
   });
   const [isModalOpened, setIsModalOpened] = React.useState(false);
+  const [inProcess, setInProcess] = React.useState(false);
 
   const onModalClose = React.useCallback(() => {
     setIsModalOpened(false);
@@ -73,7 +73,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
         await processForm(buttonAction as FormButtonAction);
         break;
       case 'install':
-        processOwnership();
+        await processOwnership();
         break;
       case 'download':
         downloadFile(buttonAction as DownloadButtonAction);
@@ -84,7 +84,9 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   };
 
   const processForm = async (formAction: FormButtonAction) => {
+    setInProcess(true);
     await dispatch(getForm(formAction));
+    setInProcess(false);
     setIsModalOpened(true);
   };
   //eslint-disable-next-line
@@ -126,10 +128,11 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
     }
   };
 
-  const installOwnership = (): void => {
+  const installOwnership = async () => {
     if (selectedApp && selectedApp?.model?.length > 0) {
       try {
-        dispatch(
+        setInProcess(true);
+        await dispatch(
           installApplication(
             {
               appId: selectedApp.appId,
@@ -138,6 +141,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
             selectedApp.safeName[0],
           ),
         );
+        setInProcess(false);
       } catch (error) {
         notify.error(viewData.viewData!.message!.fail);
       }
@@ -147,15 +151,17 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
     }
   };
 
-  const uninstallOwnership = (): void => {
+  const uninstallOwnership = async () => {
     if (selectedApp && selectedApp.ownership) {
       try {
-        dispatch(
+        setInProcess(true);
+        await dispatch(
           uninstallApplication(
             { ownershipId: selectedApp.ownership.ownershipId, appId: selectedApp.appId },
             selectedApp.safeName[0],
           ),
         );
+        setInProcess(false);
       } catch (error) {
         notify.error(viewData.viewData!.message!.fail);
       }
@@ -166,7 +172,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   return (
     <div className="action-button">
       <OcButtonComponent
-        type="none"
+        type="primary"
         customClass={viewData?.viewData?.button.class}
         text={viewData?.viewData?.button.text}
         process={inProcess}
