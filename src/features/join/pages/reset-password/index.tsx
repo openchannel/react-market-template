@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { OcResetPasswordComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
-import { getUserToken, invalidMassagePassword, validatePassword } from '../constants';
+import { getUserToken, invalidMassagePassword, LocationParams, validatePassword } from '../constants';
 import { useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { resetPassword } from '../../../common/store/session/actions';
@@ -15,7 +15,7 @@ const ResetPassword = (): JSX.Element => {
   const [validationError, setValidationError] = React.useState(false);
 
   const dispatch = useDispatch();
-  const location = useLocation();
+  const location = useLocation<LocationParams>();
   const history = useHistory();
 
   React.useEffect(() => {

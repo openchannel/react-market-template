@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { OcActivation } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
-import { getUserToken, requiredField } from '../constants';
+import { getUserToken, LocationParams, requiredField } from '../constants';
 import { isEmptyInputValue } from '@openchannel/react-common-components/dist/ui/form/lib';
 import { useDispatch } from 'react-redux';
 import { activeUserAccount } from '../../../common/store/session/actions';
@@ -9,14 +9,14 @@ import { useLocation } from 'react-router-dom';
 import './styles.scss';
 
 const ActivatePage = (): JSX.Element => {
-  const [inputValue, setInputValue] = React.useState('');
+  const location = useLocation<LocationParams>();
+  const userToken = getUserToken(location);
+  const [inputValue, setInputValue] = React.useState(userToken || '');
   const [inputError, setInputError] = React.useState('');
   const dispatch = useDispatch();
-  const location = useLocation();
 
   const onChange = React.useCallback((e: { target: HTMLInputElement }) => {
     setInputValue(e.target.value);
-    console.log('e.target.value', e.target.value);
     if (isEmptyInputValue(e.target.value)) {
       setInputError(requiredField);
     } else {
@@ -25,19 +25,19 @@ const ActivatePage = (): JSX.Element => {
   }, []);
 
   const onSubmit = React.useCallback(async () => {
-    if (isEmptyInputValue(inputValue)) {
+    if (!isEmptyInputValue(inputValue)) {
       try {
-        const userToken = getUserToken(location);
-        await dispatch(activeUserAccount(userToken || inputValue));
-      } catch {
-        //
+        await dispatch(activeUserAccount(inputValue));
+        // eslint-disable-next-line
+      } catch (e: any) {
+        setInputError(e.response?.data['validation-errors'][0].message);
       }
     }
     if (isEmptyInputValue(inputValue)) {
       setInputError(requiredField);
     }
-    console.log('1');
-  }, []);
+  }, [inputValue]);
+
   return (
     <div className="bg-container pt-sm-5">
       <div className="activation-position">
