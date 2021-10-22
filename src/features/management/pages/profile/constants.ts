@@ -21,13 +21,13 @@ export const formPassword = {
 
 export const formConfigsWithoutTypeData: OcEditUserFormConfig[] = [
   {
-    name: 'Default',
+    name: 'Custom',
     account: {
-      type: 'default',
+      type: 'custom-account-type',
       typeData: {
         fields: [],
       },
-      includeFields: ['name', 'email'],
+      includeFields: ['name', 'username', 'email', 'customData.about-me'],
     },
     organization: {
       type: '',
@@ -38,13 +38,13 @@ export const formConfigsWithoutTypeData: OcEditUserFormConfig[] = [
     },
   },
   {
-    name: 'Custom',
+    name: 'Default',
     account: {
-      type: 'custom-account-type',
+      type: 'default',
       typeData: {
         fields: [],
       },
-      includeFields: ['name', 'username', 'email', 'customData.about-me'],
+      includeFields: ['name', 'email'],
     },
     organization: {
       type: '',

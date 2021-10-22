@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
+import { omit } from 'lodash';
 
 import { MainTemplate } from '../../../common/templates';
 import { useDispatch } from 'react-redux';
@@ -52,9 +53,13 @@ const Profile = (): JSX.Element => {
   };
 
   const handleMyProfileSubmit = async (value: FormikValues, { setErrors }: FormikHelpers<FormikValues>) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    account.customData['about-me'] = value.customDataaboutme;
+    const newValues = omit(value, 'customDataaboutme');
     const next = {
       ...account,
-      ...value,
+      ...newValues,
     };
     try {
       await dispatch(saveUserData(next));

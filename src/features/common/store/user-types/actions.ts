@@ -7,7 +7,7 @@ import {
 } from '@openchannel/react-common-components';
 import { TypeMapperUtils, userAccount, userAccountTypes, users } from '@openchannel/react-common-services';
 import { Dispatch } from 'redux';
-import { cloneDeep, keyBy } from 'lodash';
+import { cloneDeep, keyBy, get } from 'lodash';
 import { normalizeError } from '../utils';
 import { defaultFormConfig } from './constants';
 import { FormikValues } from 'formik';
@@ -66,7 +66,11 @@ export const loadUserProfileForm =
     try {
       const { list: userAccountTypes } = await getUserAccountTypes(injectAccountTypes, configs);
       const { list: organizationTypes } = await getUserTypes(injectOrganizationTypes, configs);
+
       const account = await getUserAccount();
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      dispatch(saveAccount(account));
 
       const accTypes = keyBy(userAccountTypes, 'userAccountTypeId');
       const orgTypes = keyBy(organizationTypes, 'userTypeId');
@@ -97,9 +101,9 @@ export const loadUserProfileForm =
               }
             }
 
-            Object.entries(account).forEach(([key, value]) =>
-              config?.account?.typeData?.fields!.filter((f) => f.id === key).forEach((f) => (f.defaultValue = value)),
-            );
+            config.account.typeData.fields?.forEach((field) => {
+              field.defaultValue = get(account, field.id, '');
+            });
 
             return config;
           })
