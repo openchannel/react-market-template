@@ -9,6 +9,7 @@ import {
   CreateOwnershipModel,
   ReqHeaders,
   AppFormModelResponse,
+  AppVersionService,
 } from '@openchannel/react-common-services';
 import { Filter, FullAppData } from '@openchannel/react-common-components';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
@@ -54,6 +55,7 @@ const getApps = async (pageNumber: number, limit: number, sort?: string, filter?
   return data.list;
 };
 const setCurrentForm = (payload: AppFormModelResponse) => ({ type: ActionTypes.SET_CURRENT_FORM, payload });
+const setAppByVersion = (payload: FullAppData) => ({ type: ActionTypes.SET_APP_BY_VERSION, payload });
 
 const getAppsByFilters = async (filters: MappedFilter[]) => {
   const requests = filters.map(({ sort, query }) => getApps(1, 4, sort, query));
@@ -260,3 +262,16 @@ export const uninstallApplication =
       dispatch(finishLoading());
     }
   };
+
+export const getAppByVersion = (appId: string, version: number) => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+  try {
+    const { data } = await AppVersionService.getAppByVersion(appId, version);
+    dispatch(setAppByVersion(data));
+    dispatch(finishLoading());
+    return data;
+  } catch (error) {
+    dispatch(finishLoading());
+    throw error;
+  }
+};
