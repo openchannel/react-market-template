@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { OcLoginComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
+import { getSearchParams } from '../../../common/libs/helpers';
 import { nativeLogin } from '../../../common/store/session';
 import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
 import './styles.scss';
@@ -13,7 +14,7 @@ const noop = () => {};
 const LoginPage = (): JSX.Element => {
   const history = useHistory();
   const dispatch = useDispatch();
-
+  const searchParams = React.useMemo(() => getSearchParams(window.location.search), []);
   const [serverErrorValidation, setServerErrorValidation] = React.useState(false);
 
   const onSubmit = React.useCallback(
@@ -24,7 +25,7 @@ const LoginPage = (): JSX.Element => {
 
       try {
         await dispatch(nativeLogin({ email, password, isChecked: false }));
-        history.push('/');
+        Object.keys(searchParams).includes('returnUrl') ? history.push(searchParams.returnUrl) : history.push('/');
         // eslint-disable-next-line
       } catch (error: any) {
         if (error.response.data.code === 'VALIDATION') {

@@ -17,7 +17,6 @@ import './style.scss';
 
 export interface ActionButtonProps {
   buttonAction: ButtonAction;
-  inProcess: boolean;
 }
 
 interface IViewDataSelected {
@@ -26,29 +25,21 @@ interface IViewDataSelected {
 }
 
 export const ActionButton: React.FC<ActionButtonProps> = (props) => {
-  const { buttonAction, inProcess } = props;
+  const { buttonAction } = props;
 
   const dispatch = useDispatch();
   const history = useHistory();
-  const { selectedApp } = useTypedSelector(({ apps }) => apps);
+  const { selectedApp, currentForm } = useTypedSelector(({ apps }) => apps);
   const [viewData, setViewData] = React.useState<IViewDataSelected>({
     actionType: null,
     viewData: null,
   });
   const [isModalOpened, setIsModalOpened] = React.useState(false);
-  const [currentForm, setCurrentForm] = React.useState<AppFormModel>({});
+  const [inProcess, setInProcess] = React.useState(false);
 
   const onModalClose = React.useCallback(() => {
     setIsModalOpened(false);
   }, []);
-
-  const onFormSubmit = React.useCallback(
-    (values) => {
-      dispatch(submitForm(selectedApp!.appId, values));
-      setIsModalOpened(false);
-    },
-    [selectedApp],
-  );
 
   React.useEffect(() => {
     switch (buttonAction.type) {
@@ -76,13 +67,13 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
     }
   }, [selectedApp]);
 
-  const handleButtonClick = (): void => {
+  const handleButtonClick = async () => {
     switch (buttonAction.type) {
       case 'form':
-        processForm(buttonAction as FormButtonAction);
+        await processForm(buttonAction as FormButtonAction);
         break;
       case 'install':
-        processOwnership();
+        await processOwnership();
         break;
       case 'download':
         downloadFile(buttonAction as DownloadButtonAction);
@@ -93,12 +84,18 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   };
 
   const processForm = async (formAction: FormButtonAction) => {
-    // eslint-disable-next-line
-    const form: any = await dispatch(getForm(formAction));
-    setCurrentForm(form);
+    setInProcess(true);
+    await dispatch(getForm(formAction));
+    setInProcess(false);
     setIsModalOpened(true);
   };
-
+  //eslint-disable-next-line
+  const onFormSubmit = async (values: any) => {
+    if (currentForm !== null) {
+      await dispatch(submitForm(selectedApp!.appId, { ...values, formId: currentForm.formId }));
+      setIsModalOpened(false);
+    }
+  };
   const processOwnership = (): void => {
     if (isUserLoggedIn()) {
       switch (viewData.actionType) {
@@ -112,7 +109,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
           notify.error(`Error: invalid owned button type: ${buttonAction.type}`);
       }
     } else {
-      history.push(`/login?${window.location.pathname}`);
+      history.push(`/login?returnUrl=${window.location.pathname}`);
     }
   };
 
@@ -125,16 +122,17 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
       const fileDetails = await fileService.downloadFileDetails(file, {});
       fileService.getFileUrl(fileDetails.data.fileId).then((res) => window.open(res.data.url));
 
-      if (buttonAction.statistic) {
-        statisticService.record(buttonAction.statistic, selectedApp!.appId);
+      if (buttonAction.statistic && selectedApp) {
+        statisticService.record(buttonAction.statistic, selectedApp.appId, 1);
       }
     }
   };
 
-  const installOwnership = (): void => {
+  const installOwnership = async () => {
     if (selectedApp && selectedApp?.model?.length > 0) {
       try {
-        dispatch(
+        setInProcess(true);
+        await dispatch(
           installApplication(
             {
               appId: selectedApp.appId,
@@ -143,6 +141,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
             selectedApp.safeName[0],
           ),
         );
+        setInProcess(false);
       } catch (error) {
         notify.error(viewData.viewData!.message!.fail);
       }
@@ -152,20 +151,28 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
     }
   };
 
-  const uninstallOwnership = (): void => {
+  const uninstallOwnership = async () => {
     if (selectedApp && selectedApp.ownership) {
       try {
-        dispatch(uninstallApplication(selectedApp.ownership.ownershipId, selectedApp.safeName[0]));
+        setInProcess(true);
+        await dispatch(
+          uninstallApplication(
+            { ownershipId: selectedApp.ownership.ownershipId, appId: selectedApp.appId },
+            selectedApp.safeName[0],
+          ),
+        );
+        setInProcess(false);
       } catch (error) {
         notify.error(viewData.viewData!.message!.fail);
       }
       notify.success(viewData.viewData!.message!.success);
     }
   };
+
   return (
     <div className="action-button">
       <OcButtonComponent
-        type="none"
+        type="primary"
         customClass={viewData?.viewData?.button.class}
         text={viewData?.viewData?.button.text}
         process={inProcess}
@@ -175,7 +182,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
       <Modal isOpened={isModalOpened} onClose={onModalClose} className="modal-content" size="sm">
         <div className="action-button_modal">
           <div className="action-button_modal__header header">
-            <h2 className="action-button_modal__header-heading">{currentForm.name || ''}</h2>
+            <h2 className="action-button_modal__header-heading">{currentForm!.name || ''}</h2>
             <CloseIcon
               aria-label="close button"
               className="action-button_modal__header-close-icon"
@@ -183,7 +190,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
             />
           </div>
           <div className="action-button_modal__modal-body">
-            <OcForm formJsonData={currentForm} onSubmit={onFormSubmit} />
+            <OcForm formJsonData={currentForm as AppFormModel} onSubmit={onFormSubmit} />
           </div>
         </div>
       </Modal>

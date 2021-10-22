@@ -23,7 +23,7 @@ import InternetIcon from '../../../../../public/assets/img/internet.svg';
 import PadlockIcon from '../../../../../public/assets/img/padlock.svg';
 import EmailIcon from '../../../../../public/assets/img/icon-email.svg';
 import BubbleIcon from '../../../../../public/assets/img/speech-bubble.svg';
-import { fetchRecommendedApps, fetchSelectedApp } from '../../../apps/store/apps/actions';
+import { fetchRecommendedApps, fetchSelectedApp, statVisitApp } from '../../../apps/store/apps/actions';
 import DotsIcon from '../../../../../public/assets/img/dots-hr-icon.svg';
 import {
   fetchReviewByAppId,
@@ -70,6 +70,12 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     dispatch(fetchRecommendedApps());
     dispatch(fetchSorts());
   }, [app]);
+
+  React.useEffect(() => {
+    if (selectedApp !== null) {
+      dispatch(statVisitApp(selectedApp.appId));
+    }
+  }, []);
   const { recommendedApps, selectedApp } = useTypedSelector(({ apps }) => apps);
   const { reviewsByApp, sorts } = useTypedSelector(({ reviews }) => reviews);
   const { userId, isExist } = useTypedSelector(({ session }) => session);
@@ -109,8 +115,15 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     dispatch(fetchReviewByAppId(appId, sort?.value, filter?.value));
   };
 
-  const appRating = React.useMemo(() => selectedApp!.rating / 100, [selectedApp]);
-  const appReviewCount = React.useMemo(() => selectedApp!.reviewCount, [selectedApp]);
+  const appRating = React.useMemo(
+    () => (selectedApp && selectedApp.rating ? selectedApp.rating / 100 : 0),
+    [selectedApp],
+  );
+
+  const appReviewCount = React.useMemo(
+    () => (selectedApp && selectedApp.reviewCount ? selectedApp.rating / 100 : 0),
+    [selectedApp],
+  );
 
   const appGalleryImages = app.customData
     ? app?.customData?.images?.map((imageUrl: string) => {
@@ -219,7 +232,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                     {
                       //eslint-disable-next-line
                       appListingActions?.map((action: any, index: number) => (
-                        <ActionButton buttonAction={action} inProcess={false} key={index} />
+                        <ActionButton buttonAction={action} key={index} />
                       ))
                     }
                   </div>
@@ -235,9 +248,10 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
 
         <div className="row mb-0 mb-md-8 mt-3 mt-md-8">
           <OcAppDescription
-            showFullDescription
             appDescription={app?.customData.description as string}
             truncateTextLength={800}
+            shortDescription={false}
+            showFullDescription={false}
             header="About"
             headerClass="mb-2"
           />

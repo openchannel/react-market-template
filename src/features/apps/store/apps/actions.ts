@@ -4,9 +4,12 @@ import {
   frontend,
   AppResponse,
   formsService,
+  statisticService,
   ownershipService,
   CreateOwnershipModel,
   ReqHeaders,
+  AppFormModelResponse,
+  AppVersionService,
 } from '@openchannel/react-common-services';
 import { Filter, FullAppData } from '@openchannel/react-common-components';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
@@ -25,6 +28,11 @@ export interface CreateFormSubmissionModel {
   userId: string;
   email: string;
   formData: unknown;
+}
+
+export interface UninstallAppModel {
+  ownershipId: string;
+  appId: string;
 }
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
@@ -46,6 +54,8 @@ const getApps = async (pageNumber: number, limit: number, sort?: string, filter?
   const { data } = await apps.getApps(pageNumber, limit, sort, filter);
   return data.list;
 };
+const setCurrentForm = (payload: AppFormModelResponse) => ({ type: ActionTypes.SET_CURRENT_FORM, payload });
+const setAppByVersion = (payload: FullAppData) => ({ type: ActionTypes.SET_APP_BY_VERSION, payload });
 
 const getAppsByFilters = async (filters: MappedFilter[]) => {
   const requests = filters.map(({ sort, query }) => getApps(1, 4, sort, query));
@@ -91,6 +101,11 @@ export const clearSelectedFilters = () => (dispatch: Dispatch) => {
 
 export const clearFilteredApps = () => (dispatch: Dispatch) => {
   dispatch(resetFilteredApps());
+};
+
+export const statVisitApp = (appId: string) => async (dispatch: Dispatch) => {
+  await statisticService.recordVisitToApp(appId);
+  dispatch(finishLoading());
 };
 
 export const fetchGalleries = () => async (dispatch: Dispatch) => {
@@ -155,11 +170,11 @@ export const clearMyApps = () => (dispatch: Dispatch) => {
   dispatch(resetMyApps());
 };
 
-export const fetchSelectedApp = (safename: string) => async (dispatch: Dispatch) => {
+export const fetchSelectedApp = (safename: string, appId?: string) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
-
   try {
-    const { data } = await apps.getAppBySafeName(safename);
+    const { data } =
+      appId && appId.length > 0 && !safename ? await apps.getAppById(appId) : await apps.getAppBySafeName(safename);
     dispatch(setSelectedApp(data));
     dispatch(finishLoading());
   } catch (error) {
@@ -186,9 +201,9 @@ export const fetchRecommendedApps = () => async (dispatch: Dispatch) => {
 export const getForm = (formAction: FormButtonAction) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
   try {
-    const { data } = await formsService.getForm(formAction?.formId);
+    const { data } = await formsService.getForm(formAction.formId);
+    dispatch(setCurrentForm(data));
     dispatch(finishLoading());
-    return data;
   } catch (error) {
     dispatch(finishLoading());
     throw error;
@@ -224,6 +239,7 @@ export const installApplication =
       if (res.data) {
         const { data } = await apps.getAppBySafeName(safename);
         dispatch(setSelectedApp(data));
+        await statisticService.record('installs', ownership.appId, 1);
       }
       dispatch(finishLoading());
     } catch (error) {
@@ -232,16 +248,30 @@ export const installApplication =
   };
 
 export const uninstallApplication =
-  (ownershipId: string, safename: string, headers?: ReqHeaders) => async (dispatch: Dispatch) => {
+  (ownership: UninstallAppModel, safename: string, headers?: ReqHeaders) => async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const res = await ownershipService.uninstallOwnership(ownershipId, headers);
+      const res = await ownershipService.uninstallOwnership(ownership.ownershipId, headers);
       if (res.data) {
         const { data } = await apps.getAppBySafeName(safename);
         dispatch(setSelectedApp(data));
+        await statisticService.record('installs', ownership.appId, -1);
       }
       dispatch(finishLoading());
     } catch (error) {
       dispatch(finishLoading());
     }
   };
+
+export const getAppByVersion = (appId: string, version: number) => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+  try {
+    const { data } = await AppVersionService.getAppByVersion(appId, version);
+    dispatch(setAppByVersion(data));
+    dispatch(finishLoading());
+    return data;
+  } catch (error) {
+    dispatch(finishLoading());
+    throw error;
+  }
+};
