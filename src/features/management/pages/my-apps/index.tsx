@@ -14,6 +14,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import dots from '../../../../../public/assets/img/dots-hr-icon.svg';
 
 import './styles.scss';
+import { FullAppData } from '@openchannel/react-common-components';
 
 declare type Option = {
   label: string;
@@ -77,7 +78,9 @@ export const MyAppsPage: React.FC = () => {
 
   const handleShowOptionSelect = (v?: Option) => loadApps(1, v?.value);
 
-  const handleClickByApp = () => {};
+  const handleClickByApp = (e: FullAppData) => {
+    history.push(`/details/${e.safeName[0]}`);
+  };
 
   const handleAppAction = () => {};
 
