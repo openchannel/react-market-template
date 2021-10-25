@@ -159,6 +159,7 @@ export const getUserCompanyForm = () => async (dispatch: Dispatch) => {
 
 export const clearUserCompanyForm = () => (dispatch: Dispatch) => dispatch(resetCompanyForm());
 
+// eslint-disable-next-line
 export const saveUserCompany = (value: any) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
 

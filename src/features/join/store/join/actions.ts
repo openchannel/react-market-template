@@ -92,6 +92,7 @@ export const sendInvite = (payload: SignUpByInviteRequest) => async (dispatch: T
     // remove existed session. issue - AT-1082
     await dispatch(logout());
   } catch (error: unknown) {
+    // eslint-disable-next-line
     (error as { response: { data?: { errors?: [{ message: string }] } } }).response.data?.errors?.forEach((err: any) =>
       notify.error(err.message),
     );
