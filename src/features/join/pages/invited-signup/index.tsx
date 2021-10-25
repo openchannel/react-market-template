@@ -75,38 +75,33 @@ const InvitedSignUpPage = (): JSX.Element => {
   return (
     <div className="bg-container pt-sm-5">
       <div ref={formWrapperRef} className="signup-position">
-          {isExpired && <h5 className="text-primary">Sorry! Your invite token has been expired!</h5>}
-          {!isExpired && formConfigs.length > 0 && (
-              <OcSignupComponent
-                  formConfigs={formConfigs}
-                  onSubmit={onSubmit}
-                  companyLogoUrl={companyLogo}
-                  enablePasswordField={false}
-                  enableTermsCheckbox
-                  ordinaryTermsDescription={(
-                      <div className="font-s">
-                        I agree to&nbsp;
-                        <a
-                            className="font-s font-med"
-                            href={TERMS_OF_SERVICE_LINK}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                          Terms of Service
-                        </a>
-                        &nbsp;and&nbsp;
-                        <a
-                            className="font-s font-med"
-                            href={DATA_PROCESSING_POLICY_LINK}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                          Data Processing Policy
-                        </a>
-                      </div>
-                  )}
-              />
-          )}
+        {isExpired && <h5 className="text-primary">Sorry! Your invite token has been expired!</h5>}
+        {!isExpired && formConfigs.length > 0 && (
+          <OcSignupComponent
+            formConfigs={formConfigs}
+            onSubmit={onSubmit}
+            companyLogoUrl={companyLogo}
+            enablePasswordField={false}
+            enableTermsCheckbox
+            ordinaryTermsDescription={
+              <div className="font-s">
+                I agree to&nbsp;
+                <a className="font-s font-med" href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noopener noreferrer">
+                  Terms of Service
+                </a>
+                &nbsp;and&nbsp;
+                <a
+                  className="font-s font-med"
+                  href={DATA_PROCESSING_POLICY_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Data Processing Policy
+                </a>
+              </div>
+            }
+          />
+        )}
       </div>
     </div>
   );

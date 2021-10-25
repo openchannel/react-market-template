@@ -3,7 +3,8 @@ import {
   InviteUserModel,
   userAccountTypes,
   userInvites,
-  nativeLogin, SignUpByInviteRequest,
+  nativeLogin,
+  SignUpByInviteRequest,
 } from '@openchannel/react-common-services';
 
 import { GetState, TypedDispatch } from 'types';
@@ -27,7 +28,7 @@ const getUserAccountFormType = async (userInviteData: InviteUserModel) => {
         fields: mapDataToField(data.fields, userInviteData),
       };
     } catch {
-      console.error('Can\'t load UserAccountType');
+      console.error("Can't load UserAccountType");
       // return config which is presented bellow
     }
   }
@@ -74,7 +75,7 @@ export const getUserInviteInfoByToken = (token: string) => async (dispatch: Type
           type: 'account-type',
           typeData: formConfig,
         },
-      }
+      },
     };
   } catch {
     return {
@@ -90,9 +91,10 @@ export const sendInvite = (payload: SignUpByInviteRequest) => async (dispatch: T
     await nativeLogin.signupByInvite({ userCustomData: payload, inviteToken: userInviteData!.token! });
     // remove existed session. issue - AT-1082
     await dispatch(logout());
-
   } catch (error: unknown) {
-    (error as { response: { data?: { errors?: [ { message: string; } ] } } }).response.data?.errors?.forEach((err: any) => notify.error(err.message));
+    (error as { response: { data?: { errors?: [{ message: string }] } } }).response.data?.errors?.forEach((err: any) =>
+      notify.error(err.message),
+    );
     throw error;
   }
 };
