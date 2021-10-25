@@ -5,6 +5,7 @@ import {
   userInvites,
   nativeLogin,
   SignUpByInviteRequest,
+  storage,
 } from '@openchannel/react-common-services';
 
 import { GetState, TypedDispatch } from 'types';
@@ -89,8 +90,11 @@ export const sendInvite = (payload: SignUpByInviteRequest) => async (dispatch: T
 
   try {
     await nativeLogin.signupByInvite({ userCustomData: payload, inviteToken: userInviteData!.token! });
-    // remove existed session. issue - AT-1082
-    await dispatch(logout());
+
+    if (storage.isUserLoggedIn()) {
+      // remove existed session. issue - AT-1082
+      await dispatch(logout());
+    }
   } catch (error: unknown) {
     // eslint-disable-next-line
     (error as { response: { data?: { errors?: [{ message: string }] } } }).response.data?.errors?.forEach((err: any) =>
