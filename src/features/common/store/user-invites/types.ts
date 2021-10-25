@@ -10,7 +10,8 @@ export type UserInvites = {
   userProperties: UsersGridParametersModel;
 };
 
-export type Action = {
+export type Action =
+  | {
       type: ActionTypes.SET_LIST_ROLES;
       payload: UserRoles;
     }

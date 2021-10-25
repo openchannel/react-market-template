@@ -1,4 +1,3 @@
-import { ActionTypes } from './action-types';
 import {
   OcEditUserFormConfig,
   OcEditUserResult,
@@ -7,10 +6,12 @@ import {
 } from '@openchannel/react-common-components';
 import { TypeMapperUtils, userAccount, userAccountTypes, users } from '@openchannel/react-common-services';
 import { Dispatch } from 'redux';
-import { cloneDeep, keyBy } from 'lodash';
+import { cloneDeep, keyBy, get } from 'lodash';
+
 import { normalizeError } from '../utils';
+
+import { ActionTypes } from './action-types';
 import { defaultFormConfig } from './constants';
-import { FormikValues } from 'formik';
 
 const EMPTY_TYPE_RESPONSE = {
   list: [],
@@ -29,7 +30,7 @@ const saveCompanyForm = (companyForm: TypeModel<TypeFieldModel>) => ({
 });
 const resetCompanyForm = () => ({ type: ActionTypes.RESET_USER_COMPANY_FORM });
 
-export const getUserTypes = async (injectOrganizationType: boolean, configs: OcEditUserFormConfig[]) => {
+const getUserTypes = async (injectOrganizationType: boolean, configs: OcEditUserFormConfig[]) => {
   if (injectOrganizationType) {
     const orgTypesIDs = configs.map((config) => config?.organization?.type).filter((type) => type);
     const searchQuery = orgTypesIDs?.length > 0 ? `{'userTypeId':{'$in': ['${orgTypesIDs.join("','")}']}}` : '';
@@ -44,7 +45,7 @@ export const getUserTypes = async (injectOrganizationType: boolean, configs: OcE
   return EMPTY_TYPE_RESPONSE;
 };
 
-export const getUserAccountTypes = async (injectAccountType: boolean, configs: OcEditUserFormConfig[]) => {
+const getUserAccountTypes = async (injectAccountType: boolean, configs: OcEditUserFormConfig[]) => {
   if (injectAccountType) {
     const accTypesIDs = configs.map((config) => config?.account?.type).filter((type) => type);
     const searchQuery = accTypesIDs?.length > 0 ? `{'userAccountTypeId':{'$in': ['${accTypesIDs.join("','")}']}}` : '';
@@ -66,29 +67,18 @@ export const loadUserProfileForm =
     try {
       const { list: userAccountTypes } = await getUserAccountTypes(injectAccountTypes, configs);
       const { list: organizationTypes } = await getUserTypes(injectOrganizationTypes, configs);
-      const account = await getUserAccount();
+      const { data: account } = await userAccount.getUserAccount();
 
       const accTypes = keyBy(userAccountTypes, 'userAccountTypeId');
       const orgTypes = keyBy(organizationTypes, 'userTypeId');
 
-      if (injectAccountTypes || injectAccountTypes) {
-        const newConfigs: OcEditUserFormConfig[] = cloneDeep(configs)
-          .map((config) => {
-            const accountTypeData = accTypes[config?.account?.type];
-            const organizationTypeData = orgTypes[config?.organization?.type];
+      const newConfigs: OcEditUserFormConfig[] = cloneDeep(configs)
+        .map((config) => {
+          if (injectOrganizationTypes) {
+            if (config?.organization?.type) {
+              const organizationTypeData = orgTypes[config.organization.type];
 
-            // put account type
-            if (injectAccountTypes) {
-              if (accountTypeData) {
-                config.account.typeData = accountTypeData as TypeModel<TypeFieldModel>;
-              } else {
-                console.error(config.account.type, ' is not a valid user account type');
-                return null;
-              }
-            }
-
-            // put organization type
-            if (injectOrganizationTypes) {
+              // put organization type
               if (organizationTypeData) {
                 config.organization.typeData = organizationTypeData as TypeModel<TypeFieldModel>;
               } else {
@@ -96,20 +86,28 @@ export const loadUserProfileForm =
                 return null;
               }
             }
+          }
 
-            Object.entries(account).forEach(([key, value]) =>
-              config?.account?.typeData?.fields!.filter((f) => f.id === key).forEach((f) => (f.defaultValue = value)),
-            );
+          // put account type
+          if (injectAccountTypes) {
+            const accountTypeData = accTypes[config.account.type];
+            if (accountTypeData) {
+              config.account.typeData = accountTypeData as TypeModel<TypeFieldModel>;
+            } else {
+              console.error(config.account.type, ' is not a valid user account type');
+              return null;
+            }
 
-            return config;
-          })
-          .filter((v) => v != null)
-          .map((v) => v!);
-        dispatch(saveConfig(newConfigs));
-      } else {
-        dispatch(saveConfig([]));
-      }
+            config.account.typeData.fields?.forEach((field) => {
+              field.defaultValue = get(account, field.id, '');
+            });
+          }
 
+          return config;
+        })
+        .filter(Boolean) as OcEditUserFormConfig[];
+
+      dispatch(saveConfig(newConfigs));
       dispatch(finishLoading());
     } catch (error) {
       dispatch(finishLoading());
@@ -161,7 +159,7 @@ export const getUserCompanyForm = () => async (dispatch: Dispatch) => {
 
 export const clearUserCompanyForm = () => (dispatch: Dispatch) => dispatch(resetCompanyForm());
 
-export const saveUserCompany = (value: FormikValues) => async (dispatch: Dispatch) => {
+export const saveUserCompany = (value: any) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
 
   try {
