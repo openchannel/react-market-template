@@ -4,7 +4,7 @@ import {
   TypeFieldModel,
   TypeModel,
 } from '@openchannel/react-common-components';
-import { TypeMapperUtils, userAccount, userAccountTypes, users } from '@openchannel/react-common-services';
+import { TypeMapperUtils, UserAccount, userAccount, userAccountTypes, users } from '@openchannel/react-common-services';
 import { Dispatch } from 'redux';
 import { cloneDeep, keyBy, get } from 'lodash';
 import { normalizeError } from '../utils';
@@ -21,7 +21,7 @@ const EMPTY_TYPE_RESPONSE = {
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
 const saveConfig = (configs: OcEditUserFormConfig[]) => ({ type: ActionTypes.GET_USER_CONFIG, payload: { configs } });
-const saveAccount = (account: OcEditUserResult) => ({ type: ActionTypes.GET_USER_ACCOUNT, payload: { account } });
+const saveAccount = (account: UserAccount) => ({ type: ActionTypes.GET_USER_ACCOUNT, payload: { account } });
 const saveCompanyForm = (companyForm: TypeModel<TypeFieldModel>) => ({
   type: ActionTypes.GET_USER_COMPANY_FORM,
   payload: { companyForm },
@@ -43,7 +43,7 @@ const getUserTypes = async (injectOrganizationType: boolean, configs: OcEditUser
   return EMPTY_TYPE_RESPONSE;
 };
 
-const getUserAccountTypes = async (injectAccountType: boolean, configs: OcEditUserFormConfig[]) => {
+export const getUserAccountTypes = async (injectAccountType: boolean, configs: OcEditUserFormConfig[]) => {
   if (injectAccountType) {
     const accTypesIDs = configs.map((config) => config?.account?.type).filter((type) => type);
     const searchQuery = accTypesIDs?.length > 0 ? `{'userAccountTypeId':{'$in': ['${accTypesIDs.join("','")}']}}` : '';
@@ -67,8 +67,6 @@ export const loadUserProfileForm =
       const { list: organizationTypes } = await getUserTypes(injectOrganizationTypes, configs);
       const { data: account } = await userAccount.getUserAccount();
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       dispatch(saveAccount(account));
       const accTypes = keyBy(userAccountTypes, 'userAccountTypeId');
       const orgTypes = keyBy(organizationTypes, 'userTypeId');
