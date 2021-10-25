@@ -3,6 +3,7 @@ import React from 'react';
 const LoginPage = React.lazy(() => import('./pages/login'));
 const ForgotPasswordPage = React.lazy(() => import('./pages/forgot-password'));
 const ResetPasswordPage = React.lazy(() => import('./pages/reset-password'));
+const InvitedSignUpPage = React.lazy(() => import('./pages/invited-signup'));
 
 export const joinRoutes = [
   {
@@ -22,5 +23,9 @@ export const joinRoutes = [
     exact: true,
     private: true,
     Component: ResetPasswordPage,
+  },
+  {
+    path: '/invite/:inviteId',
+    Component: InvitedSignUpPage,
   },
 ];
