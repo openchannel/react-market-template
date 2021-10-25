@@ -8,6 +8,7 @@ import {
   userInvitesReducer as userInvites,
 } from './features/common/store';
 import { appsReducer as apps } from './features/apps/store';
+import { joinReducer as join } from './features/join/store';
 import { reviewsReducer as reviews } from './features/reviews/store';
 
 export const rootReducer = combineReducers({
@@ -18,4 +19,5 @@ export const rootReducer = combineReducers({
   session,
   userTypes,
   userInvites,
+  join,
 });
