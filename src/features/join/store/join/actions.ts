@@ -1,30 +1,33 @@
+import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import {
   InviteUserModel,
-  UserAccountTypeModel,
   userAccountTypes,
   userInvites,
+  nativeLogin, SignUpByInviteRequest,
 } from '@openchannel/react-common-services';
 
-import { TypedDispatch } from 'types';
+import { GetState, TypedDispatch } from 'types';
+import { logout } from '../../../common/store/session/actions';
 import { mapDataToField } from '../../utils';
+
 import { ActionTypes } from './action-types';
 
-export const setUserInviteData = (payload: UserAccountTypeModel) => ({
+export const setUserInviteData = (payload: InviteUserModel) => ({
   type: ActionTypes.SET_USER_INVITES_DATA,
   payload,
 });
 
-const getFormType = (userInviteData: InviteUserModel) => async (dispatch: TypedDispatch) => {
+const getUserAccountFormType = async (userInviteData: InviteUserModel) => {
   if (userInviteData.type) {
     try {
       const { data } = await userAccountTypes.getUserAccountType(userInviteData.type);
 
-      dispatch(setUserInviteData(data));
-
       return {
+        ...data,
         fields: mapDataToField(data.fields, userInviteData),
       };
     } catch {
+      console.error('Can\'t load UserAccountType');
       // return config which is presented bellow
     }
   }
@@ -59,15 +62,37 @@ export const getUserInviteInfoByToken = (token: string) => async (dispatch: Type
   try {
     const { data } = await userInvites.getUserInviteInfoByToken(token);
 
-    const formConfig = await getFormType(data)(dispatch);
+    dispatch(setUserInviteData(data));
+
+    const formConfig = await getUserAccountFormType(data);
 
     return {
       isExpired: data.expireDate ? new Date(data.expireDate) < new Date() : false,
-      formConfig,
+      formConfig: {
+        name: 'sign-up',
+        account: {
+          type: 'account-type',
+          typeData: formConfig,
+        },
+      }
     };
   } catch {
     return {
       redirect: true,
     };
+  }
+};
+
+export const sendInvite = (payload: SignUpByInviteRequest) => async (dispatch: TypedDispatch, getState: GetState) => {
+  const { userInviteData } = getState().join;
+
+  try {
+    await nativeLogin.signupByInvite({ userCustomData: payload, inviteToken: userInviteData!.token! });
+    // remove existed session. issue - AT-1082
+    await dispatch(logout());
+
+  } catch (error: unknown) {
+    (error as { response: { data?: { errors?: [ { message: string; } ] } } }).response.data?.errors?.forEach((err: any) => notify.error(err.message));
+    throw error;
   }
 };

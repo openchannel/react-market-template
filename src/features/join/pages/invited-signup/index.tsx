@@ -1,31 +1,28 @@
 import * as React from 'react';
+import { merge } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import {
-  OcError,
-  OcButtonComponent,
-  OcLabelComponent,
-  OcCheckboxComponent,
-} from '@openchannel/react-common-components/dist/ui/common/atoms';
-import { AppFormModel } from '@openchannel/react-common-components';
-import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
+import { OcEditUserFormConfig } from '@openchannel/react-common-components';
+import { OcSignupComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 
 import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
+import { useTypedSelector } from 'features/common/hooks';
 
-import { getUserInviteInfoByToken } from '../../store/join';
+import { getUserInviteInfoByToken, sendInvite } from '../../store/join';
 
 import './styles.scss';
 
-// todo: connect 'terms' control with oc-form
-// todo: add 'disabled' attr to the fields or use Ref to find email field and disable it
+const TERMS_OF_SERVICE_LINK = 'https://my.openchannel.io/terms-of-service';
+const DATA_PROCESSING_POLICY_LINK = 'https://my.openchannel.io/data-processing-policy';
 
 const InvitedSignUpPage = (): JSX.Element => {
   const { inviteId } = useParams<{ inviteId?: string }>();
   const history = useHistory();
   const dispatch = useDispatch();
-  const [formConfig, setFormConfig] = React.useState<AppFormModel>();
+  const [formConfigs, setFormConfigs] = React.useState<OcEditUserFormConfig[]>([]);
   const [isExpired, setIsExpired] = React.useState(false);
-  const [isTermsChecked, setTermsChecked] = React.useState(false);
+  const formWrapperRef = React.useRef<HTMLDivElement>(null);
+  const userInviteData = useTypedSelector(({ join }) => join.userInviteData);
 
   React.useEffect(() => {
     if (!inviteId) {
@@ -37,7 +34,7 @@ const InvitedSignUpPage = (): JSX.Element => {
       const { redirect, isExpired, formConfig } = info as unknown as {
         redirect: boolean;
         isExpired: boolean;
-        formConfig: AppFormModel;
+        formConfig: OcEditUserFormConfig;
       };
 
       if (redirect) {
@@ -45,73 +42,71 @@ const InvitedSignUpPage = (): JSX.Element => {
       }
 
       setIsExpired(isExpired);
-      setFormConfig(formConfig);
+      setFormConfigs([formConfig]);
     };
 
     loadInfo();
   }, []);
 
-  const onChangeTerms = React.useCallback(() => {
-    setTermsChecked((prev) => !prev);
-  }, []);
+  React.useEffect(() => {
+    if (formConfigs.length > 0 && formWrapperRef.current) {
+      // disable email input after form is mounted
+      setTimeout(() => {
+        const emailInput = formWrapperRef.current!.querySelector('#email')!;
+        emailInput.setAttribute('disabled', 'true');
+      }, 0);
+    }
+  }, [formConfigs]);
 
   const onSubmit = React.useCallback(
-    (values) => {
-      // todo: add terms check and send request
-      if (!isTermsChecked) {
-        return;
-      }
+    async (values, { setSubmitting }) => {
+      delete values.terms;
 
-      // const request = merge(this.userInviteData, this.formResultData);
+      try {
+        await dispatch(sendInvite(merge(userInviteData, values)));
+        history.replace('/login');
+      } catch {
+        setSubmitting(false);
+      }
     },
-    [isTermsChecked],
+    [userInviteData, history.replace],
   );
 
   return (
     <div className="bg-container pt-sm-5">
-      <div className="card border-card signup-position">
-        <div className="card-body">
+      <div ref={formWrapperRef} className="signup-position">
           {isExpired && <h5 className="text-primary">Sorry! Your invite token has been expired!</h5>}
-          {!isExpired && formConfig && (
-            <>
-              <div className="text-center">
-                <img alt="Company" className="img-fluid mb-4 company-logo" src={companyLogo} />
-              </div>
-              <div className="text-center">
-                <h4 className="mb-1">Sign Up</h4>
-                <OcLabelComponent className="mb-3">Enter your account details below</OcLabelComponent>
-              </div>
-              <OcForm formJsonData={formConfig} onSubmit={onSubmit} successButtonText="Sign Up" />
-              <div className="form-group">
-                <div className="d-flex align-items-start">
-                  <OcCheckboxComponent onClick={onChangeTerms} checked={isTermsChecked} />
-                  <div className="font-s">
-                    I agree to&nbsp;
-                    <a
-                      className="font-s font-med"
-                      href="https://my.openchannel.io/terms-of-service"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Terms of Service
-                    </a>
-                    &nbsp;and&nbsp;
-                    <a
-                      className="font-s font-med"
-                      href="https://my.openchannel.io/data-processing-policy"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Data Processing Policy
-                    </a>
-                  </div>
-                  <OcError />
-                </div>
-              </div>
-              {/*<OcButtonComponent customClass="btn-block mt-5" type="primary" text="Sign Up" />*/}
-            </>
+          {!isExpired && formConfigs.length > 0 && (
+              <OcSignupComponent
+                  formConfigs={formConfigs}
+                  onSubmit={onSubmit}
+                  companyLogoUrl={companyLogo}
+                  enablePasswordField={false}
+                  enableTermsCheckbox
+                  ordinaryTermsDescription={(
+                      <div className="font-s">
+                        I agree to&nbsp;
+                        <a
+                            className="font-s font-med"
+                            href={TERMS_OF_SERVICE_LINK}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                          Terms of Service
+                        </a>
+                        &nbsp;and&nbsp;
+                        <a
+                            className="font-s font-med"
+                            href={DATA_PROCESSING_POLICY_LINK}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                          Data Processing Policy
+                        </a>
+                      </div>
+                  )}
+              />
           )}
-        </div>
       </div>
     </div>
   );
