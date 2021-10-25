@@ -8,10 +8,8 @@ import { TypeMapperUtils, userAccount, userAccountTypes, users } from '@openchan
 import { Dispatch } from 'redux';
 import { cloneDeep, keyBy, get } from 'lodash';
 import { normalizeError } from '../utils';
-
 import { ActionTypes } from './action-types';
 import { defaultFormConfig } from './constants';
-import { FormikValues } from 'formik';
 
 const EMPTY_TYPE_RESPONSE = {
   list: [],
@@ -69,11 +67,9 @@ export const loadUserProfileForm =
       const { list: organizationTypes } = await getUserTypes(injectOrganizationTypes, configs);
       const { data: account } = await userAccount.getUserAccount();
 
-      const accountUser = await getUserAccount();
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      dispatch(saveAccount(accountUser));
-
+      dispatch(saveAccount(account));
       const accTypes = keyBy(userAccountTypes, 'userAccountTypeId');
       const orgTypes = keyBy(organizationTypes, 'userTypeId');
 
