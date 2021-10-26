@@ -110,8 +110,6 @@ const Profile = (): JSX.Element => {
             {isSelectedPage === 'myProfile' && (
               <OcEditUserFormComponent
                 formConfigs={configs}
-                defaultEmptyConfigsErrorMessage=""
-                enableCustomTerms
                 onSubmit={handleMyProfileSubmit}
                 enableTypesDropdown={true}
                 submitText="Save"
