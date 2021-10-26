@@ -5,15 +5,17 @@ import { getUserToken, LocationParams, requiredField } from '../constants';
 import { isEmptyInputValue } from '@openchannel/react-common-components/dist/ui/form/lib';
 import { useDispatch } from 'react-redux';
 import { activeUserAccount } from '../../../common/store/session/actions';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import './styles.scss';
 
 const ActivatePage = (): JSX.Element => {
   const location = useLocation<LocationParams>();
   const userToken = getUserToken(location);
+  const [loadingRequest, setLoadingRequest] = React.useState(false);
   const [inputValue, setInputValue] = React.useState(userToken || '');
   const [inputError, setInputError] = React.useState('');
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const onChange = React.useCallback((e: { target: HTMLInputElement }) => {
     setInputValue(e.target.value);
@@ -27,10 +29,17 @@ const ActivatePage = (): JSX.Element => {
   const onSubmit = React.useCallback(async () => {
     if (!isEmptyInputValue(inputValue)) {
       try {
+        setLoadingRequest(true);
         await dispatch(activeUserAccount(inputValue));
+        history.push('/login');
+        setInputValue('');
+        setLoadingRequest(false);
         // eslint-disable-next-line
       } catch (e: any) {
-        setInputError(e.response?.data['validation-errors'][0].message);
+        if (e.response?.status === 400) {
+          setInputError(e.response?.data['validation-errors'][0].message);
+          setLoadingRequest(false);
+        }
       }
     }
     if (isEmptyInputValue(inputValue)) {
@@ -51,6 +60,7 @@ const ActivatePage = (): JSX.Element => {
           }}
           inputError={inputError}
           handleButtonClick={onSubmit}
+          process={loadingRequest}
         />
       </div>
     </div>
