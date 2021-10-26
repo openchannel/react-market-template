@@ -1,3 +1,4 @@
+import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import {
   InviteUserModel,
   userAccountTypes,
@@ -95,6 +96,17 @@ export const sendInvite = (payload: SignUpByInviteRequest) => async (dispatch: T
       // remove existed session. issue - AT-1082
       await dispatch(logout());
     }
+  } catch (e) {
+    notifyErrorResp(e);
+    throw e;
+  }
+};
+
+export const sendActivationCode = (email: string) => async () => {
+  try {
+    await nativeLogin.sendActivationCode(email);
+
+    notify.success('Activation email was sent to your inbox!');
   } catch (e) {
     notifyErrorResp(e);
     throw e;

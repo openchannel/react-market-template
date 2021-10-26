@@ -1,41 +1,52 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { OcLoginComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
+import { OcLoginComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 
-import { getSearchParams } from '../../../common/libs/helpers';
-import { nativeLogin } from '../../../common/store/session';
+import { ErrorResponse } from 'types';
+import { nativeLogin } from 'features/common/store/session';
+import { getSearchParams } from 'features/common/libs/helpers';
+import { sendActivationCode } from '../../store/join';
+
 import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
 import './styles.scss';
-
-const noop = () => {};
 
 const LoginPage = (): JSX.Element => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const searchParams = React.useMemo(() => getSearchParams(window.location.search), []);
   const [serverErrorValidation, setServerErrorValidation] = React.useState(false);
+  const [isUnverifiedEmail, setIsUnverifiedEmail] = React.useState(false);
+  const searchParams = React.useMemo(() => getSearchParams(window.location.search), []);
+
+  const onActivationLinkClick = React.useCallback((email) => {
+    dispatch(sendActivationCode(email));
+  }, []);
 
   const onSubmit = React.useCallback(
-    async ({ email, password }: { email: string; password: string }) => {
+    async ({ email, password, remember }: { email: string; password: string; remember: boolean }) => {
       if (serverErrorValidation) {
         setServerErrorValidation(false);
       }
+      if (isUnverifiedEmail) {
+        setIsUnverifiedEmail(false);
+      }
 
       try {
-        await dispatch(nativeLogin({ email, password, isChecked: false }));
+        await dispatch(nativeLogin({ email, password, isChecked: remember }));
         Object.keys(searchParams).includes('returnUrl') ? history.push(searchParams.returnUrl) : history.push('/');
-        // eslint-disable-next-line
-      } catch (error: any) {
-        if (error.response.data.code === 'VALIDATION') {
+      } catch (e) {
+        const error = e as ErrorResponse;
+        if (error.response.data?.errors?.find((e) => e.code?.includes('_incorrect'))) {
           setServerErrorValidation(true);
+        } else if (error.response.data?.errors?.find((e) => e.code === 'email_not_verified')) {
+          setIsUnverifiedEmail(true);
         } else {
-          notify.error(error.response.data.message);
+          notify.error(error.response.data?.message);
         }
       }
     },
-    [history, serverErrorValidation],
+    [history, serverErrorValidation, searchParams],
   );
 
   return (
@@ -45,9 +56,10 @@ const LoginPage = (): JSX.Element => {
           signupUrl="/signup"
           forgotPwdUrl="/forgot-password"
           handleSubmit={onSubmit}
-          onActivationLinkClick={noop}
+          onActivationLinkClick={onActivationLinkClick}
           companyLogoUrl={companyLogo}
           isIncorrectEmail={serverErrorValidation}
+          isUnverifiedEmail={isUnverifiedEmail}
         />
       </div>
     </div>
