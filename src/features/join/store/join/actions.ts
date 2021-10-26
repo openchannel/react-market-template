@@ -1,4 +1,3 @@
-import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import {
   InviteUserModel,
   userAccountTypes,
@@ -9,7 +8,8 @@ import {
 } from '@openchannel/react-common-services';
 
 import { GetState, TypedDispatch } from 'types';
-import { logout } from '../../../common/store/session/actions';
+import { logout } from 'features/common/store/session';
+import { notifyErrorResp } from 'features/common/libs/helpers';
 import { mapDataToField } from '../../utils';
 
 import { ActionTypes } from './action-types';
@@ -95,11 +95,8 @@ export const sendInvite = (payload: SignUpByInviteRequest) => async (dispatch: T
       // remove existed session. issue - AT-1082
       await dispatch(logout());
     }
-  } catch (error: unknown) {
-    // eslint-disable-next-line
-    (error as { response: { data?: { errors?: [{ message: string }] } } }).response.data?.errors?.forEach((err: any) =>
-      notify.error(err.message),
-    );
-    throw error;
+  } catch (e) {
+    notifyErrorResp(e);
+    throw e;
   }
 };
