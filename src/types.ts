@@ -11,8 +11,12 @@ export interface ErrorResponse {
     data: {
       code: string;
       status: number;
-      errors?: { message: string }[];
-      message?: string;
+      message: string;
+      errors?: {
+        fields?: string;
+        code?: string;
+        message?: string;
+      }[];
       'validation-errors'?: {
         field: string;
         message: string;

@@ -25,7 +25,11 @@ export const notifyErrorResp = (e: unknown) => {
   const validationErrors = data?.['validation-errors'];
 
   if (data?.errors) {
-    data?.errors?.forEach((err) => notify.error(err.message));
+    data.errors.forEach((err) => {
+      if (err.message) {
+        notify.error(err.message);
+      }
+    });
   } else if (validationErrors != null && validationErrors?.length > 0) {
     validationErrors.forEach((error: { message: string }) => {
       notify.error(error.message);
