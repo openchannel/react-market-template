@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { noop } from 'lodash';
 import { useDispatch } from 'react-redux';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { OcSignupComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
-import { getSearchParams } from '../../../common/libs/helpers';
 import { nativeSignup } from '../../../common/store/session';
 import { useTypedSelector } from '../../../common/hooks';
 import { loadUserProfileForm } from '../../../common/store/user-types/actions';
 import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
+import doneIcon from '../../../../../public/assets/img/forgot-password-complete-icon.svg';
 import './styles.scss';
 
 const mockConfig = [
@@ -51,13 +51,14 @@ const mockConfig = [
 ];
 
 const SignupPage = (): JSX.Element => {
+  console.log(doneIcon);
+
   const history = useHistory();
   const dispatch = useDispatch();
-  const searchParams = React.useMemo(() => getSearchParams(window.location.search), []);
   const [serverErrorValidation, setServerErrorValidation] = React.useState(false);
+  const [showSignupFeedbackPage, setShowSignupFeedbackPage] = React.useState(false);
   // eslint-disable-next-line
   const { configs } = useTypedSelector(({ userTypes }) => userTypes);
-  console.log('!!!', configs);
 
   const prefixedConfigs =
     configs.length > 0
@@ -92,7 +93,6 @@ const SignupPage = (): JSX.Element => {
           },
         }))
       : [];
-  console.log('!!!@@@', prefixedConfigs);
 
   React.useEffect(() => {
     dispatch(loadUserProfileForm(mockConfig, true, true, false));
@@ -114,7 +114,7 @@ const SignupPage = (): JSX.Element => {
 
       try {
         await dispatch(nativeSignup(submitValues));
-        Object.keys(searchParams).includes('returnUrl') ? history.push(searchParams.returnUrl) : history.push('/');
+        await setShowSignupFeedbackPage(true);
         // eslint-disable-next-line
       } catch (error: any) {
         if (error.response.data.code === 'VALIDATION') {
@@ -130,33 +130,64 @@ const SignupPage = (): JSX.Element => {
   return (
     <div className="bg-container pt-sm-5">
       <div className="signup-position">
-        <OcSignupComponent
-          showSignupFeedbackPage={false}
-          forgotPasswordDoneUrl="/forgot-password"
-          loginUrl="/login"
-          companyLogoUrl={companyLogo}
-          enableTypesDropdown
-          formConfigs={prefixedConfigs}
-          onSubmit={onSubmit}
-          enablePasswordField
-          enableTermsCheckbox
-          defaultTypeLabelText=""
-          customTermsDescription=""
-          goToActivationPage={noop}
-          defaultEmptyConfigsErrorMessage="There are no configuration"
-          ordinaryTermsDescription={
-            <>
-              I agree to{' '}
-              <Link to="/" className="edit-user-form__content__link">
-                Terms of service
-              </Link>{' '}
-              and{' '}
-              <Link className="edit-user-form__content__link" to="/">
-                Data Processing Policy
-              </Link>
-            </>
-          }
-        />
+        {showSignupFeedbackPage && (
+          <OcSignupComponent
+            showSignupFeedbackPage
+            forgotPasswordDoneUrl={doneIcon}
+            loginUrl="/login"
+            companyLogoUrl={companyLogo}
+            enableTypesDropdown
+            formConfigs={prefixedConfigs}
+            onSubmit={onSubmit}
+            enablePasswordField
+            enableTermsCheckbox
+            defaultTypeLabelText=""
+            customTermsDescription=""
+            goToActivationPage={noop}
+            defaultEmptyConfigsErrorMessage="There are no configuration"
+            ordinaryTermsDescription={
+              <>
+                I agree to{' '}
+                <a href="https://my.openchannel.io/terms-of-service" className="edit-user-form__content__link">
+                  Terms of service
+                </a>{' '}
+                and{' '}
+                <a className="edit-user-form__content__link" href="https://my.openchannel.io/data-processing-policy">
+                  Data Processing Policy
+                </a>
+              </>
+            }
+          />
+        )}
+        {showSignupFeedbackPage === false && (
+          <OcSignupComponent
+            showSignupFeedbackPage={showSignupFeedbackPage}
+            forgotPasswordDoneUrl="/forgot-password"
+            loginUrl="/login"
+            companyLogoUrl={companyLogo}
+            enableTypesDropdown
+            formConfigs={prefixedConfigs}
+            onSubmit={onSubmit}
+            enablePasswordField
+            enableTermsCheckbox
+            defaultTypeLabelText=""
+            customTermsDescription=""
+            goToActivationPage={noop}
+            defaultEmptyConfigsErrorMessage="There are no configuration"
+            ordinaryTermsDescription={
+              <>
+                I agree to{' '}
+                <a href="https://my.openchannel.io/terms-of-service" className="edit-user-form__content__link">
+                  Terms of service
+                </a>{' '}
+                and{' '}
+                <a className="edit-user-form__content__link" href="https://my.openchannel.io/data-processing-policy">
+                  Data Processing Policy
+                </a>
+              </>
+            }
+          />
+        )}
       </div>
     </div>
   );

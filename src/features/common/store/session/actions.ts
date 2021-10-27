@@ -40,8 +40,8 @@ export const nativeLogin = (body: UserLoginModel) => async (dispatch: Dispatch) 
 
 export const nativeSignup = (body: OCNativeCustomSignup | OCNativeDefaultSignup) => async (dispatch: Dispatch) => {
   const response = await native.signup(body);
-  dispatch(setSession(response.data));
-
+  // dispatch(setSession(response.data));
+  dispatch(finishLoading());
   return response.data;
 };
 
