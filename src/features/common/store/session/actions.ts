@@ -11,8 +11,9 @@ import {
   OCNativeCustomSignup,
 } from '@openchannel/react-common-services';
 
+import { RootState } from 'types';
+import { notifyErrorResp } from '../../libs/helpers';
 import { ActionTypes } from './action-types';
-import { RootState } from '../../../../types';
 import { normalizeError } from '../utils';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
@@ -110,10 +111,20 @@ export const fetchUserId = () => async (dispatch: Dispatch) => {
   }
 };
 
-export const sendResetPassword = (email: string) => async () => {
-  await native.sendResetCode(email);
+export const sendResetCode = (email: string) => async () => {
+  try {
+    await native.sendResetCode(email);
+  } catch (e) {
+    notifyErrorResp(e);
+    throw e;
+  }
 };
 
 export const resetPassword = (body: UserResetPassword) => async () => {
-  await native.resetPassword(body);
+  try {
+    await native.resetPassword(body);
+  } catch (e) {
+    notifyErrorResp(e);
+    throw e;
+  }
 };

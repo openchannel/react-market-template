@@ -51,10 +51,10 @@ const InvitedSignUpPage = (): JSX.Element => {
   React.useEffect(() => {
     if (formConfigs.length > 0 && formWrapperRef.current) {
       // disable email input after form is mounted
-      // setTimeout(() => {
-      //   const emailInput = formWrapperRef.current!.querySelector('#email')!;
-      //   emailInput.setAttribute('disabled', 'true');
-      // }, 0);
+      setTimeout(() => {
+        const emailInput = formWrapperRef.current?.querySelector('#email');
+        emailInput?.setAttribute('disabled', 'true');
+      }, 0);
     }
   }, [formConfigs]);
 
