@@ -18,14 +18,17 @@ export const getSearchParams = (search: string) => {
 };
 
 export const notifyErrorResp = (e: unknown) => {
-  const {
-    response: { data },
-  } = <ErrorResponse>e;
+  const { response } = <ErrorResponse>e;
 
-  const validationErrors = data?.['validation-errors'];
+  if (response?.data === undefined) {
+    console.error('Error', e, response, response?.data);
+    return;
+  }
 
-  if (data?.errors) {
-    data.errors.forEach((err) => {
+  const validationErrors = response.data?.['validation-errors'];
+
+  if (response.data?.errors) {
+    response.data.errors.forEach((err) => {
       if (err.message) {
         notify.error(err.message);
       }

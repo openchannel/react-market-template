@@ -42,7 +42,7 @@ const LoginPage = (): JSX.Element => {
         } else if (error.response.data?.errors?.find((e) => e.code === 'email_not_verified')) {
           setIsUnverifiedEmail(true);
         } else {
-          notify.error(error.response.data?.message);
+          notify.error(error.response?.data?.message ?? "Can't parse server error.");
         }
       }
     },

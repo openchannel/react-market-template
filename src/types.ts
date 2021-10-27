@@ -8,7 +8,7 @@ export type TypedDispatch = Dispatch<any>;
 
 export interface ErrorResponse {
   response: {
-    data: {
+    data?: {
       code: string;
       status: number;
       message: string;
