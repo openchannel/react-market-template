@@ -60,14 +60,19 @@ const getUserAccountTypes = async (injectAccountType: boolean, configs: OcEditUs
 };
 
 export const loadUserProfileForm =
-  (configs: OcEditUserFormConfig[], injectOrganizationTypes: boolean, injectAccountTypes: boolean) =>
+  (
+    configs: OcEditUserFormConfig[],
+    injectOrganizationTypes: boolean,
+    injectAccountTypes: boolean,
+    isLoggedIn: boolean,
+  ) =>
   async (dispatch: Dispatch) => {
     dispatch(startLoading());
 
     try {
       const { list: userAccountTypes } = await getUserAccountTypes(injectAccountTypes, configs);
       const { list: organizationTypes } = await getUserTypes(injectOrganizationTypes, configs);
-      const { data: account } = await userAccount.getUserAccount();
+      const { data: account = {} } = isLoggedIn ? await userAccount.getUserAccount() : {};
 
       const accTypes = keyBy(userAccountTypes, 'userAccountTypeId');
       const orgTypes = keyBy(organizationTypes, 'userTypeId');
@@ -97,10 +102,11 @@ export const loadUserProfileForm =
               console.error(config.account.type, ' is not a valid user account type');
               return null;
             }
-
-            config.account.typeData.fields?.forEach((field) => {
-              field.defaultValue = get(account, field.id, '');
-            });
+            if (isLoggedIn) {
+              config.account.typeData.fields?.forEach((field) => {
+                field.defaultValue = get(account, field.id, '');
+              });
+            }
           }
 
           return config;
