@@ -1,3 +1,6 @@
+export const ACCOUNT_PREFIX = 'acc--';
+export const ORGANIZATION_PREFIX = 'org--';
+
 export const mockConfig = [
   {
     name: 'Default',
@@ -35,3 +38,6 @@ export const mockConfig = [
     },
   },
 ];
+
+export const enablePasswordField = true;
+export const enableTermsCheckbox = true;

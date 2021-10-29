@@ -8,95 +8,40 @@ import { useTypedSelector } from '../../../common/hooks';
 import { loadUserProfileForm } from '../../../common/store/user-types/actions';
 import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
 import doneIcon from '../../../../../public/assets/img/forgot-password-complete-icon.svg';
-import { mockConfig } from './constants';
+import { mockConfig, enablePasswordField, enableTermsCheckbox, ACCOUNT_PREFIX, ORGANIZATION_PREFIX } from './constants';
+import { prefixedConfigs, requiredPrefixedFields } from './utils';
 import './styles.scss';
 
 const SignupPage = (): JSX.Element => {
   const dispatch = useDispatch();
   const [serverErrorValidation, setServerErrorValidation] = React.useState(false);
   const [showSignupFeedbackPage, setShowSignupFeedbackPage] = React.useState(false);
-  // eslint-disable-next-line
+  const formWrapperRef = React.useRef<HTMLDivElement>(null);
   const { configs } = useTypedSelector(({ userTypes }) => userTypes);
-  const enablePasswordField = true;
-  const enableTermsCheckbox = true;
-
-  const prefixedConfigs =
-    configs.length > 0
-      ? configs.map((config) => ({
-          ...config,
-          account: {
-            ...config.account!,
-            includeFields: config!.account!.includeFields!.map((incField) => `acc--${incField}`),
-            typeData: {
-              ...config.account.typeData,
-              fields: config!.account!.typeData!.fields!.map((field) => ({
-                ...field,
-                id: `acc--${field.id}`,
-              })),
-            },
-          },
-          fieldsOrder: config.fieldsOrder
-            ? config.fieldsOrder.map((orderField) =>
-                !orderField.includes('org--') ? `acc--${orderField}` : orderField,
-              )
-            : [],
-          organization: {
-            ...config.organization!,
-            includeFields: config!.organization!.includeFields!.map((incField) => `org--${incField}`),
-            typeData: {
-              ...config!.organization!.typeData,
-              fields: config!.organization!.typeData!.fields!.map((field) => ({
-                ...field,
-                id: `org--${field.id}`,
-              })),
-            },
-          },
-        }))
-      : [];
-
-  const requiredPrefixedFields = prefixedConfigs.map((config) => ({
-    name: config.name,
-    fields: [
-      ...config.account!.typeData.fields!.filter((field) => field.attributes.required === true),
-      ...config.organization!.typeData.fields!.filter((field) => field.attributes.required === true),
-      enablePasswordField
-        ? {
-            id: 'password',
-            name: 'password',
-            type: 'password',
-            label: 'Password',
-            defaultValue: '',
-            attributes: { required: true },
-          }
-        : undefined,
-      enableTermsCheckbox
-        ? {
-            id: 'terms',
-            name: 'terms',
-            type: 'checkbox',
-            defaultValue: false,
-            attributes: { required: true },
-          }
-        : undefined,
-    ].filter(Boolean),
-  }));
 
   React.useEffect(() => {
     dispatch(loadUserProfileForm(mockConfig, true, true));
   }, []);
 
+  const prefixedFormConfigs = React.useMemo(() => prefixedConfigs(configs), [configs]);
+
   // eslint-disable-next-line
   const onSubmit = (values: any) => {
-    const selectedForm = document.querySelector('.select-component__text')?.innerHTML;
-    const submitFieldsByFormType = requiredPrefixedFields.filter((config) => config.name === selectedForm);
+    const selectedForm = formWrapperRef.current?.querySelector('.select-component__text')?.innerHTML;
+    const submitFieldsByFormType = requiredPrefixedFields(prefixedFormConfigs).filter(
+      (config) => config.name === selectedForm,
+    );
 
     // eslint-disable-next-line
     const submitValues: any = {};
     submitFieldsByFormType[0].fields.map((field) => {
       if (values[field!.id]) {
-        submitValues[field!.id.replace(/\b(?:acc--|org--)\b/g, '')] = values[field!.id];
+        const regex = new RegExp(`(?:${ACCOUNT_PREFIX}|${ORGANIZATION_PREFIX})`, 'g');
+        console.log('regex', regex);
+        submitValues[field!.id.replace(regex, '')] = values[field!.id];
       }
     });
+    console.log('submitValues', submitValues);
 
     if (serverErrorValidation) {
       setServerErrorValidation(false);
@@ -117,7 +62,7 @@ const SignupPage = (): JSX.Element => {
 
   return (
     <div className="bg-container pt-sm-5">
-      <div className="signup-position">
+      <div className="signup-position" ref={formWrapperRef}>
         {showSignupFeedbackPage && (
           <OcSignupComponent
             showSignupFeedbackPage
@@ -125,7 +70,7 @@ const SignupPage = (): JSX.Element => {
             loginUrl="/login"
             companyLogoUrl={companyLogo}
             enableTypesDropdown
-            formConfigs={prefixedConfigs}
+            formConfigs={prefixedFormConfigs}
             onSubmit={onSubmit}
             enablePasswordField={enablePasswordField}
             enableTermsCheckbox={enableTermsCheckbox}
@@ -151,7 +96,7 @@ const SignupPage = (): JSX.Element => {
             loginUrl="/login"
             companyLogoUrl={companyLogo}
             enableTypesDropdown
-            formConfigs={prefixedConfigs}
+            formConfigs={prefixedFormConfigs}
             onSubmit={onSubmit}
             enablePasswordField
             enableTermsCheckbox

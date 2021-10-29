@@ -4,7 +4,7 @@ import {
   TypeFieldModel,
   TypeModel,
 } from '@openchannel/react-common-components';
-import { TypeMapperUtils, userAccount, userAccountTypes, users, auth } from '@openchannel/react-common-services';
+import { TypeMapperUtils, userAccount, userAccountTypes, users, storage } from '@openchannel/react-common-services';
 import { Dispatch } from 'redux';
 import { cloneDeep, keyBy, get } from 'lodash';
 
@@ -66,7 +66,7 @@ export const loadUserProfileForm =
     try {
       const { list: userAccountTypes } = await getUserAccountTypes(injectAccountTypes, configs);
       const { list: organizationTypes } = await getUserTypes(injectOrganizationTypes, configs);
-      const isLoggedIn = await auth.tryLoginByRefreshToken();
+      const isLoggedIn = storage.isUserLoggedIn();
       const { data: account = {} } = isLoggedIn ? await userAccount.getUserAccount() : {};
 
       const accTypes = keyBy(userAccountTypes, 'userAccountTypeId');
