@@ -4,12 +4,11 @@ import {
   TypeFieldModel,
   TypeModel,
 } from '@openchannel/react-common-components';
-import { TypeMapperUtils, userAccount, userAccountTypes, users } from '@openchannel/react-common-services';
+import { TypeMapperUtils, userAccount, userAccountTypes, users, auth } from '@openchannel/react-common-services';
 import { Dispatch } from 'redux';
 import { cloneDeep, keyBy, get } from 'lodash';
 
 import { normalizeError } from '../utils';
-
 import { ActionTypes } from './action-types';
 import { defaultFormConfig } from './constants';
 
@@ -60,18 +59,14 @@ const getUserAccountTypes = async (injectAccountType: boolean, configs: OcEditUs
 };
 
 export const loadUserProfileForm =
-  (
-    configs: OcEditUserFormConfig[],
-    injectOrganizationTypes: boolean,
-    injectAccountTypes: boolean,
-    isLoggedIn: boolean,
-  ) =>
+  (configs: OcEditUserFormConfig[], injectOrganizationTypes: boolean, injectAccountTypes: boolean) =>
   async (dispatch: Dispatch) => {
     dispatch(startLoading());
 
     try {
       const { list: userAccountTypes } = await getUserAccountTypes(injectAccountTypes, configs);
       const { list: organizationTypes } = await getUserTypes(injectOrganizationTypes, configs);
+      const isLoggedIn = await auth.tryLoginByRefreshToken();
       const { data: account = {} } = isLoggedIn ? await userAccount.getUserAccount() : {};
 
       const accTypes = keyBy(userAccountTypes, 'userAccountTypeId');

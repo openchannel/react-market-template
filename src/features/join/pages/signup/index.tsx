@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { noop } from 'lodash';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import { OcSignupComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
@@ -10,55 +8,17 @@ import { useTypedSelector } from '../../../common/hooks';
 import { loadUserProfileForm } from '../../../common/store/user-types/actions';
 import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
 import doneIcon from '../../../../../public/assets/img/forgot-password-complete-icon.svg';
+import { mockConfig } from './constants';
 import './styles.scss';
 
-const mockConfig = [
-  {
-    name: 'Default',
-    organization: {
-      type: 'default',
-      typeData: {
-        fields: [],
-      },
-      includeFields: ['name', 'customData.company'],
-    },
-    account: {
-      type: 'default',
-      typeData: {
-        fields: [],
-      },
-      includeFields: ['name', 'email'],
-    },
-    fieldsOrder: ['name', 'email', 'org--name', 'password'],
-  },
-  {
-    name: 'Custom',
-    organization: {
-      type: 'custom-user-type',
-      typeData: {
-        fields: [],
-      },
-      includeFields: ['name', 'customData.about-my-company'],
-    },
-    account: {
-      type: 'custom-account-type',
-      typeData: {
-        fields: [],
-      },
-      includeFields: ['name', 'username', 'email', 'customData.about-me'],
-    },
-  },
-];
-
 const SignupPage = (): JSX.Element => {
-  console.log(doneIcon);
-
-  const history = useHistory();
   const dispatch = useDispatch();
   const [serverErrorValidation, setServerErrorValidation] = React.useState(false);
   const [showSignupFeedbackPage, setShowSignupFeedbackPage] = React.useState(false);
   // eslint-disable-next-line
   const { configs } = useTypedSelector(({ userTypes }) => userTypes);
+  const enablePasswordField = true;
+  const enableTermsCheckbox = true;
 
   const prefixedConfigs =
     configs.length > 0
@@ -94,38 +54,66 @@ const SignupPage = (): JSX.Element => {
         }))
       : [];
 
+  const requiredPrefixedFields = prefixedConfigs.map((config) => ({
+    name: config.name,
+    fields: [
+      ...config.account!.typeData.fields!.filter((field) => field.attributes.required === true),
+      ...config.organization!.typeData.fields!.filter((field) => field.attributes.required === true),
+      enablePasswordField
+        ? {
+            id: 'password',
+            name: 'password',
+            type: 'password',
+            label: 'Password',
+            defaultValue: '',
+            attributes: { required: true },
+          }
+        : undefined,
+      enableTermsCheckbox
+        ? {
+            id: 'terms',
+            name: 'terms',
+            type: 'checkbox',
+            defaultValue: false,
+            attributes: { required: true },
+          }
+        : undefined,
+    ].filter(Boolean),
+  }));
+
   React.useEffect(() => {
-    dispatch(loadUserProfileForm(mockConfig, true, true, false));
+    dispatch(loadUserProfileForm(mockConfig, true, true));
   }, []);
 
-  const onSubmit = React.useCallback(
+  // eslint-disable-next-line
+  const onSubmit = (values: any) => {
+    const selectedForm = document.querySelector('.select-component__text')?.innerHTML;
+    const submitFieldsByFormType = requiredPrefixedFields.filter((config) => config.name === selectedForm);
+
     // eslint-disable-next-line
-    async (values: any) => {
-      const submitValues = {
-        uname: values['acc--name'],
-        email: values['acc--email'],
-        company: values['org--name'],
-        password: values.password,
-      };
-
-      if (serverErrorValidation) {
-        setServerErrorValidation(false);
+    const submitValues: any = {};
+    submitFieldsByFormType[0].fields.map((field) => {
+      if (values[field!.id]) {
+        submitValues[field!.id.replace(/\b(?:acc--|org--)\b/g, '')] = values[field!.id];
       }
+    });
 
-      try {
-        await dispatch(nativeSignup(submitValues));
-        await setShowSignupFeedbackPage(true);
-        // eslint-disable-next-line
-      } catch (error: any) {
-        if (error.response.data.code === 'VALIDATION') {
-          setServerErrorValidation(true);
-        } else {
-          notify.error(error.response.data.message);
-        }
+    if (serverErrorValidation) {
+      setServerErrorValidation(false);
+    }
+
+    try {
+      dispatch(nativeSignup(submitValues));
+      setShowSignupFeedbackPage(true);
+      // eslint-disable-next-line
+    } catch (error: any) {
+      if (error.response.data.code === 'VALIDATION') {
+        setServerErrorValidation(true);
+      } else {
+        notify.error(error.response.data.message);
       }
-    },
-    [history, serverErrorValidation],
-  );
+    }
+  };
 
   return (
     <div className="bg-container pt-sm-5">
@@ -139,11 +127,8 @@ const SignupPage = (): JSX.Element => {
             enableTypesDropdown
             formConfigs={prefixedConfigs}
             onSubmit={onSubmit}
-            enablePasswordField
-            enableTermsCheckbox
-            defaultTypeLabelText=""
-            customTermsDescription=""
-            goToActivationPage={noop}
+            enablePasswordField={enablePasswordField}
+            enableTermsCheckbox={enableTermsCheckbox}
             defaultEmptyConfigsErrorMessage="There are no configuration"
             ordinaryTermsDescription={
               <>
@@ -161,8 +146,8 @@ const SignupPage = (): JSX.Element => {
         )}
         {showSignupFeedbackPage === false && (
           <OcSignupComponent
-            showSignupFeedbackPage={showSignupFeedbackPage}
-            forgotPasswordDoneUrl="/forgot-password"
+            showSignupFeedbackPage={false}
+            forgotPasswordDoneUrl={doneIcon}
             loginUrl="/login"
             companyLogoUrl={companyLogo}
             enableTypesDropdown
@@ -170,9 +155,6 @@ const SignupPage = (): JSX.Element => {
             onSubmit={onSubmit}
             enablePasswordField
             enableTermsCheckbox
-            defaultTypeLabelText=""
-            customTermsDescription=""
-            goToActivationPage={noop}
             defaultEmptyConfigsErrorMessage="There are no configuration"
             ordinaryTermsDescription={
               <>

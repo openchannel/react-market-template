@@ -32,7 +32,7 @@ const Profile = (): JSX.Element => {
   );
 
   React.useEffect(() => {
-    dispatch(loadUserProfileForm(formConfigsWithoutTypeData, false, true, true));
+    dispatch(loadUserProfileForm(formConfigsWithoutTypeData, false, true));
   }, []);
 
   const handleChangePasswordSubmit = async (
