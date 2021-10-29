@@ -76,7 +76,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
       dispatch(statVisitApp(selectedApp.appId));
     }
   }, []);
-  const { recommendedApps, selectedApp } = useTypedSelector(({ apps }) => apps);
+  const { recommendedApps, selectedApp, isLoaded } = useTypedSelector(({ apps }) => apps);
   const { reviewsByApp, sorts } = useTypedSelector(({ reviews }) => reviews);
   const { userId, isExist } = useTypedSelector(({ session }) => session);
   const [isWritingReview, setIsWritingReview] = React.useState(false);
@@ -200,170 +200,176 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
 
   return (
     <>
-      <div className="bg-container bg bg-s pb-7">
-        <div className="container container_custom">
-          <div className="app-detail__back-link height-unset">
-            <div className="d-flex flex-row align-items-center">
-              <OcNavigationBreadcrumbs pageTitle="" navigateText="Back" navigateClick={historyBack} />
+      {isLoaded && (
+        <>
+          <div className="bg-container bg bg-s pb-7">
+            <div className="container container_custom">
+              <div className="app-detail__back-link height-unset">
+                <div className="d-flex flex-row align-items-center">
+                  <OcNavigationBreadcrumbs pageTitle="" navigateText="Back" navigateClick={historyBack} />
+                </div>
+              </div>
+              <div className="app-detail__data">
+                <div className="app-detail__data-description">
+                  {app?.customData?.logo && (
+                    <div className="col-md-auto mb-2 app-logo">
+                      <img src={app?.customData?.logo} alt={`${app?.name || 'app-icon'}`} />
+                    </div>
+                  )}
+                  <div className="d-flex flex-column">
+                    <h1 className="mb-2 page-title-size">{app?.name}</h1>
+                    <span className="app-detail__price">{(price || app.model[0]?.price) === 0 && 'Free'}</span>
+                    <div className="text-secondary mt-1">{app?.customData.summary}</div>
+                    <OcRatingComponent
+                      className="mb-3"
+                      rating={appRating}
+                      reviewCount={appReviewCount}
+                      label="reviews"
+                      labelClass="medium"
+                      type="single-star"
+                      disabled={true}
+                    />
+                    {appListingActions?.length > 0 && (
+                      <div className="actions-container">
+                        {
+                          //eslint-disable-next-line
+                          appListingActions?.map((action: any, index: number) => (
+                            <ActionButton buttonAction={action} key={index} />
+                          ))
+                        }
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {app?.video && <OcVideoComponent videoUrl={app?.video} />}
+              </div>
             </div>
           </div>
-          <div className="app-detail__data">
-            <div className="app-detail__data-description">
-              {app?.customData?.logo && (
-                <div className="col-md-auto mb-2 app-logo">
-                  <img src={app?.customData?.logo} alt={`${app?.name || 'app-icon'}`} />
-                </div>
-              )}
-              <div className="d-flex flex-column">
-                <h1 className="mb-2 page-title-size">{app?.name}</h1>
-                <span className="app-detail__price">{(price || app.model[0]?.price) === 0 && 'Free'}</span>
-                <div className="text-secondary mt-1">{app?.customData.summary}</div>
-                <OcRatingComponent
-                  className="mb-3"
-                  rating={appRating}
-                  reviewCount={appReviewCount}
-                  label="reviews"
-                  labelClass="medium"
-                  type="single-star"
-                  disabled={true}
-                />
-                {appListingActions?.length > 0 && (
-                  <div className="actions-container">
-                    {
-                      //eslint-disable-next-line
-                      appListingActions?.map((action: any, index: number) => (
-                        <ActionButton buttonAction={action} key={index} />
-                      ))
-                    }
-                  </div>
+          <div className="container">
+            <div className="mt-8 d-block">
+              {appGalleryImages && <OcImageGalleryComponent gallery={appGalleryImages} />}
+            </div>
+
+            <div className="row mb-0 mb-md-8 mt-3 mt-md-8">
+              <OcAppDescription
+                appDescription={app?.customData.description as string}
+                truncateTextLength={800}
+                shortDescription={false}
+                showFullDescription={false}
+                header="About"
+                headerClass="mb-2"
+              />
+              <div className="app-detail__data-support col-md ml-md-8 mt-3 mt-md-0">
+                <h2 className="app-detail__data-support-title mb-2 ">Support</h2>
+                <ul className="list-group list-group-flush">
+                  {app?.customData['terms-of-service-url'] && (
+                    <li className="list-group-item">
+                      <img src={HelpIcon} className="pr-2" alt="icon" />
+                      <a className="support-link" href={app?.customData['terms-of-service-url']}>
+                        F.A.Q.
+                      </a>
+                    </li>
+                  )}
+                  {app?.customData['website-url'] && (
+                    <li className="list-group-item">
+                      <img src={InternetIcon} className="pr-2" alt="icon" />
+                      <a className="support-link" href={app?.customData['website-url']}>
+                        Developer website
+                      </a>
+                    </li>
+                  )}
+                  {app?.customData['terms-of-service-url'] && (
+                    <li className="list-group-item">
+                      <img src={PadlockIcon} className="pr-2" alt="icon" />
+                      <a className="support-link" href={app?.customData['terms-of-service-url']}>
+                        Privacy Policy
+                      </a>
+                    </li>
+                  )}
+                  {app?.customData['contact-email'] && (
+                    <li className="list-group-item link">
+                      <img src={EmailIcon} className="pr-2" alt="icon" />
+                      <a className="support-link" href={`mailto: ${app?.customData['contact-email']}`}>
+                        {app?.customData['contact-email']}
+                      </a>
+                    </li>
+                  )}
+                  {app?.customData['support-url'] && (
+                    <li className="list-group-item">
+                      <img src={BubbleIcon} className="pr-2" alt="icon" />
+                      <a className="support-link" href={app?.customData['support-url']}>
+                        Support website
+                      </a>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            </div>
+
+            <div className="d-flex flex-wrap flex-md-nowrap">
+              <div className="rating-column">
+                <OcOverallRating allReviewSummary={overallReviews} />
+              </div>
+              <div className="review-column">
+                {!isWritingReview && (
+                  <OcReviewListComponent
+                    reviewList={reviewsByApp?.list || []}
+                    writeReviewPermission={hasWriteReviewPermission}
+                    writeReview={() => setIsWritingReview(!isWritingReview)}
+                    reviewListTitle="Most recent reviews"
+                    setSelectedAction={setSelectedAction}
+                    currentUserId={userId}
+                    dropdownDefaultIcon={DotsIcon}
+                    dropdownActiveIcon={DotsIcon}
+                    dropdownMenuOptions={dropdownMenuOptions}
+                  >
+                    <div>
+                      <OcDropdown
+                        title="Sort by"
+                        options={sorts}
+                        onSelect={(selectedSort: Option | undefined) =>
+                          handleDropdownClick(app.appId, filterSelected, selectedSort)
+                        }
+                        selected={sortSelected}
+                      />
+                      <OcDropdown
+                        options={dropdownSortOptions}
+                        title="Show"
+                        onSelect={(selectedFilter: Option | undefined) =>
+                          handleDropdownClick(app.appId, selectedFilter, sortSelected)
+                        }
+                        selected={filterSelected}
+                      />
+                    </div>
+                  </OcReviewListComponent>
+                )}
+                {isWritingReview && (
+                  <OcReviewComponent
+                    heading="Write a review"
+                    onSubmit={onReviewSubmit}
+                    onReviewCancel={() => setIsWritingReview(false)}
+                    reviewData={currentEditReview}
+                    enableButtons
+                  />
                 )}
               </div>
             </div>
-            {app?.video && <OcVideoComponent videoUrl={app?.video} />}
           </div>
-        </div>
-      </div>
-      <div className="container">
-        <div className="mt-8 d-block">{appGalleryImages && <OcImageGalleryComponent gallery={appGalleryImages} />}</div>
-
-        <div className="row mb-0 mb-md-8 mt-3 mt-md-8">
-          <OcAppDescription
-            appDescription={app?.customData.description as string}
-            truncateTextLength={800}
-            shortDescription={false}
-            showFullDescription={false}
-            header="About"
-            headerClass="mb-2"
-          />
-          <div className="app-detail__data-support col-md ml-md-8 mt-3 mt-md-0">
-            <h2 className="app-detail__data-support-title mb-2 ">Support</h2>
-            <ul className="list-group list-group-flush">
-              {app?.customData['terms-of-service-url'] && (
-                <li className="list-group-item">
-                  <img src={HelpIcon} className="pr-2" alt="icon" />
-                  <a className="support-link" href={app?.customData['terms-of-service-url']}>
-                    F.A.Q.
-                  </a>
-                </li>
-              )}
-              {app?.customData['website-url'] && (
-                <li className="list-group-item">
-                  <img src={InternetIcon} className="pr-2" alt="icon" />
-                  <a className="support-link" href={app?.customData['website-url']}>
-                    Developer website
-                  </a>
-                </li>
-              )}
-              {app?.customData['terms-of-service-url'] && (
-                <li className="list-group-item">
-                  <img src={PadlockIcon} className="pr-2" alt="icon" />
-                  <a className="support-link" href={app?.customData['terms-of-service-url']}>
-                    Privacy Policy
-                  </a>
-                </li>
-              )}
-              {app?.customData['contact-email'] && (
-                <li className="list-group-item link">
-                  <img src={EmailIcon} className="pr-2" alt="icon" />
-                  <a className="support-link" href={`mailto: ${app?.customData['contact-email']}`}>
-                    {app?.customData['contact-email']}
-                  </a>
-                </li>
-              )}
-              {app?.customData['support-url'] && (
-                <li className="list-group-item">
-                  <img src={BubbleIcon} className="pr-2" alt="icon" />
-                  <a className="support-link" href={app?.customData['support-url']}>
-                    Support website
-                  </a>
-                </li>
-              )}
-            </ul>
-          </div>
-        </div>
-
-        <div className="d-flex flex-wrap flex-md-nowrap">
-          <div className="rating-column">
-            <OcOverallRating allReviewSummary={overallReviews} />
-          </div>
-          <div className="review-column">
-            {!isWritingReview && (
-              <OcReviewListComponent
-                reviewList={reviewsByApp?.list || []}
-                writeReviewPermission={hasWriteReviewPermission}
-                writeReview={() => setIsWritingReview(!isWritingReview)}
-                reviewListTitle="Most recent reviews"
-                setSelectedAction={setSelectedAction}
-                currentUserId={userId}
-                dropdownDefaultIcon={DotsIcon}
-                dropdownActiveIcon={DotsIcon}
-                dropdownMenuOptions={dropdownMenuOptions}
-              >
-                <div>
-                  <OcDropdown
-                    title="Sort by"
-                    options={sorts}
-                    onSelect={(selectedSort: Option | undefined) =>
-                      handleDropdownClick(app.appId, filterSelected, selectedSort)
-                    }
-                    selected={sortSelected}
-                  />
-                  <OcDropdown
-                    options={dropdownSortOptions}
-                    title="Show"
-                    onSelect={(selectedFilter: Option | undefined) =>
-                      handleDropdownClick(app.appId, selectedFilter, sortSelected)
-                    }
-                    selected={filterSelected}
-                  />
-                </div>
-              </OcReviewListComponent>
-            )}
-            {isWritingReview && (
-              <OcReviewComponent
-                heading="Write a review"
-                onSubmit={onReviewSubmit}
-                onReviewCancel={() => setIsWritingReview(false)}
-                reviewData={currentEditReview}
-                enableButtons
-              />
-            )}
-          </div>
-        </div>
-      </div>
-      {recommendedApps && (
-        <div className="bg-container mt-5 pt-3 pb-4 px-3 px-md-0 py-md-8 min-height-auto">
-          <div className="container">
-            <OcRecommendedAppsComponent
-              recommendedAppTitle="Recommended for you"
-              appList={recommendedApps || []}
-              routerLinkForOneApp="/details"
-              clickByAppCard={() => {
-                window.scroll(0, 0);
-              }}
-            />
-          </div>
-        </div>
+          {recommendedApps && (
+            <div className="bg-container mt-5 pt-3 pb-4 px-3 px-md-0 py-md-8 min-height-auto">
+              <div className="container">
+                <OcRecommendedAppsComponent
+                  recommendedAppTitle="Recommended for you"
+                  appList={recommendedApps || []}
+                  routerLinkForOneApp="/details"
+                  clickByAppCard={() => {
+                    window.scroll(0, 0);
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </>
       )}
     </>
   );
