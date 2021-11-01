@@ -7,10 +7,13 @@ import {
   UserLoginModel,
   userAccount,
   UserResetPassword,
+  OCNativeDefaultSignup,
+  OCNativeCustomSignup,
 } from '@openchannel/react-common-services';
 
+import { RootState } from 'types';
+import { notifyErrorResp } from '../../libs/helpers';
 import { ActionTypes } from './action-types';
-import { RootState } from '../../../../types';
 import { normalizeError } from '../utils';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
@@ -33,6 +36,12 @@ export const nativeLogin = (body: UserLoginModel) => async (dispatch: Dispatch) 
   const response = await native.signIn(body);
   dispatch(setSession(response.data));
 
+  return response.data;
+};
+
+export const nativeSignup = (body: OCNativeCustomSignup | OCNativeDefaultSignup) => async (dispatch: Dispatch) => {
+  const response = await native.signup(body);
+  dispatch(finishLoading());
   return response.data;
 };
 
@@ -101,12 +110,22 @@ export const fetchUserId = () => async (dispatch: Dispatch) => {
   }
 };
 
-export const sendResetPassword = (email: string) => async () => {
-  await native.sendResetCode(email);
+export const sendResetCode = (email: string) => async () => {
+  try {
+    await native.sendResetCode(email);
+  } catch (e) {
+    notifyErrorResp(e);
+    throw e;
+  }
 };
 
 export const resetPassword = (body: UserResetPassword) => async () => {
-  await native.resetPassword(body);
+  try {
+    await native.resetPassword(body);
+  } catch (e) {
+    notifyErrorResp(e);
+    throw e;
+  }
 };
 
 export const activeUserAccount = (token: string) => async () => {
