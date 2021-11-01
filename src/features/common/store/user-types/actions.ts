@@ -4,11 +4,19 @@ import {
   TypeFieldModel,
   TypeModel,
 } from '@openchannel/react-common-components';
-import { TypeMapperUtils, userAccount, userAccountTypes, users, storage } from '@openchannel/react-common-services';
+import {
+  TypeMapperUtils,
+  UserAccount,
+  userAccount,
+  userAccountTypes,
+  users,
+  storage,
+} from '@openchannel/react-common-services';
 import { Dispatch } from 'redux';
 import { cloneDeep, keyBy, get } from 'lodash';
 
 import { normalizeError } from '../utils';
+
 import { ActionTypes } from './action-types';
 import { defaultFormConfig } from './constants';
 
@@ -22,7 +30,7 @@ const EMPTY_TYPE_RESPONSE = {
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
 const saveConfig = (configs: OcEditUserFormConfig[]) => ({ type: ActionTypes.GET_USER_CONFIG, payload: { configs } });
-const saveAccount = (account: OcEditUserResult) => ({ type: ActionTypes.GET_USER_ACCOUNT, payload: { account } });
+const saveAccount = (account: UserAccount) => ({ type: ActionTypes.GET_USER_ACCOUNT, payload: { account } });
 const saveCompanyForm = (companyForm: TypeModel<TypeFieldModel>) => ({
   type: ActionTypes.GET_USER_COMPANY_FORM,
   payload: { companyForm },
@@ -66,8 +74,9 @@ export const loadUserProfileForm =
     try {
       const { list: userAccountTypes } = await getUserAccountTypes(injectAccountTypes, configs);
       const { list: organizationTypes } = await getUserTypes(injectOrganizationTypes, configs);
+
       const isLoggedIn = storage.isUserLoggedIn();
-      const { data: account = {} } = isLoggedIn ? await userAccount.getUserAccount() : {};
+      const account = isLoggedIn ? await getUserAccount() : null;
 
       const accTypes = keyBy(userAccountTypes, 'userAccountTypeId');
       const orgTypes = keyBy(organizationTypes, 'userTypeId');
@@ -97,7 +106,10 @@ export const loadUserProfileForm =
               console.error(config.account.type, ' is not a valid user account type');
               return null;
             }
-            if (isLoggedIn) {
+
+            if (isLoggedIn && account) {
+              dispatch(saveAccount(account));
+
               config.account.typeData.fields?.forEach((field) => {
                 field.defaultValue = get(account, field.id, '');
               });

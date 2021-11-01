@@ -4,17 +4,16 @@ import { useHistory } from 'react-router-dom';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
-
+import { set, merge } from 'lodash';
 import { MainTemplate } from '../../../common/templates';
 import { useDispatch } from 'react-redux';
-
-import './styles.scss';
 import { changePassword } from '../../../common/store/session/actions';
 import { OcEditUserFormComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 import { loadUserProfileForm, saveUserData } from '../../../common/store/user-types';
 import { useTypedSelector } from '../../../common/hooks';
 import { formConfigsWithoutTypeData, formPassword } from './constants';
 import { FormikHelpers, FormikValues } from 'formik';
+import './styles.scss';
 
 const Profile = (): JSX.Element => {
   const [isSelectedPage, setSelectedPage] = React.useState('myProfile');
@@ -52,11 +51,12 @@ const Profile = (): JSX.Element => {
   };
 
   const handleMyProfileSubmit = async (value: FormikValues, { setErrors }: FormikHelpers<FormikValues>) => {
-    const next = {
-      ...account,
-      ...value,
-    };
     try {
+      const newAccount = Object.entries(value).reduce((acc, [k, v]) => {
+        set(acc, k, v);
+        return acc;
+      }, {} as FormikValues);
+      const next = merge(account, newAccount);
       await dispatch(saveUserData(next));
       notify.success('Your profile has been updated');
       // eslint-disable-next-line
