@@ -7,6 +7,8 @@ import {
   UserLoginModel,
   userAccount,
   UserResetPassword,
+  OCNativeDefaultSignup,
+  OCNativeCustomSignup,
 } from '@openchannel/react-common-services';
 
 import { RootState } from 'types';
@@ -34,6 +36,12 @@ export const nativeLogin = (body: UserLoginModel) => async (dispatch: Dispatch) 
   const response = await native.signIn(body);
   dispatch(setSession(response.data));
 
+  return response.data;
+};
+
+export const nativeSignup = (body: OCNativeCustomSignup | OCNativeDefaultSignup) => async (dispatch: Dispatch) => {
+  const response = await native.signup(body);
+  dispatch(finishLoading());
   return response.data;
 };
 

@@ -121,7 +121,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   );
 
   const appReviewCount = React.useMemo(
-    () => (selectedApp && selectedApp.reviewCount ? selectedApp.rating / 100 : 0),
+    () => (selectedApp && selectedApp.reviewCount ? selectedApp.reviewCount : 0),
     [selectedApp],
   );
 
