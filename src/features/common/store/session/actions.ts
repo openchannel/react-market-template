@@ -127,3 +127,7 @@ export const resetPassword = (body: UserResetPassword) => async () => {
     throw e;
   }
 };
+
+export const activeUserAccount = (token: string) => async () => {
+  await native.activate(token);
+};
