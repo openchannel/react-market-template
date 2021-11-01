@@ -1,2 +1,3 @@
+export * from './actions';
 export { sessionReducer } from './reducer';
-export { nativeLogin, loginWithSSOTokens, tryLoginByRefreshToken, fetchUserId } from './actions';
+export { nativeLogin, nativeSignup, loginWithSSOTokens, tryLoginByRefreshToken, fetchUserId } from './actions';
