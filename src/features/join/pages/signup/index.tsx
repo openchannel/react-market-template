@@ -37,11 +37,9 @@ const SignupPage = (): JSX.Element => {
     submitFieldsByFormType[0].fields.map((field) => {
       if (values[field!.id]) {
         const regex = new RegExp(`(?:${ACCOUNT_PREFIX}|${ORGANIZATION_PREFIX})`, 'g');
-        console.log('regex', regex);
         submitValues[field!.id.replace(regex, '')] = values[field!.id];
       }
     });
-    console.log('submitValues', submitValues);
 
     if (serverErrorValidation) {
       setServerErrorValidation(false);
