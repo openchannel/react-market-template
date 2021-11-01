@@ -4,7 +4,14 @@ import {
   TypeFieldModel,
   TypeModel,
 } from '@openchannel/react-common-components';
-import { TypeMapperUtils, UserAccount, userAccount, userAccountTypes, users, storage } from '@openchannel/react-common-services';
+import {
+  TypeMapperUtils,
+  UserAccount,
+  userAccount,
+  userAccountTypes,
+  users,
+  storage,
+} from '@openchannel/react-common-services';
 import { Dispatch } from 'redux';
 import { cloneDeep, keyBy, get } from 'lodash';
 
@@ -67,10 +74,9 @@ export const loadUserProfileForm =
     try {
       const { list: userAccountTypes } = await getUserAccountTypes(injectAccountTypes, configs);
       const { list: organizationTypes } = await getUserTypes(injectOrganizationTypes, configs);
+
       const isLoggedIn = storage.isUserLoggedIn();
-      const { data: account = {} } = isLoggedIn ? await userAccount.getUserAccount() : {};
-
-
+      const account = isLoggedIn ? await getUserAccount() : null;
 
       const accTypes = keyBy(userAccountTypes, 'userAccountTypeId');
       const orgTypes = keyBy(organizationTypes, 'userTypeId');
@@ -100,7 +106,8 @@ export const loadUserProfileForm =
               console.error(config.account.type, ' is not a valid user account type');
               return null;
             }
-            if (isLoggedIn) {
+
+            if (isLoggedIn && account) {
               dispatch(saveAccount(account));
 
               config.account.typeData.fields?.forEach((field) => {
