@@ -1,5 +1,5 @@
 import { OcEditUserFormConfig } from '@openchannel/react-common-components/dist/ui/auth/organisms';
-import { enablePasswordField, enableTermsCheckbox } from './constants';
+import { enablePasswordField, enableTermsCheckbox, ORGANIZATION_PREFIX, ACCOUNT_PREFIX } from './constants';
 
 export const prefixedConfigs = (configs: OcEditUserFormConfig[]) =>
   configs.length > 0
@@ -7,26 +7,28 @@ export const prefixedConfigs = (configs: OcEditUserFormConfig[]) =>
         ...config,
         account: {
           ...config.account!,
-          includeFields: config!.account!.includeFields!.map((incField) => `acc--${incField}`),
+          includeFields: config!.account!.includeFields!.map((incField) => `${ACCOUNT_PREFIX}${incField}`),
           typeData: {
             ...config.account.typeData,
             fields: config!.account!.typeData!.fields!.map((field) => ({
               ...field,
-              id: `acc--${field.id}`,
+              id: `${ACCOUNT_PREFIX}${field.id}`,
             })),
           },
         },
         fieldsOrder: config.fieldsOrder
-          ? config.fieldsOrder.map((orderField) => (!orderField.includes('org--') ? `acc--${orderField}` : orderField))
+          ? config.fieldsOrder.map((orderField) =>
+              !orderField.includes(`${ORGANIZATION_PREFIX}`) ? `${ACCOUNT_PREFIX}${orderField}` : orderField,
+            )
           : [],
         organization: {
           ...config.organization!,
-          includeFields: config!.organization!.includeFields!.map((incField) => `org--${incField}`),
+          includeFields: config!.organization!.includeFields!.map((incField) => `${ORGANIZATION_PREFIX}${incField}`),
           typeData: {
             ...config!.organization!.typeData,
             fields: config!.organization!.typeData!.fields!.map((field) => ({
               ...field,
-              id: `org--${field.id}`,
+              id: `${ORGANIZATION_PREFIX}${field.id}`,
             })),
           },
         },
