@@ -5,10 +5,12 @@ import {
   userInvites,
   nativeLogin,
   SignUpByInviteRequest,
+  storage,
 } from '@openchannel/react-common-services';
 
 import { GetState, TypedDispatch } from 'types';
-import { logout } from '../../../common/store/session/actions';
+import { logout } from 'features/common/store/session';
+import { notifyErrorResp } from 'features/common/libs/helpers';
 import { mapDataToField } from '../../utils';
 
 import { ActionTypes } from './action-types';
@@ -89,13 +91,24 @@ export const sendInvite = (payload: SignUpByInviteRequest) => async (dispatch: T
 
   try {
     await nativeLogin.signupByInvite({ userCustomData: payload, inviteToken: userInviteData!.token! });
-    // remove existed session. issue - AT-1082
-    await dispatch(logout());
-  } catch (error: unknown) {
-    // eslint-disable-next-line
-    (error as { response: { data?: { errors?: [{ message: string }] } } }).response.data?.errors?.forEach((err: any) =>
-      notify.error(err.message),
-    );
-    throw error;
+
+    if (storage.isUserLoggedIn()) {
+      // remove existed session. issue - AT-1082
+      await dispatch(logout());
+    }
+  } catch (e) {
+    notifyErrorResp(e);
+    throw e;
+  }
+};
+
+export const sendActivationCode = (email: string) => async () => {
+  try {
+    await nativeLogin.sendActivationCode(email);
+
+    notify.success('Activation email was sent to your inbox!');
+  } catch (e) {
+    notifyErrorResp(e);
+    throw e;
   }
 };

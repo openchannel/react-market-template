@@ -103,9 +103,8 @@ export const clearFilteredApps = () => (dispatch: Dispatch) => {
   dispatch(resetFilteredApps());
 };
 
-export const statVisitApp = (appId: string) => async (dispatch: Dispatch) => {
+export const statVisitApp = (appId: string) => async () => {
   await statisticService.recordVisitToApp(appId);
-  dispatch(finishLoading());
 };
 
 export const fetchGalleries = () => async (dispatch: Dispatch) => {
@@ -199,16 +198,10 @@ export const fetchRecommendedApps = () => async (dispatch: Dispatch) => {
 };
 
 export const getForm = (formAction: FormButtonAction) => async (dispatch: Dispatch) => {
-  dispatch(startLoading());
-  try {
-    const { data } = await formsService.getForm(formAction.formId);
-    dispatch(setCurrentForm(data));
-    dispatch(finishLoading());
-  } catch (error) {
-    dispatch(finishLoading());
-    throw error;
-  }
+  const { data } = await formsService.getForm(formAction.formId);
+  dispatch(setCurrentForm(data));
 };
+
 export const submitForm = (appId: string, result: CreateFormSubmissionModel) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
   try {
@@ -233,7 +226,6 @@ export const submitForm = (appId: string, result: CreateFormSubmissionModel) => 
 
 export const installApplication =
   (ownership: CreateOwnershipModel, safename: string, headers?: ReqHeaders) => async (dispatch: Dispatch) => {
-    dispatch(startLoading());
     try {
       const res = await ownershipService.installOwnership(ownership, headers);
       if (res.data) {
@@ -241,15 +233,15 @@ export const installApplication =
         dispatch(setSelectedApp(data));
         await statisticService.record('installs', ownership.appId, 1);
       }
-      dispatch(finishLoading());
     } catch (error) {
-      dispatch(finishLoading());
+      console.error(error);
+
+      throw error;
     }
   };
 
 export const uninstallApplication =
   (ownership: UninstallAppModel, safename: string, headers?: ReqHeaders) => async (dispatch: Dispatch) => {
-    dispatch(startLoading());
     try {
       const res = await ownershipService.uninstallOwnership(ownership.ownershipId, headers);
       if (res.data) {
@@ -257,9 +249,10 @@ export const uninstallApplication =
         dispatch(setSelectedApp(data));
         await statisticService.record('installs', ownership.appId, -1);
       }
-      dispatch(finishLoading());
     } catch (error) {
-      dispatch(finishLoading());
+      console.error(error);
+
+      throw error;
     }
   };
 
