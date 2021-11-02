@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
-import { set, merge } from 'lodash';
+import { set, merge, cloneDeep } from 'lodash';
 import { MainTemplate } from '../../../common/templates';
 import { useDispatch } from 'react-redux';
 import { changePassword } from '../../../common/store/session/actions';
@@ -24,6 +24,7 @@ const Profile = (): JSX.Element => {
     history.goBack();
   }, [history.goBack]);
   const { configs, account } = useTypedSelector(({ userTypes }) => userTypes);
+  const newConfig = cloneDeep(configs);
   const onClickPass = React.useCallback(
     (e) => {
       setSelectedPage(e.target.dataset.link);
@@ -53,14 +54,18 @@ const Profile = (): JSX.Element => {
 
   const handleMyProfileSubmit = async (value: FormikValues, { setErrors }: FormikHelpers<FormikValues>) => {
     try {
-      const selectedForm = formWrapperRef.current?.querySelector('.select-component__text')?.innerHTML.toLowerCase();
-      const solution = selectedForm?.includes('custom') ? selectedForm?.concat('-account-type') : selectedForm;
+      const selectedForm = formWrapperRef?.current?.querySelector('.select-component__text')?.innerHTML;
+      const selectFormConfig = newConfig.filter((config) => config.name === selectedForm);
+
       const newAccount = Object.entries(value).reduce((acc, [k, v]) => {
         set(acc, k, v);
         return acc;
       }, {} as FormikValues);
-      newAccount.type = solution;
+
+      const selectType = selectFormConfig.map((config) => config.account.type);
+      newAccount.type = selectType.join();
       const next = merge(account, newAccount);
+
       await dispatch(saveUserData(next));
       notify.success('Your profile has been updated');
       // eslint-disable-next-line
