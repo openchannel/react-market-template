@@ -61,8 +61,7 @@ const Profile = (): JSX.Element => {
         return acc;
       }, {} as FormikValues);
 
-      const selectType = get(selectFormConfig, '[0]account.type');
-      newAccount.type = selectType;
+      newAccount.type = get(selectFormConfig, '[0]account.type');
       const next = merge(account, newAccount);
 
       await dispatch(saveUserData(next));
