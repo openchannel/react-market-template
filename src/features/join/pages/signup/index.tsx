@@ -25,14 +25,12 @@ const SignupPage = (): JSX.Element => {
   const [showSignupFeedbackPage, setShowSignupFeedbackPage] = React.useState(false);
   const formWrapperRef = React.useRef<HTMLDivElement>(null);
   const { configs } = useTypedSelector(({ userTypes }) => userTypes);
-  console.log('ORDINARY configs', configs);
 
   React.useEffect(() => {
     dispatch(loadUserProfileForm(mockConfig, true, true));
   }, []);
 
   const prefixedFormConfigs = React.useMemo(() => prefixedConfigs(configs), [configs]);
-  console.log('prefixed configs', prefixedFormConfigs);
 
   // eslint-disable-next-line
   const onSubmit = (values: any) => {
