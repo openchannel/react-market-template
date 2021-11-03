@@ -1,18 +1,20 @@
 import * as React from 'react';
-import { ChangePasswordRequest } from '@openchannel/react-common-services';
-import { useHistory } from 'react-router-dom';
-import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
-import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
-import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
 import { set, merge, get } from 'lodash';
-import { MainTemplate } from '../../../common/templates';
 import { useDispatch } from 'react-redux';
-import { changePassword } from '../../../common/store/session/actions';
+import { useHistory } from 'react-router-dom';
+import { ChangePasswordRequest } from '@openchannel/react-common-services';
+import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcEditUserFormComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
-import { loadUserProfileForm, saveUserData } from '../../../common/store/user-types';
-import { useTypedSelector } from '../../../common/hooks';
+import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
+import { OcForm, OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components/dist/ui/form/organisms';
+
+import { MainTemplate } from 'features/common/templates';
+import { useTypedSelector } from 'features/common/hooks';
+import { changePassword } from 'features/common/store/session';
+import { loadUserProfileForm, saveUserData } from 'features/common/store/user-types';
+
 import { formConfigsWithoutTypeData, formPassword } from './constants';
-import { FormikHelpers, FormikValues } from 'formik';
+
 import './styles.scss';
 
 const Profile = (): JSX.Element => {
@@ -20,25 +22,17 @@ const Profile = (): JSX.Element => {
   const dispatch = useDispatch();
   const history = useHistory();
   const formWrapperRef = React.useRef<HTMLDivElement>(null);
-  const historyBack = React.useCallback(() => {
-    history.goBack();
-  }, [history.goBack]);
-  const { configs, account } = useTypedSelector(({ userTypes }) => userTypes);
-  const onClickPass = React.useCallback(
-    (e) => {
-      setSelectedPage(e.target.dataset.link);
-    },
-    [setSelectedPage],
-  );
+  const { configs, account, isLoading } = useTypedSelector(({ userTypes }) => userTypes);
+
+  const onClickPass = React.useCallback((e) => {
+    setSelectedPage(e.target.dataset.link);
+  }, []);
 
   React.useEffect(() => {
     dispatch(loadUserProfileForm(formConfigsWithoutTypeData, false, true));
   }, []);
 
-  const handleChangePasswordSubmit = async (
-    value: FormikValues,
-    { resetForm, setErrors }: FormikHelpers<FormikValues>,
-  ) => {
+  const handleChangePasswordSubmit = async (value: OcFormValues, { resetForm, setErrors }: OcFormFormikHelpers) => {
     try {
       await dispatch(changePassword(value as ChangePasswordRequest));
       resetForm();
@@ -51,7 +45,7 @@ const Profile = (): JSX.Element => {
     }
   };
 
-  const handleMyProfileSubmit = async (value: FormikValues, { setErrors }: FormikHelpers<FormikValues>) => {
+  const handleMyProfileSubmit = async (value: OcFormValues, { setErrors }: OcFormFormikHelpers) => {
     try {
       const selectedForm = formWrapperRef?.current?.querySelector('.select-component__text')?.innerHTML;
       const selectFormConfig = configs.filter((config) => config.name === selectedForm);
@@ -59,7 +53,7 @@ const Profile = (): JSX.Element => {
       const newAccount = Object.entries(value).reduce((acc, [k, v]) => {
         set(acc, k, v);
         return acc;
-      }, {} as FormikValues);
+      }, {} as OcFormValues);
 
       newAccount.type = get(selectFormConfig, '[0]account.type');
       const next = merge(account, newAccount);
@@ -74,10 +68,24 @@ const Profile = (): JSX.Element => {
     }
   };
 
+  const defaultProfileFormType = React.useMemo(() => {
+    if (configs.length > 0) {
+      return configs.reduce((acc, config) => {
+        // eslint-disable-next-line
+        // @ts-ignore
+        if (config.account.type === account.type) {
+          acc = config.name;
+        }
+
+        return acc;
+      }, '');
+    }
+  }, [configs, account]);
+
   return (
     <MainTemplate>
       <div className="bg-container height-unset">
-        <OcNavigationBreadcrumbs pageTitle="My profile" navigateText="Back" navigateClick={historyBack} />
+        <OcNavigationBreadcrumbs pageTitle="My profile" navigateText="Back" navigateClick={history.goBack} />
       </div>
 
       <div className="container mb-8">
@@ -114,9 +122,10 @@ const Profile = (): JSX.Element => {
             {isSelectedPage === 'changePassword' && (
               <OcForm formJsonData={formPassword} onSubmit={handleChangePasswordSubmit} successButtonText="Save" />
             )}
-            {isSelectedPage === 'myProfile' && (
+            {isSelectedPage === 'myProfile' && !isLoading && (
               <OcEditUserFormComponent
                 formConfigs={configs}
+                defaultFormType={defaultProfileFormType}
                 onSubmit={handleMyProfileSubmit}
                 enableTypesDropdown={true}
                 submitText="Save"
