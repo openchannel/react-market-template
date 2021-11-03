@@ -1,5 +1,6 @@
 export const ACCOUNT_PREFIX = 'acc--';
 export const ORGANIZATION_PREFIX = 'org--';
+export const prefixRegex = new RegExp(`(?:${ACCOUNT_PREFIX}|${ORGANIZATION_PREFIX})`, 'g');
 
 export const mockConfig = [
   {

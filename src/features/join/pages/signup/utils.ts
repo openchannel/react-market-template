@@ -7,28 +7,34 @@ export const prefixedConfigs = (configs: OcEditUserFormConfig[]) =>
         ...config,
         account: {
           ...config.account!,
-          includeFields: config!.account!.includeFields!.map((incField) => `${ACCOUNT_PREFIX}${incField}`),
+          includeFields: config!.account!.includeFields!.map(
+            (incField) => `${config.account.type}+${ACCOUNT_PREFIX}${incField}`,
+          ),
           typeData: {
             ...config.account.typeData,
             fields: config!.account!.typeData!.fields!.map((field) => ({
               ...field,
-              id: `${ACCOUNT_PREFIX}${field.id}`,
+              id: `${config.account.type}+${ACCOUNT_PREFIX}${field.id}`,
             })),
           },
         },
         fieldsOrder: config.fieldsOrder
           ? config.fieldsOrder.map((orderField) =>
-              !orderField.includes(`${ORGANIZATION_PREFIX}`) ? `${ACCOUNT_PREFIX}${orderField}` : orderField,
+              !orderField.includes(`${ORGANIZATION_PREFIX}`)
+                ? `${config.account.type}+${ACCOUNT_PREFIX}${orderField}`
+                : `${config.organization!.type}+${orderField}`,
             )
           : [],
         organization: {
           ...config.organization!,
-          includeFields: config!.organization!.includeFields!.map((incField) => `${ORGANIZATION_PREFIX}${incField}`),
+          includeFields: config!.organization!.includeFields!.map(
+            (incField) => `${config.organization!.type}+${ORGANIZATION_PREFIX}${incField}`,
+          ),
           typeData: {
             ...config!.organization!.typeData,
             fields: config!.organization!.typeData!.fields!.map((field) => ({
               ...field,
-              id: `${ORGANIZATION_PREFIX}${field.id}`,
+              id: `${config.organization!.type}+${ORGANIZATION_PREFIX}${field.id}`,
             })),
           },
         },

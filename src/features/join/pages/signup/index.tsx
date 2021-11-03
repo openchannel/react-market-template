@@ -8,8 +8,15 @@ import { useTypedSelector } from '../../../common/hooks';
 import { loadUserProfileForm } from '../../../common/store/user-types/actions';
 import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
 import doneIcon from '../../../../../public/assets/img/forgot-password-complete-icon.svg';
-import { mockConfig, enablePasswordField, enableTermsCheckbox, ACCOUNT_PREFIX, ORGANIZATION_PREFIX } from './constants';
-import { prefixedConfigs, requiredPrefixedFields } from './utils';
+import {
+  mockConfig,
+  enablePasswordField,
+  enableTermsCheckbox,
+  ACCOUNT_PREFIX,
+  ORGANIZATION_PREFIX,
+  prefixRegex,
+} from './constants';
+import { prefixedConfigs } from './utils';
 import './styles.scss';
 
 const SignupPage = (): JSX.Element => {
@@ -18,33 +25,55 @@ const SignupPage = (): JSX.Element => {
   const [showSignupFeedbackPage, setShowSignupFeedbackPage] = React.useState(false);
   const formWrapperRef = React.useRef<HTMLDivElement>(null);
   const { configs } = useTypedSelector(({ userTypes }) => userTypes);
+  console.log('ORDINARY configs', configs);
 
   React.useEffect(() => {
     dispatch(loadUserProfileForm(mockConfig, true, true));
   }, []);
 
   const prefixedFormConfigs = React.useMemo(() => prefixedConfigs(configs), [configs]);
+  console.log('prefixed configs', prefixedFormConfigs);
 
   // eslint-disable-next-line
   const onSubmit = (values: any) => {
     const selectedForm = formWrapperRef.current?.querySelector('.select-component__text')?.innerHTML;
-    const submitFieldsByFormType = requiredPrefixedFields(prefixedFormConfigs).filter(
-      (config) => config.name === selectedForm,
-    );
-
+    const accType = configs.find((el) => el.name === selectedForm)?.account.type;
+    const orgType = configs.find((el) => el.name === selectedForm)?.organization!.type;
     // eslint-disable-next-line
-    const submitValues: any = {};
-    submitFieldsByFormType[0].fields.map((field) => {
-      if (values[field!.id]) {
-        const regex = new RegExp(`(?:${ACCOUNT_PREFIX}|${ORGANIZATION_PREFIX})`, 'g');
-        submitValues[field!.id.replace(regex, '')] = values[field!.id];
+    const submitValues: any = {
+      account: {
+        type: accType,
+        customData: {},
+      },
+      organization: {
+        type: orgType,
+        customData: {},
+      },
+    };
+
+    for (const key in values) {
+      key.includes(ACCOUNT_PREFIX)
+        ? (submitValues.account[key.replace(prefixRegex, '').replace(`${accType}+`, '')] = values[key])
+        : key.includes(ORGANIZATION_PREFIX)
+        ? (submitValues.organization[key.replace(prefixRegex, '').replace(`${orgType}+`, '')] = values[key])
+        : (submitValues[key.replace(prefixRegex, '')] = values[key]);
+    }
+    for (const accKey in submitValues.account) {
+      if (accKey.includes('customData.')) {
+        submitValues.account.customData[accKey.replace('customData.', '')] = submitValues.account[accKey];
+        delete submitValues.account[accKey];
       }
-    });
+    }
+    for (const accKey in submitValues.organization) {
+      if (accKey.includes('customData.')) {
+        submitValues.organization.customData[accKey.replace('customData.', '')] = submitValues.organization[accKey];
+        delete submitValues.organization[accKey];
+      }
+    }
 
     if (serverErrorValidation) {
       setServerErrorValidation(false);
     }
-
     try {
       dispatch(nativeSignup(submitValues));
       setShowSignupFeedbackPage(true);
