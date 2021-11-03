@@ -6,6 +6,7 @@ export interface UserTypes {
   configs: OcEditUserFormConfig[];
   account: OcEditUserResult;
   companyForm: TypeModel<TypeFieldModel> | null;
+  isLoading: boolean;
 }
 
 export type Action =
@@ -29,4 +30,10 @@ export type Action =
     }
   | {
       type: ActionTypes.RESET_USER_COMPANY_FORM;
+    }
+  | {
+      type: ActionTypes.START_LOADING;
+    }
+  | {
+      type: ActionTypes.FINISH_LOADING;
     };
