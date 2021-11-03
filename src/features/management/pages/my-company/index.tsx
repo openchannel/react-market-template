@@ -16,10 +16,6 @@ const MyCompany = (): JSX.Element => {
   const [selectedPage, setSelectedPage] = React.useState(pageIds.company);
   const [inviteModal, updateInviteModal] = React.useState<InviteModalState>({ isOpened: false, user: null });
 
-  const historyBack = React.useCallback(() => {
-    history.goBack();
-  }, [history.goBack]);
-
   const filterPagesByUserType = page.filter((page) => storage.hasAnyPermission(page.permissions));
 
   const onClickPass = React.useCallback((e) => {
@@ -44,7 +40,7 @@ const MyCompany = (): JSX.Element => {
         <OcNavigationBreadcrumbs
           pageTitle="My company"
           navigateText="Back"
-          navigateClick={historyBack}
+          navigateClick={history.goBack}
           buttonText={
             // show button only if the selected page is a 'profile'
             selectedPage === pageIds.profile ? 'Invite a member' : ''
