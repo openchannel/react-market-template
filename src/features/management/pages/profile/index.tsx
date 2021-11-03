@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
-import { set, merge } from 'lodash';
+import { set, merge, get } from 'lodash';
 import { MainTemplate } from '../../../common/templates';
 import { useDispatch } from 'react-redux';
 import { changePassword } from '../../../common/store/session/actions';
@@ -19,6 +19,7 @@ const Profile = (): JSX.Element => {
   const [isSelectedPage, setSelectedPage] = React.useState('myProfile');
   const dispatch = useDispatch();
   const history = useHistory();
+  const formWrapperRef = React.useRef<HTMLDivElement>(null);
   const historyBack = React.useCallback(() => {
     history.goBack();
   }, [history.goBack]);
@@ -52,11 +53,17 @@ const Profile = (): JSX.Element => {
 
   const handleMyProfileSubmit = async (value: FormikValues, { setErrors }: FormikHelpers<FormikValues>) => {
     try {
+      const selectedForm = formWrapperRef?.current?.querySelector('.select-component__text')?.innerHTML;
+      const selectFormConfig = configs.filter((config) => config.name === selectedForm);
+
       const newAccount = Object.entries(value).reduce((acc, [k, v]) => {
         set(acc, k, v);
         return acc;
       }, {} as FormikValues);
+
+      newAccount.type = get(selectFormConfig, '[0]account.type');
       const next = merge(account, newAccount);
+
       await dispatch(saveUserData(next));
       notify.success('Your profile has been updated');
       // eslint-disable-next-line
@@ -74,7 +81,7 @@ const Profile = (): JSX.Element => {
       </div>
 
       <div className="container mb-8">
-        <div className="page-navigation row">
+        <div className="page-navigation row" ref={formWrapperRef}>
           <div className="col-md-3">
             <ul className="list-unstyled">
               <li>
