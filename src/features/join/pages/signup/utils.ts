@@ -1,5 +1,5 @@
 import { OcEditUserFormConfig } from '@openchannel/react-common-components/dist/ui/auth/organisms';
-import { enablePasswordField, enableTermsCheckbox, ORGANIZATION_PREFIX, ACCOUNT_PREFIX } from './constants';
+import { ORGANIZATION_PREFIX, ACCOUNT_PREFIX } from './constants';
 
 export const prefixedConfigs = (configs: OcEditUserFormConfig[]) =>
   configs.length > 0
@@ -40,31 +40,3 @@ export const prefixedConfigs = (configs: OcEditUserFormConfig[]) =>
         },
       }))
     : [];
-
-export const requiredPrefixedFields = (configs: OcEditUserFormConfig[]) =>
-  configs.map((config) => ({
-    name: config.name,
-    fields: [
-      ...config.account!.typeData.fields!.filter((field) => field.attributes.required === true),
-      ...config.organization!.typeData.fields!.filter((field) => field.attributes.required === true),
-      enablePasswordField
-        ? {
-            id: 'password',
-            name: 'password',
-            type: 'password',
-            label: 'Password',
-            defaultValue: '',
-            attributes: { required: true },
-          }
-        : undefined,
-      enableTermsCheckbox
-        ? {
-            id: 'terms',
-            name: 'terms',
-            type: 'checkbox',
-            defaultValue: false,
-            attributes: { required: true },
-          }
-        : undefined,
-    ].filter(Boolean),
-  }));

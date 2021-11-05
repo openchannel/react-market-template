@@ -2,6 +2,9 @@ export const ACCOUNT_PREFIX = 'acc--';
 export const ORGANIZATION_PREFIX = 'org--';
 export const prefixRegex = new RegExp(`(?:${ACCOUNT_PREFIX}|${ORGANIZATION_PREFIX})`, 'g');
 
+export const ACCOUNT_TYPE_REGEX = new RegExp(`(?:${ACCOUNT_PREFIX})`);
+export const ORGANIZATION_TYPE_REGEX = new RegExp(`(?:${ORGANIZATION_PREFIX})`);
+
 export const mockConfig = [
   {
     name: 'Default',
@@ -39,6 +42,3 @@ export const mockConfig = [
     },
   },
 ];
-
-export const enablePasswordField = true;
-export const enableTermsCheckbox = true;
