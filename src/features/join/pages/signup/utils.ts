@@ -1,42 +1,36 @@
+import { OcEditUserTypeConfig } from '@openchannel/react-common-components/dist/ui/auth/organisms/oc-edit-user-form/types';
+import { cloneDeep, merge } from 'lodash';
+
 import { OcEditUserFormConfig } from '@openchannel/react-common-components/dist/ui/auth/organisms';
+
 import { ORGANIZATION_PREFIX, ACCOUNT_PREFIX } from './constants';
 
-export const prefixedConfigs = (configs: OcEditUserFormConfig[]) =>
+const addFieldPrefix = {
+  account: (str: string) => `${ACCOUNT_PREFIX}${str}`,
+  organization: (str: string) => `${ORGANIZATION_PREFIX}${str}`,
+};
+
+const mapConfig = (config: OcEditUserTypeConfig | undefined, addPrefixFn: (s: string) => string) => {
+  const mappedConfig = cloneDeep(config);
+
+  merge(mappedConfig, {
+    includeFields: (config?.includeFields || []).map(addPrefixFn),
+    typeData: {
+      fields: (config?.typeData.fields || []).map((f) => ({ ...f, id: addPrefixFn(f.id) })),
+    },
+  });
+
+  return mappedConfig as OcEditUserTypeConfig;
+};
+
+export const prefixedConfigs = (configs: OcEditUserFormConfig[]): OcEditUserFormConfig[] =>
   configs.length > 0
     ? configs.map((config) => ({
         ...config,
-        account: {
-          ...config.account!,
-          includeFields: config!.account!.includeFields!.map(
-            (incField) => `${config.account.type}+${ACCOUNT_PREFIX}${incField}`,
-          ),
-          typeData: {
-            ...config.account.typeData,
-            fields: config!.account!.typeData!.fields!.map((field) => ({
-              ...field,
-              id: `${config.account.type}+${ACCOUNT_PREFIX}${field.id}`,
-            })),
-          },
-        },
-        fieldsOrder: config.fieldsOrder
-          ? config.fieldsOrder.map((orderField) =>
-              !orderField.includes(`${ORGANIZATION_PREFIX}`)
-                ? `${config.account.type}+${ACCOUNT_PREFIX}${orderField}`
-                : `${config.organization!.type}+${orderField}`,
-            )
-          : [],
-        organization: {
-          ...config.organization!,
-          includeFields: config!.organization!.includeFields!.map(
-            (incField) => `${config.organization!.type}+${ORGANIZATION_PREFIX}${incField}`,
-          ),
-          typeData: {
-            ...config!.organization!.typeData,
-            fields: config!.organization!.typeData!.fields!.map((field) => ({
-              ...field,
-              id: `${config.organization!.type}+${ORGANIZATION_PREFIX}${field.id}`,
-            })),
-          },
-        },
+        account: mapConfig(config.account, addFieldPrefix.account),
+        organization: config.organization ? mapConfig(config.organization, addFieldPrefix.organization) : undefined,
+        fieldsOrder: (config.fieldsOrder || []).map((fo) =>
+          fo.includes(`${ORGANIZATION_PREFIX}`) ? addFieldPrefix.account(fo) : fo,
+        ),
       }))
     : [];
