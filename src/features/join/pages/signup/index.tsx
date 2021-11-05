@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { set } from 'lodash';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { OCNativeCustomSignup } from '@openchannel/react-common-services';
 import { OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components';
 import { OcSignupComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
@@ -19,6 +20,7 @@ import './styles.scss';
 
 const SignupPage = (): JSX.Element => {
   const dispatch = useDispatch();
+  const { push } = useHistory();
   const [serverErrorValidation, setServerErrorValidation] = React.useState(false);
   const [showFeedback, setShowFeedback] = React.useState(false);
   const { configs, isLoading } = useTypedSelector(({ userTypes }) => userTypes);
@@ -64,6 +66,10 @@ const SignupPage = (): JSX.Element => {
     }
   };
 
+  const goToActivationPage = React.useCallback(() => {
+    push('/activate');
+  }, [push]);
+
   return (
     <div className="bg-container pt-sm-5">
       <div className="signup-position">
@@ -78,6 +84,7 @@ const SignupPage = (): JSX.Element => {
             defaultEmptyConfigsErrorMessage="There are no configuration"
             enablePasswordField
             enableTermsCheckbox
+            goToActivationPage={goToActivationPage}
             ordinaryTermsDescription={
               <>
                 I agree to{' '}
