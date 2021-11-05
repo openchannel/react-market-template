@@ -39,10 +39,13 @@ export const nativeLogin = (body: UserLoginModel) => async (dispatch: Dispatch) 
   return response.data;
 };
 
-export const nativeSignup = (body: OCNativeCustomSignup | OCNativeDefaultSignup) => async (dispatch: Dispatch) => {
-  const response = await native.signup(body);
-  dispatch(finishLoading());
-  return response.data;
+export const nativeSignup = (body: OCNativeCustomSignup | OCNativeDefaultSignup) => async () => {
+  try {
+    await native.signup(body);
+  } catch (e) {
+    notifyErrorResp(e);
+    throw e;
+  }
 };
 
 export const loginWithSSOTokens = (idToken: string, accessToken: string) => async (dispatch: Dispatch) => {

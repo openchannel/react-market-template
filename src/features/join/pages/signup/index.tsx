@@ -1,23 +1,27 @@
 import * as React from 'react';
+import { set } from 'lodash';
 import { useDispatch } from 'react-redux';
+import { OCNativeCustomSignup } from '@openchannel/react-common-services';
+import { OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components';
 import { OcSignupComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
-import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
-import { nativeSignup } from '../../../common/store/session';
-import { useTypedSelector } from '../../../common/hooks';
-import { loadUserProfileForm } from '../../../common/store/user-types/actions';
+import { ErrorResponse } from 'types';
+import { nativeSignup } from 'features/common/store/session';
+import { useTypedSelector } from 'features/common/hooks';
+import { loadUserProfileForm } from 'features/common/store/user-types';
 import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
 import doneIcon from '../../../../../public/assets/img/forgot-password-complete-icon.svg';
-import { mockConfig, enablePasswordField, enableTermsCheckbox, ACCOUNT_PREFIX, ORGANIZATION_PREFIX } from './constants';
-import { prefixedConfigs, requiredPrefixedFields } from './utils';
+
+import { prefixedConfigs } from './utils';
+import { mockConfig, ACCOUNT_TYPE_REGEX, ORGANIZATION_TYPE_REGEX } from './constants';
+
 import './styles.scss';
 
 const SignupPage = (): JSX.Element => {
   const dispatch = useDispatch();
   const [serverErrorValidation, setServerErrorValidation] = React.useState(false);
-  const [showSignupFeedbackPage, setShowSignupFeedbackPage] = React.useState(false);
-  const formWrapperRef = React.useRef<HTMLDivElement>(null);
-  const { configs } = useTypedSelector(({ userTypes }) => userTypes);
+  const [showFeedback, setShowFeedback] = React.useState(false);
+  const { configs, isLoading } = useTypedSelector(({ userTypes }) => userTypes);
 
   React.useEffect(() => {
     dispatch(loadUserProfileForm(mockConfig, true, true));
@@ -25,80 +29,55 @@ const SignupPage = (): JSX.Element => {
 
   const prefixedFormConfigs = React.useMemo(() => prefixedConfigs(configs), [configs]);
 
-  // eslint-disable-next-line
-  const onSubmit = (values: any) => {
-    const selectedForm = formWrapperRef.current?.querySelector('.select-component__text')?.innerHTML;
-    const submitFieldsByFormType = requiredPrefixedFields(prefixedFormConfigs).filter(
-      (config) => config.name === selectedForm,
-    );
-
-    // eslint-disable-next-line
-    const submitValues: any = {};
-    submitFieldsByFormType[0].fields.map((field) => {
-      if (values[field!.id]) {
-        const regex = new RegExp(`(?:${ACCOUNT_PREFIX}|${ORGANIZATION_PREFIX})`, 'g');
-        submitValues[field!.id.replace(regex, '')] = values[field!.id];
-      }
-    });
-
+  const onSubmit = async (values: OcFormValues, { setSubmitting }: OcFormFormikHelpers) => {
     if (serverErrorValidation) {
       setServerErrorValidation(false);
     }
 
+    const formData = Object.entries(values).reduce((fd, [key, value]) => {
+      if (ACCOUNT_TYPE_REGEX.test(key)) {
+        set(fd, `account.${key.replace(ACCOUNT_TYPE_REGEX, '')}`, value);
+      } else if (ORGANIZATION_TYPE_REGEX.test(key)) {
+        set(fd, `organization.${key.replace(ORGANIZATION_TYPE_REGEX, '')}`, value);
+      } else if (key === 'terms') {
+        set(fd, `account.terms`, value);
+      } else if (key === 'password') {
+        set(fd, 'password', value);
+      } else if (key === 'info') {
+        set(fd, 'account.type', value.formType);
+        set(fd, 'organization.type', value.formType);
+      }
+
+      return fd;
+    }, {} as OCNativeCustomSignup);
+
     try {
-      dispatch(nativeSignup(submitValues));
-      setShowSignupFeedbackPage(true);
-      // eslint-disable-next-line
-    } catch (error: any) {
-      if (error.response.data.code === 'VALIDATION') {
+      await dispatch(nativeSignup(formData));
+      setShowFeedback(true);
+    } catch (error) {
+      const { response } = error as ErrorResponse;
+
+      setSubmitting(false);
+      if (response.data?.code === 'VALIDATION') {
         setServerErrorValidation(true);
-      } else {
-        notify.error(error.response.data.message);
       }
     }
   };
 
   return (
     <div className="bg-container pt-sm-5">
-      <div className="signup-position" ref={formWrapperRef}>
-        {showSignupFeedbackPage && (
+      <div className="signup-position">
+        {!isLoading && (
           <OcSignupComponent
-            showSignupFeedbackPage
+            showFeedback={showFeedback}
             forgotPasswordDoneUrl={doneIcon}
             loginUrl="/login"
             companyLogoUrl={companyLogo}
-            enableTypesDropdown
             formConfigs={prefixedFormConfigs}
             onSubmit={onSubmit}
-            enablePasswordField={enablePasswordField}
-            enableTermsCheckbox={enableTermsCheckbox}
             defaultEmptyConfigsErrorMessage="There are no configuration"
-            ordinaryTermsDescription={
-              <>
-                I agree to{' '}
-                <a href="https://my.openchannel.io/terms-of-service" className="edit-user-form__content__link">
-                  Terms of service
-                </a>{' '}
-                and{' '}
-                <a className="edit-user-form__content__link" href="https://my.openchannel.io/data-processing-policy">
-                  Data Processing Policy
-                </a>
-              </>
-            }
-          />
-        )}
-        {showSignupFeedbackPage === false && (
-          <OcSignupComponent
-            showSignupFeedbackPage={false}
-            forgotPasswordDoneUrl={doneIcon}
-            loginUrl="/login"
-            companyLogoUrl={companyLogo}
-            enableTypesDropdown
-            formConfigs={prefixedFormConfigs}
-            onSubmit={onSubmit}
             enablePasswordField
             enableTermsCheckbox
-            defaultEmptyConfigsErrorMessage="There are no configuration"
             ordinaryTermsDescription={
               <>
                 I agree to{' '}
