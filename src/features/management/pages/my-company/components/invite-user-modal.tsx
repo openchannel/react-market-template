@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { update, cloneDeep, merge } from 'lodash';
-import { OcFormValues, AppFormField } from '@openchannel/react-common-components';
+import { OcFormValues, AppFormField, AppFormModel } from '@openchannel/react-common-components';
 import { OcInviteModal, inviteFormConfig } from '@openchannel/react-common-components/dist/ui/common/organisms';
 
 import { useTypedSelector } from '../../../../common/hooks';
@@ -13,7 +13,7 @@ const InviteUserModal: React.FC<InviteUserModalProps> = React.memo(({ userData, 
   const { listRoles } = useTypedSelector(({ userInvites }) => userInvites);
 
   const updatedInviteFormConfig = React.useMemo(() => {
-    const config = cloneDeep(inviteFormConfig);
+    const config: AppFormModel = merge(cloneDeep(inviteFormConfig), { formId: '123' });
 
     // convert roles to a valid format for the oc-form
     const roleOptions = Object.entries(listRoles).reduce((list, [, name]) => {

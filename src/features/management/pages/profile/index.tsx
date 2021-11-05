@@ -8,8 +8,8 @@ import { OcEditUserFormComponent } from '@openchannel/react-common-components/di
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
 import { OcForm, OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components/dist/ui/form/organisms';
 
-import { MainTemplate } from 'features/common/templates';
 import { useTypedSelector } from 'features/common/hooks';
+import { MainTemplate } from 'features/common/templates';
 import { changePassword } from 'features/common/store/session';
 import { loadUserProfileForm, saveUserData } from 'features/common/store/user-types';
 
@@ -120,15 +120,14 @@ const Profile = (): JSX.Element => {
           </div>
           <div className="col-md-5 col-lg-4 pt-1">
             {isSelectedPage === 'changePassword' && (
-              <OcForm formJsonData={formPassword} onSubmit={handleChangePasswordSubmit} successButtonText="Save" />
+              <OcForm formJsonData={formPassword} onSubmit={handleChangePasswordSubmit} submitButtonText="Save" />
             )}
             {isSelectedPage === 'myProfile' && !isLoading && (
               <OcEditUserFormComponent
                 formConfigs={configs}
                 defaultFormType={defaultProfileFormType}
                 onSubmit={handleMyProfileSubmit}
-                enableTypesDropdown={true}
-                submitText="Save"
+                submitButtonText="Save"
               />
             )}
           </div>
