@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { set, merge, get } from 'lodash';
+import { set, merge } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { ChangePasswordRequest } from '@openchannel/react-common-services';
@@ -21,7 +21,6 @@ const Profile = (): JSX.Element => {
   const [isSelectedPage, setSelectedPage] = React.useState('myProfile');
   const dispatch = useDispatch();
   const history = useHistory();
-  const formWrapperRef = React.useRef<HTMLDivElement>(null);
   const { configs, account, isLoading } = useTypedSelector(({ userTypes }) => userTypes);
 
   const onClickPass = React.useCallback((e) => {
@@ -45,23 +44,26 @@ const Profile = (): JSX.Element => {
     }
   };
 
-  const handleMyProfileSubmit = async (value: OcFormValues, { setErrors }: OcFormFormikHelpers) => {
+  const handleMyProfileSubmit = async (value: OcFormValues, { setErrors, setSubmitting }: OcFormFormikHelpers) => {
     try {
-      const selectedForm = formWrapperRef?.current?.querySelector('.select-component__text')?.innerHTML;
-      const selectFormConfig = configs.filter((config) => config.name === selectedForm);
-
-      const newAccount = Object.entries(value).reduce((acc, [k, v]) => {
-        set(acc, k, v);
+      const formData = Object.entries(value).reduce((acc, [k, v]) => {
+        if (k === 'info') {
+          set(acc, 'type', v.formType);
+        } else {
+          set(acc, k, v);
+        }
         return acc;
       }, {} as OcFormValues);
 
-      newAccount.type = get(selectFormConfig, '[0]account.type');
-      const next = merge(account, newAccount);
+      merge(account, formData);
 
-      await dispatch(saveUserData(next));
+      await dispatch(saveUserData(account));
+
+      setSubmitting(false);
       notify.success('Your profile has been updated');
       // eslint-disable-next-line
     } catch (e: any) {
+      setSubmitting(false);
       if (e.errors != null) {
         setErrors(e.errors);
       }
@@ -89,7 +91,7 @@ const Profile = (): JSX.Element => {
       </div>
 
       <div className="container mb-8">
-        <div className="page-navigation row" ref={formWrapperRef}>
+        <div className="page-navigation row">
           <div className="col-md-3">
             <ul className="list-unstyled">
               <li>
