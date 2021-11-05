@@ -1,6 +1,7 @@
 import { OcEditUserFormConfig } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 
 export const formPassword = {
+  formId: 'password-form',
   fields: [
     {
       id: 'password',
