@@ -5,6 +5,7 @@ const initialState = {
   configs: [],
   account: {},
   companyForm: null,
+  isLoading: false,
 };
 
 export const userTypesReducer = (state: UserTypes = initialState, action: Action): UserTypes => {
@@ -34,6 +35,20 @@ export const userTypesReducer = (state: UserTypes = initialState, action: Action
       return {
         ...state,
         companyForm: null,
+      };
+    }
+
+    case ActionTypes.START_LOADING: {
+      return {
+        ...state,
+        isLoading: true,
+      };
+    }
+
+    case ActionTypes.FINISH_LOADING: {
+      return {
+        ...state,
+        isLoading: false,
       };
     }
 

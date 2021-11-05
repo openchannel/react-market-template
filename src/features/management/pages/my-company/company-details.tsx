@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { useTypedSelector } from '../../../common/hooks';
-import { clearUserCompanyForm, getUserCompanyForm, saveUserCompany } from '../../../common/store/user-types/actions';
-import { OcForm, OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components/dist/ui/form/organisms';
-import { AppFormModel } from '@openchannel/react-common-components/dist/ui/form/models';
 import { apps } from '@openchannel/react-common-services';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
+import { AppFormModel } from '@openchannel/react-common-components/dist/ui/form/models';
+import { OcForm, OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components/dist/ui/form/organisms';
+
+import { useTypedSelector } from 'features/common/hooks';
+import { clearUserCompanyForm, getUserCompanyForm, saveUserCompany } from 'features/common/store/user-types/actions';
 
 const CompanyDetails: React.FC = () => {
   const dispatch = useDispatch();
@@ -37,7 +38,13 @@ const CompanyDetails: React.FC = () => {
     return null;
   }
 
-  return <OcForm formJsonData={companyForm as AppFormModel} onSubmit={handleSubmit} service={apps} />;
+  // todo: temporary disable render 'date' and 'datetime' fields
+  const trimmedForm = {
+    ...companyForm,
+    fields: companyForm.fields!.filter((f) => f.type !== 'datetime' && f.type !== 'date'),
+  };
+
+  return <OcForm formJsonData={trimmedForm as AppFormModel} onSubmit={handleSubmit} service={apps} />;
 };
 
 export default CompanyDetails;
