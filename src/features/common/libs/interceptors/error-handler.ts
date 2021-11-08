@@ -37,7 +37,6 @@ const process401Error = async <T>(config: T) => {
 };
 
 const isCsrfError = ({ response }: InterceptorError) => {
-  console.log('isCsrfError response', response)
   return response?.status === 403 && response?.data?.toLowerCase()?.includes('csrf');
 };
 
