@@ -93,7 +93,7 @@ const SignupPage = (): JSX.Element => {
                 </a>{' '}
                 and{' '}
                 <a className="edit-user-form__content__link" href="https://my.openchannel.io/data-processing-policy">
-                  Data Processing Policy
+                  Data processing policy
                 </a>
               </>
             }
