@@ -4,6 +4,7 @@ const ChartPage = React.lazy(() => import('./pages/chart'));
 const HomePage = React.lazy(() => import('./pages/home'));
 const SearchPage = React.lazy(() => import('./pages/search'));
 const DetailsPage = React.lazy(() => import('./pages/details'));
+const NotFoundPage = React.lazy(() => import('./pages/not-found'));
 const AppVersionPage = React.lazy(() => import('./pages/app-version'));
 
 export const commonRoutes = [
@@ -35,5 +36,9 @@ export const commonRoutes = [
     path: '/',
     exact: true,
     Component: HomePage,
+  },
+  {
+    path: '*',
+    Component: NotFoundPage,
   },
 ];

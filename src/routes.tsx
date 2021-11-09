@@ -16,6 +16,7 @@ export const Routes = (): JSX.Element => (
         <Route
           key={key}
           path={route.path}
+          exact={route.exact}
           render={() =>
             route.private ? (
               <OidcWrapper>

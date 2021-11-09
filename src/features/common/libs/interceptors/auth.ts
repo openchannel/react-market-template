@@ -7,7 +7,7 @@ const BASE_URL = settings.PRODUCTION ? settings.API_URL : settings.API_URL_DEVEL
 interceptors.request.use((request) => {
   const token = storage.getAccessToken();
 
-  if (token && request.baseURL!.startsWith(BASE_URL)) {
+  if (token && request.baseURL?.startsWith(BASE_URL)) {
     request.headers['Authorization'] = `Bearer ${token}`;
   }
 

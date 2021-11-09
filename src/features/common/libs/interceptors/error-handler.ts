@@ -37,7 +37,7 @@ const process401Error = async <T>(config: T) => {
 };
 
 const isCsrfError = ({ response }: InterceptorError) => {
-  return response?.status === 403 && response?.data?.error?.toLowerCase()?.includes('csrf');
+  return response?.status === 403 && response?.data?.toLowerCase()?.includes('csrf');
 };
 
 const reInitCSRF = async <T>(config: T) => {
