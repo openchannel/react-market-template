@@ -88,12 +88,22 @@ const SignupPage = (): JSX.Element => {
             ordinaryTermsDescription={
               <>
                 I agree to{' '}
-                <a href="https://my.openchannel.io/terms-of-service" className="edit-user-form__content__link">
+                <a
+                  target="_blank"
+                  href="https://my.openchannel.io/terms-of-service"
+                  className="edit-user-form__content__link"
+                  rel="noreferrer"
+                >
                   Terms of service
                 </a>{' '}
                 and{' '}
-                <a className="edit-user-form__content__link" href="https://my.openchannel.io/data-processing-policy">
-                  Data Processing Policy
+                <a
+                  target="_blank"
+                  className="edit-user-form__content__link"
+                  href="https://my.openchannel.io/data-processing-policy"
+                  rel="noreferrer"
+                >
+                  Data processing policy
                 </a>
               </>
             }
