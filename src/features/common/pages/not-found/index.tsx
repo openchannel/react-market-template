@@ -17,7 +17,9 @@ export const NotFoundPage: React.FC = () => {
 
   return (
     <MainTemplate>
-      <NotFound errorImgUrl={image} onClick={redirect} buttonClassName="button-255" />
+      <div className="not-found-wrapper">
+        <NotFound errorImgUrl={image} onClick={redirect} buttonClassName="button-255" />
+      </div>
     </MainTemplate>
   );
 };
