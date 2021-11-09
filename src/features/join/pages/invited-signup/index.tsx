@@ -12,7 +12,6 @@ import { getUserInviteInfoByToken, sendInvite } from '../../store/join';
 
 import './styles.scss';
 import { SignUpByInviteRequest } from '@openchannel/react-common-services';
-import { CUSTOM_DATA_REGEX } from './constants';
 
 const TERMS_OF_SERVICE_LINK = 'https://my.openchannel.io/terms-of-service';
 const DATA_PROCESSING_POLICY_LINK = 'https://my.openchannel.io/data-processing-policy';
@@ -65,11 +64,7 @@ const InvitedSignUpPage = (): JSX.Element => {
       delete values.terms;
 
       const formData = Object.entries(values).reduce((fd, [key, value]) => {
-        if (CUSTOM_DATA_REGEX.test(key)) {
           set(fd, `${key}`, value);
-        } else {
-          set(fd, `${key}`, value);
-        }
 
         return fd;
       }, {} as SignUpByInviteRequest);
