@@ -67,15 +67,7 @@ const InvitedSignUpPage = (): JSX.Element => {
       const formData = Object.entries(values).reduce((fd, [key, value]) => {
         if (CUSTOM_DATA_REGEX.test(key)) {
           set(fd, `${key}`, value);
-        } else if (key === 'email') {
-          set(fd, `${key}`, value);
-        } else if (key === 'name') {
-          set(fd, `${key}`, value);
-        } else if (key === 'username') {
-          set(fd, `${key}`, value);
-        } else if (key === 'password') {
-          set(fd, `${key}`, value);
-        } else if (key === 'info') {
+        } else {
           set(fd, `${key}`, value);
         }
 
