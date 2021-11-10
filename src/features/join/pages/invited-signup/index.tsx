@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { merge } from 'lodash';
+import { set, merge } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { OcEditUserFormConfig } from '@openchannel/react-common-components';
@@ -11,6 +11,7 @@ import { useTypedSelector } from 'features/common/hooks';
 import { getUserInviteInfoByToken, sendInvite } from '../../store/join';
 
 import './styles.scss';
+import { SignUpByInviteRequest } from '@openchannel/react-common-services';
 
 const TERMS_OF_SERVICE_LINK = 'https://my.openchannel.io/terms-of-service';
 const DATA_PROCESSING_POLICY_LINK = 'https://my.openchannel.io/data-processing-policy';
@@ -62,8 +63,14 @@ const InvitedSignUpPage = (): JSX.Element => {
     async (values, { setSubmitting }) => {
       delete values.terms;
 
+      const formData = Object.entries(values).reduce((fd, [key, value]) => {
+          set(fd, `${key}`, value);
+
+        return fd;
+      }, {} as SignUpByInviteRequest);
+
       try {
-        await dispatch(sendInvite(merge(userInviteData, values)));
+        await dispatch(sendInvite(merge(userInviteData, formData)));
         history.replace('/login');
       } catch {
         setSubmitting(false);
