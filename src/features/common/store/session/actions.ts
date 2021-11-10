@@ -134,3 +134,7 @@ export const resetPassword = (body: UserResetPassword) => async () => {
 export const activeUserAccount = (token: string) => async () => {
   await native.activate(token);
 };
+
+export const resendActivationCode = (email: string) => async () => {
+  await native.sendActivationCode(email);
+};
