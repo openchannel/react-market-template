@@ -46,7 +46,6 @@ export const joinRoutes = [
   {
     path: '/resend-activation',
     exact: true,
-    private: true,
     Component: ResendActivatePage,
   },
 ];
