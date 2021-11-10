@@ -15,6 +15,7 @@ import { RootState } from 'types';
 import { notifyErrorResp } from '../../libs/helpers';
 import { ActionTypes } from './action-types';
 import { normalizeError } from '../utils';
+import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
@@ -136,5 +137,11 @@ export const activeUserAccount = (token: string) => async () => {
 };
 
 export const resendActivationCode = (email: string) => async () => {
-  await native.sendActivationCode(email);
+  try {
+    await native.sendActivationCode(email);
+    notify.success('Code sent');
+    // eslint-disable-next-line
+  } catch (e: any) {
+    notify.error(e.response.data.message);
+  }
 };
