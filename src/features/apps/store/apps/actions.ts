@@ -122,14 +122,6 @@ export const fetchGalleries = () => async (dispatch: Dispatch) => {
       if (data.length > 0) acc.push({ ...filters[i], data: data.map((d) => mapAppData(d)) });
       return acc;
     }, [] as Gallery[]);
-
-    const featured = galleries
-      .filter((item) => item.id === 'featured')
-      .map((el) => el.data)
-      .flat(4);
-
-    dispatch(setFeatured(featured));
-
     dispatch(setGalleries(galleries));
     dispatch(finishLoading());
   } catch (error) {
@@ -137,6 +129,13 @@ export const fetchGalleries = () => async (dispatch: Dispatch) => {
 
     throw error;
   }
+};
+
+export const getFeaturedApps = (sort: string, filter: string) => async (dispatch: Dispatch) => {
+  const {
+    data: { list },
+  } = await apps.getApps(1, 4, sort, filter, true);
+  dispatch(setFeatured(list));
 };
 
 export const fetchFilters = () => async (dispatch: Dispatch) => {

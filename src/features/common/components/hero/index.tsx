@@ -4,10 +4,20 @@ import { OcFeaturedAppsComponent } from '@openchannel/react-common-components/di
 import { useCmsData, useTypedSelector } from '../../hooks';
 
 import './style.scss';
+import { getFeaturedApps } from '../../../apps/store/apps/actions';
+import { useDispatch } from 'react-redux';
 
 const Hero: React.FC = () => {
   const { home } = useCmsData();
   const { featured } = useTypedSelector(({ apps }) => apps);
+  const dispatch = useDispatch();
+  const featuredSort = JSON.stringify({ randomize: 1 });
+  const featuredFilter = JSON.stringify({ 'attributes.featured': 'yes' });
+
+  React.useEffect(() => {
+
+    dispatch(getFeaturedApps(featuredSort, featuredFilter));
+  }, []);
 
   return (
     <div className="bg-container height-unset d-flex flex-column align-items-center">
