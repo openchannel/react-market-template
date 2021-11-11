@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { OcFeaturedAppsComponent } from '@openchannel/react-common-components/dist/ui/common/organisms';
 
-import { data } from '../../../../mocks/app-list';
-import { useCmsData } from '../../hooks';
+import { useCmsData, useTypedSelector } from '../../hooks';
 
 import './style.scss';
 
 const Hero: React.FC = () => {
   const { home } = useCmsData();
+  const { featured } = useTypedSelector(({ apps }) => apps);
 
   return (
     <div className="bg-container height-unset d-flex flex-column align-items-center">
@@ -21,7 +21,7 @@ const Hero: React.FC = () => {
       </div>
       <div className="container featured-apps-container">
         <OcFeaturedAppsComponent
-          data={data}
+          data={featured}
           mainRouterLink="/details"
           // navigationParam="safeName[0]"
           label="Featured"
