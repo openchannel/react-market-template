@@ -64,7 +64,7 @@ const InvitedSignUpPage = (): JSX.Element => {
       delete values.terms;
 
       const formData = Object.entries(values).reduce((fd, [key, value]) => {
-          set(fd, `${key}`, value);
+        set(fd, `${key}`, value);
 
         return fd;
       }, {} as SignUpByInviteRequest);

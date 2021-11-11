@@ -42,6 +42,7 @@ const setGalleries = (payload: Gallery[]) => ({ type: ActionTypes.SET_GALLERIES,
 const updateMyApps = (payload: Partial<Searchable<FullAppData>>) => ({ type: ActionTypes.UPDATE_MY_APPS, payload });
 const resetMyApps = () => ({ type: ActionTypes.RESET_MY_APPS });
 const setFilters = (payload: Filter[]) => ({ type: ActionTypes.SET_FILTERS, payload });
+const setFeatured = (payload: FullAppData[]) => ({ type: ActionTypes.SET_FEATURED, payload });
 const updateSearchPayload = (payload: SelectedFilters) => ({
   type: ActionTypes.SET_SELECTED_FILTERS,
   payload,
@@ -121,6 +122,13 @@ export const fetchGalleries = () => async (dispatch: Dispatch) => {
       if (data.length > 0) acc.push({ ...filters[i], data: data.map((d) => mapAppData(d)) });
       return acc;
     }, [] as Gallery[]);
+
+    const featured = galleries
+      .filter((item) => item.id === 'featured')
+      .map((el) => el.data)
+      .flat(4);
+
+    dispatch(setFeatured(featured));
 
     dispatch(setGalleries(galleries));
     dispatch(finishLoading());

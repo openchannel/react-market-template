@@ -23,6 +23,7 @@ export interface Apps {
   appByVersion: null | FullAppData;
   recommendedApps: null | FullAppData[];
   currentForm: null | AppFormModelResponse;
+  featured: FullAppData[];
 }
 
 export type Action =
@@ -70,6 +71,10 @@ export type Action =
     }
   | {
       type: ActionTypes.START_LOADING;
+    }
+  | {
+      type: ActionTypes.SET_FEATURED;
+      payload: FullAppData[];
     }
   | {
       type: ActionTypes.FINISH_LOADING;
