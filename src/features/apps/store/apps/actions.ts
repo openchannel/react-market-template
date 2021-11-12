@@ -131,11 +131,20 @@ export const fetchGalleries = () => async (dispatch: Dispatch) => {
   }
 };
 
-export const getFeaturedApps = (sort: string, filter: string) => async (dispatch: Dispatch) => {
-  const {
-    data: { list },
-  } = await apps.getApps(1, 4, sort, filter, true);
-  dispatch(setFeatured(list));
+export const getFeaturedApps = () => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+  const featuredSort = JSON.stringify({ randomize: 1 });
+  const featuredFilter = JSON.stringify({ 'attributes.featured': 'yes' });
+  try {
+    const {
+      data: { list },
+    } = await apps.getApps(1, 4, featuredSort, featuredFilter, true);
+    dispatch(setFeatured(list));
+  } catch (error) {
+    dispatch(finishLoading());
+
+    throw error;
+  }
 };
 
 export const fetchFilters = () => async (dispatch: Dispatch) => {
