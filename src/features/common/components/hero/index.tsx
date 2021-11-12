@@ -1,22 +1,17 @@
 import * as React from 'react';
 import { OcFeaturedAppsComponent } from '@openchannel/react-common-components/dist/ui/common/organisms';
-
 import { useCmsData, useTypedSelector } from '../../hooks';
-
-import './style.scss';
 import { getFeaturedApps } from '../../../apps/store/apps/actions';
 import { useDispatch } from 'react-redux';
+import './style.scss';
 
 const Hero: React.FC = () => {
   const { home } = useCmsData();
   const { featured } = useTypedSelector(({ apps }) => apps);
   const dispatch = useDispatch();
-  const featuredSort = JSON.stringify({ randomize: 1 });
-  const featuredFilter = JSON.stringify({ 'attributes.featured': 'yes' });
 
   React.useEffect(() => {
-
-    dispatch(getFeaturedApps(featuredSort, featuredFilter));
+    dispatch(getFeaturedApps());
   }, []);
 
   return (
@@ -32,8 +27,8 @@ const Hero: React.FC = () => {
       <div className="container featured-apps-container">
         <OcFeaturedAppsComponent
           data={featured}
-          mainRouterLink="/details"
-          // navigationParam="safeName[0]"
+          mainRouterLink="/details/"
+          navigationParam="safeName[0]"
           label="Featured"
           customClass=""
         />
