@@ -3,7 +3,8 @@ import { User } from 'oidc-client';
 import { useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { joinRoutes } from '../../join';
+import { joinRoutes } from 'features/join';
+
 import { useAuth, useTypedSelector } from '../hooks';
 import { getSearchParams } from '../libs/helpers';
 import { loginWithSSOTokens } from '../store/session';
@@ -17,6 +18,7 @@ export const AuthWrapper: React.FC = ({ children }) => {
   const { isLoading: isOidcLoading, userManager, isSsoLogin } = useTypedSelector((state) => state.oidc);
   const searchParams = React.useMemo(() => getSearchParams(window.location.search), []);
 
+  // create session on oidc response
   const loginWithOidcTokens = React.useCallback(
     async ({ id_token, access_token }: User) => {
       try {
@@ -27,16 +29,20 @@ export const AuthWrapper: React.FC = ({ children }) => {
         setAuthWithOidcLoading(false);
       }
     },
-    [dispatch, history.replace],
+    [history.replace],
   );
 
-  const authWithOidc = async () => {
+  // process response after redirect from okta
+  const processResponse = React.useCallback(async () => {
     if (!userManager) return;
 
-    const processResponse = async () => {
-      const response = await userManager.signinRedirectCallback(location.hash);
-      await loginWithOidcTokens(response);
-    };
+    const response = await userManager.signinRedirectCallback(location.hash);
+    await loginWithOidcTokens(response);
+  }, [userManager, loginWithOidcTokens, location.hash]);
+
+  // try creating session with oidc
+  const authWithOidc = async () => {
+    if (!userManager) return;
 
     try {
       if (!location.hash) {
@@ -45,7 +51,7 @@ export const AuthWrapper: React.FC = ({ children }) => {
         await processResponse();
       }
     } catch (e) {
-      console.error('authWithOidc Error: ', e);
+      console.error('auth with oidc Error: ', e);
       setAuthWithOidcLoading(false);
       history.replace('/login');
     }
@@ -63,19 +69,15 @@ export const AuthWrapper: React.FC = ({ children }) => {
 
   React.useEffect(() => {
     const init = async () => {
-      const joinPaths = joinRoutes.map(({ path }) => path);
-
       try {
         await checkSession();
 
+        const joinPaths = joinRoutes.map(({ path }) => path);
         if (joinPaths.includes(location.pathname)) {
           history.replace('/');
         }
       } catch {
-        // if session is not exist and location is not 'join' -> call checkAuthType
-        if (!joinPaths.includes(location.pathname)) {
-          await checkAuthType();
-        }
+        await checkAuthType();
       }
     };
 
