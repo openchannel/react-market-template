@@ -5,7 +5,6 @@ const initialState = {
   isLoading: false,
   isLoaded: false,
   galleries: [],
-  featured: [],
   myApps: {
     data: [],
     pageNumber: 1,
@@ -51,13 +50,6 @@ export const appsReducer = (state: Apps = initialState, action: Action): Apps =>
       return {
         ...state,
         galleries: action.payload,
-      };
-    }
-
-    case ActionTypes.SET_FEATURED: {
-      return {
-        ...state,
-        featured: action.payload,
       };
     }
 
