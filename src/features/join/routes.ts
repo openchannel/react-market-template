@@ -10,7 +10,7 @@ const InvitedSignUpPage = React.lazy(() => import('./pages/invited-signup'));
 export const joinRoutes = [
   {
     path: '/login',
-    exact: true,
+    exact: false,
     private: true,
     Component: LoginPage,
   },
