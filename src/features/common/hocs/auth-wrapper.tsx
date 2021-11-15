@@ -21,7 +21,7 @@ export const AuthWrapper: React.FC = ({ children }) => {
     async ({ id_token, access_token }: User) => {
       try {
         await dispatch(loginWithSSOTokens(id_token, access_token));
-        history.replace(location.pathname);
+        history.replace('/');
       } catch (e) {
         console.error('e', e);
         setAuthWithOidcLoading(false);
