@@ -11,7 +11,7 @@ const ResendActivatePage = React.lazy(() => import('./pages/resend-activate'));
 export const joinRoutes = [
   {
     path: '/login',
-    exact: true,
+    exact: false,
     private: true,
     Component: LoginPage,
   },

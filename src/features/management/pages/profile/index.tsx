@@ -24,11 +24,31 @@ const Profile = (): JSX.Element => {
   const { configs, account, isLoading } = useTypedSelector(({ userTypes }) => userTypes);
 
   const onClickPass = React.useCallback((e) => {
+    switch (e.target.dataset.link) {
+      case 'myProfile':
+        history.replace('/my-profile/profile-details');
+        break;
+      case 'changePassword':
+        history.replace('/my-profile/password');
+        break;
+      default:
+        break;
+    }
     setSelectedPage(e.target.dataset.link);
   }, []);
 
   React.useEffect(() => {
     dispatch(loadUserProfileForm(formConfigsWithoutTypeData, false, true));
+    switch (isSelectedPage) {
+      case 'myProfile':
+        history.replace('/my-profile/profile-details');
+        break;
+      case 'changePassword':
+        history.replace('/my-profile/password');
+        break;
+      default:
+        break;
+    }
   }, []);
 
   const handleChangePasswordSubmit = async (value: OcFormValues, { resetForm, setErrors }: OcFormFormikHelpers) => {
