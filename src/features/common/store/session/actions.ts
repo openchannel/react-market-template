@@ -11,7 +11,7 @@ import {
   OCNativeCustomSignup,
 } from '@openchannel/react-common-services';
 
-import { RootState } from 'types';
+import { ErrorResponse, RootState } from 'types';
 import { notifyErrorResp } from '../../libs/helpers';
 import { ActionTypes } from './action-types';
 import { normalizeError } from '../utils';
@@ -140,8 +140,14 @@ export const resendActivationCode = (email: string) => async () => {
   try {
     await native.sendActivationCode(email);
     notify.success('Code sent');
-    // eslint-disable-next-line
-  } catch (e: any) {
-    notify.error(e.response.data.message);
+  } catch (e) {
+    const { response } = <ErrorResponse>e;
+
+    notifyErrorResp(e);
+
+    if (response.data?.code === 'VALIDATION') {
+      notify.error(response.data.message);
+    }
+    throw e;
   }
 };

@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { OcResendActivation } from '@openchannel/react-common-components/dist/ui/auth/organisms';
-import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
 import { useDispatch } from 'react-redux';
-import { isEmptyInputValue } from '@openchannel/react-common-components/dist/ui/form/lib';
-import { invalidMassageEmail, requiredField, validateEmail } from '../constants';
-import { resendActivationCode } from '../../../common/store/session';
 import { useHistory } from 'react-router-dom';
+import { isEmptyInputValue } from '@openchannel/react-common-components/dist/ui/form/lib';
+import { OcResendActivation } from '@openchannel/react-common-components/dist/ui/auth/organisms';
+
+import companyLogo from '../../../../../public/assets/img/company-logo-2x.png';
+import { resendActivationCode } from '../../../common/store/session';
+
+import { invalidMassageEmail, requiredField, validateEmail } from '../constants';
+
 import './styles.scss';
 
 const ResendActivatePage = (): JSX.Element => {
@@ -19,11 +22,10 @@ const ResendActivatePage = (): JSX.Element => {
     setInputValue(e.target.value);
     if (validateEmail()(e.target.value) !== null) {
       setInputError(invalidMassageEmail);
+    } else if (isEmptyInputValue(e.target.value)) {
+      setInputError(requiredField);
     } else {
       setInputError('');
-    }
-    if (isEmptyInputValue(e.target.value)) {
-      setInputError(requiredField);
     }
   }, []);
 
@@ -33,14 +35,9 @@ const ResendActivatePage = (): JSX.Element => {
         setLoadingRequest(true);
         await dispatch(resendActivationCode(inputValue));
         history.push('/login');
-        setInputValue('');
-        setLoadingRequest(false);
       } catch {
         setLoadingRequest(false);
       }
-    }
-    if (isEmptyInputValue(inputValue)) {
-      setInputError(requiredField);
     }
   }, [inputValue]);
 
