@@ -137,8 +137,9 @@ export const getFeaturedApps = () => async (dispatch: Dispatch) => {
 
   const {
     data: { list },
-  } = await apps.getApps(1, 4, featuredSort, featuredFilter, true);
-  dispatch(setFeatured(list));
+  } = await apps.getApps(1, 4, featuredSort, featuredFilter);
+
+  dispatch(setFeatured((list || []).map((d) => mapAppData(d))));
 };
 
 export const fetchFilters = () => async (dispatch: Dispatch) => {
