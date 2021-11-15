@@ -17,18 +17,6 @@ export const managementRoutes = [
     private: true,
     Component: ProfilePage,
   },
-  // {
-  //   path: '/management/profile',
-  //   exact: true,
-  //   private: true,
-  //   Component: ProfilePage,
-  // },
-  // {
-  //   path: '/management/profile',
-  //   exact: true,
-  //   private: true,
-  //   Component: ProfilePage,
-  // },
   {
     path: '/my-company',
     exact: false,
