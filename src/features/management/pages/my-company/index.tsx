@@ -34,6 +34,19 @@ const MyCompany = (): JSX.Element => {
     updateInviteModal({ isOpened: false, user: null });
   }, []);
 
+  React.useEffect(() => {
+    switch (selectedPage) {
+      case pageIds.company:
+        history.replace('/my-company/company-details');
+        break;
+      case pageIds.profile:
+        history.replace('/my-company/user-management');
+        break;
+      default:
+        break;
+    }
+  }, [selectedPage]);
+
   return (
     <MainTemplate>
       <div className="bg-container height-unset">

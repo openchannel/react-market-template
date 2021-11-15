@@ -6,13 +6,16 @@
   "default-header": {
     "logo": "assets/img/logo-company.png",
     "menu": {
-      "items": [{
-        "label": "Browse",
-        "location": "/"
-      }, {
-        "label": "My apps",
-        "location": "/management/apps"
-      }]
+      "items": [
+        {
+          "label": "Browse",
+          "location": "/"
+        },
+        {
+          "label": "My apps",
+          "location": "/my-apps"
+        }
+      ]
     }
   },
   "big-hero": {
@@ -30,14 +33,18 @@
   },
   "default-footer": {
     "menu": {
-      "items": [{
-        "label": "",
-        "location": "",
-        "items": [{
+      "items": [
+        {
           "label": "",
-          "location": ""
-        }]
-      }]
+          "location": "",
+          "items": [
+            {
+              "label": "",
+              "location": ""
+            }
+          ]
+        }
+      ]
     },
     "logo": "assets/img/logo-company.png"
   },
