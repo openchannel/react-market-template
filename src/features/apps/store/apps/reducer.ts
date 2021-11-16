@@ -5,6 +5,7 @@ const initialState = {
   isLoading: false,
   isLoaded: false,
   galleries: [],
+  featured: [],
   myApps: {
     data: [],
     pageNumber: 1,
@@ -89,36 +90,49 @@ export const appsReducer = (state: Apps = initialState, action: Action): Apps =>
         selectedFilters: action.payload,
       };
     }
+
     case ActionTypes.RESET_SELECTED_FILTERS: {
       return {
         ...state,
         selectedFilters: initialState.selectedFilters,
       };
     }
+
     case ActionTypes.SET_FILTERED_APPS: {
       return {
         ...state,
         filteredApps: action.payload,
       };
     }
+
     case ActionTypes.SET_SELECTED_APP: {
       return {
         ...state,
         selectedApp: action.payload,
       };
     }
+
     case ActionTypes.SET_APP_BY_VERSION: {
       return {
         ...state,
         appByVersion: action.payload,
       };
     }
+
     case ActionTypes.SET_RECOMMENDED_APPS: {
       return {
         ...state,
         recommendedApps: action.payload,
       };
     }
+
+    case ActionTypes.SET_FEATURED: {
+      return {
+        ...state,
+        featured: action.payload,
+      };
+    }
+
     default:
       return state;
   }
