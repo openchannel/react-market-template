@@ -25,8 +25,8 @@ export const Header = ({ cmsData }: any): JSX.Element => {
   }, [isMobile]);
 
   const options = [
-    !isSSO() ? { label: 'My Profile', value: '/management/profile' } : undefined,
-    hasCompanyPermission() ? { label: 'My Company', value: '/management/company' } : undefined,
+    !isSSO() ? { label: 'My Profile', value: '/my-profile' } : undefined,
+    hasCompanyPermission() ? { label: 'My Company', value: '/my-company' } : undefined,
     { label: 'Logout', value: 'logout' },
   ].filter(Boolean) as DropdownModel<string>[];
 

@@ -122,6 +122,7 @@ export const fetchGalleries = () => async (dispatch: Dispatch) => {
       if (data.length > 0) acc.push({ ...filters[i], data: data.map((d) => mapAppData(d)) });
       return acc;
     }, [] as Gallery[]);
+
     dispatch(setGalleries(galleries));
     dispatch(finishLoading());
   } catch (error) {

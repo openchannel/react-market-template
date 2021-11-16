@@ -11,10 +11,11 @@ import {
   OCNativeCustomSignup,
 } from '@openchannel/react-common-services';
 
-import { RootState } from 'types';
+import { ErrorResponse, RootState } from 'types';
 import { notifyErrorResp } from '../../libs/helpers';
 import { ActionTypes } from './action-types';
 import { normalizeError } from '../utils';
+import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
@@ -133,4 +134,20 @@ export const resetPassword = (body: UserResetPassword) => async () => {
 
 export const activeUserAccount = (token: string) => async () => {
   await native.activate(token);
+};
+
+export const resendActivationCode = (email: string) => async () => {
+  try {
+    await native.sendActivationCode(email);
+    notify.success('Code sent');
+  } catch (e) {
+    const { response } = <ErrorResponse>e;
+
+    notifyErrorResp(e);
+
+    if (response.data?.code === 'VALIDATION') {
+      notify.error(response.data.message);
+    }
+    throw e;
+  }
 };
