@@ -11,6 +11,7 @@ export interface SelectedFilters {
   filters: SelectedFilter[];
   searchStr: string;
 }
+
 export interface Apps {
   isLoading: boolean;
   isLoaded: boolean;
@@ -23,6 +24,7 @@ export interface Apps {
   appByVersion: null | FullAppData;
   recommendedApps: null | FullAppData[];
   currentForm: null | AppFormModelResponse;
+  featured: FullAppData[];
 }
 
 export type Action =
@@ -67,6 +69,10 @@ export type Action =
     }
   | {
       type: ActionTypes.RESET_MY_APPS;
+    }
+  | {
+      type: ActionTypes.SET_FEATURED;
+      payload: FullAppData[];
     }
   | {
       type: ActionTypes.START_LOADING;
