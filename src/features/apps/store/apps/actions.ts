@@ -42,6 +42,7 @@ const setGalleries = (payload: Gallery[]) => ({ type: ActionTypes.SET_GALLERIES,
 const updateMyApps = (payload: Partial<Searchable<FullAppData>>) => ({ type: ActionTypes.UPDATE_MY_APPS, payload });
 const resetMyApps = () => ({ type: ActionTypes.RESET_MY_APPS });
 const setFilters = (payload: Filter[]) => ({ type: ActionTypes.SET_FILTERS, payload });
+const setFeatured = (payload: FullAppData[]) => ({ type: ActionTypes.SET_FEATURED, payload });
 const updateSearchPayload = (payload: SelectedFilters) => ({
   type: ActionTypes.SET_SELECTED_FILTERS,
   payload,
@@ -129,6 +130,17 @@ export const fetchGalleries = () => async (dispatch: Dispatch) => {
 
     throw error;
   }
+};
+
+export const getFeaturedApps = () => async (dispatch: Dispatch) => {
+  const featuredSort = JSON.stringify({ randomize: 1 });
+  const featuredFilter = JSON.stringify({ 'attributes.featured': 'yes' });
+
+  const {
+    data: { list },
+  } = await apps.getApps(1, 4, featuredSort, featuredFilter);
+
+  dispatch(setFeatured((list || []).map((d) => mapAppData(d))));
 };
 
 export const fetchFilters = () => async (dispatch: Dispatch) => {
