@@ -27,13 +27,15 @@ const Hero: React.FC = () => {
         </div>
       </div>
       <div className="container featured-apps-container">
-        <OcFeaturedAppsComponent
-          data={data}
-          mainRouterLink="/details/"
-          navigationParam="safeName[0]"
-          label="Featured"
-          customClass=""
-        />
+        {data.length > 0 && (
+          <OcFeaturedAppsComponent
+            data={data}
+            mainRouterLink="/details/"
+            navigationParam="safeName[0]"
+            label="Featured"
+            customClass=""
+          />
+        )}
       </div>
     </div>
   );
