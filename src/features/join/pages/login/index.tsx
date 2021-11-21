@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcLoginComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 
