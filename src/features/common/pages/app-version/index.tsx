@@ -3,39 +3,17 @@ import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { get } from 'lodash';
 import { ButtonAction, DownloadButtonAction, FormButtonAction } from '../../components/action-button/types';
-import { pageConfig } from '../../../../assets/config/configData';
-import { useTypedSelector, useAuth } from '../../hooks';
-import { getAppByVersion } from '../../../apps/store/apps/actions';
+import { pageConfig } from '../../../../assets/config';
+import { useTypedSelector } from '../../hooks';
+import { getAppByVersion } from 'features/apps/store/apps';
 import { MainTemplate } from '../../templates';
 import AppDetails from '../../components/app-detail-data';
 
 export const AppVersionPage: React.FC = () => {
   const dispatch = useDispatch();
-  const { checkSession, getAuthConfig, isConfigLoaded } = useAuth();
   const { appByVersion } = useTypedSelector(({ apps }) => apps);
 
   const params: { [key: string]: string } = useParams();
-
-  React.useEffect(() => {
-    window.scroll(0, 0);
-    const init = async () => {
-      try {
-        checkSession();
-      } catch {
-        /*do nothing*/
-      }
-
-      if (!isConfigLoaded) {
-        try {
-          getAuthConfig();
-        } catch {
-          /*do nothing*/
-        }
-      }
-    };
-
-    init();
-  }, []);
 
   React.useEffect(() => {
     dispatch(getAppByVersion(params.appId, Number(params.appVersion)));

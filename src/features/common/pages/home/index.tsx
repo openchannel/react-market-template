@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { OcTextSearchComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
-import { useAuth, useMedia, useTypedSelector } from '../../hooks';
+import { useMedia, useTypedSelector } from '../../hooks';
 import { AppList } from '../../organisms';
 import { MainTemplate } from '../../templates';
 import { Hero, GetStarted, Sidebar, CollapseWithTitle } from '../../components';
@@ -14,31 +14,10 @@ import { setSearchPayload } from 'features/apps/store/apps/actions';
 export const HomePage: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { checkSession, getAuthConfig, isConfigLoaded } = useAuth();
   const [collapsed, setCollapsed] = React.useState(false);
   const [searchStr, setSearchStr] = React.useState('');
   const { filters } = useTypedSelector(({ apps }) => apps);
   const isMobile = useMedia();
-
-  React.useEffect(() => {
-    const init = async () => {
-      try {
-        checkSession();
-      } catch {
-        /*do nothing*/
-      }
-
-      if (!isConfigLoaded) {
-        try {
-          getAuthConfig();
-        } catch {
-          /*do nothing*/
-        }
-      }
-    };
-
-    init();
-  }, []);
 
   const goToSearch = React.useCallback((selectedFilter: SelectedFilter, searchStr?: string) => {
     let path = `/browse/${selectedFilter.id}/${selectedFilter.parent.id}`;
