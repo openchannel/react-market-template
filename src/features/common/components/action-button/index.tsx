@@ -109,7 +109,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
           notify.error(`Error: invalid owned button type: ${buttonAction.type}`);
       }
     } else {
-      history.replace(`/login?returnUrl=${window.location.pathname}`);
+      history.replace(`/login?return=${window.location.pathname}`);
     }
   };
 

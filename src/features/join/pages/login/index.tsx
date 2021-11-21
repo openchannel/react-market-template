@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcLoginComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 
@@ -34,7 +34,12 @@ const LoginPage = (): JSX.Element => {
 
       try {
         await dispatch(nativeLogin({ email, password, isChecked: remember }));
-        Object.keys(searchParams).includes('returnUrl') ? history.push(searchParams.returnUrl) : history.push('/');
+
+        if (Object.keys(searchParams).includes('return')) {
+          history.push(searchParams.return);
+        } else {
+          history.push('/');
+        }
       } catch (e) {
         const error = e as ErrorResponse;
         if (error.response.data?.errors?.find((e) => e.code?.includes('_incorrect'))) {
