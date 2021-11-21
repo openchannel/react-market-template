@@ -3,39 +3,17 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { get } from 'lodash';
 import { ButtonAction, DownloadButtonAction, FormButtonAction } from '../../components/action-button/types';
-import { pageConfig } from '../../../../assets/config/configData';
-import { useAuth, useTypedSelector } from '../../hooks';
-import { fetchSelectedApp } from '../../../apps/store/apps/actions';
+import { pageConfig } from '../../../../assets/config';
+import { useTypedSelector } from '../../hooks';
+import { fetchSelectedApp } from 'features/apps/store/apps';
 import { MainTemplate } from '../../templates';
 import AppDetails from '../../components/app-detail-data';
 
 export const DetailsPage: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { checkSession, getAuthConfig, isConfigLoaded } = useAuth();
   const appSafeName = React.useMemo(() => history.location.pathname.split('/')[2], [history.location]);
   const { selectedApp } = useTypedSelector(({ apps }) => apps);
-
-  React.useEffect(() => {
-    window.scroll(0, 0);
-    const init = async () => {
-      try {
-        checkSession();
-      } catch {
-        /*do nothing*/
-      }
-
-      if (!isConfigLoaded) {
-        try {
-          getAuthConfig();
-        } catch {
-          /*do nothing*/
-        }
-      }
-    };
-
-    init();
-  }, []);
 
   React.useEffect(() => {
     dispatch(fetchSelectedApp(appSafeName));
