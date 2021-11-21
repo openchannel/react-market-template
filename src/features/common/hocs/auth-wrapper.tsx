@@ -66,15 +66,20 @@ export const AuthWrapper: React.FC = ({ children }) => {
 
   React.useEffect(() => {
     const init = async () => {
+      const joinPaths = joinRoutes.map(({ path }) => path);
+
       try {
         await checkSession();
 
-        const joinPaths = joinRoutes.map(({ path }) => path);
         if (joinPaths.includes(location.pathname)) {
-          history.replace(location.pathname);
+          history.replace('/');
         }
       } catch {
-        await checkAuthType();
+        if (joinPaths.includes(location.pathname)) {
+          await checkAuthType();
+        } else {
+          history.replace(`/login?return=${location.pathname}`);
+        }
       }
     };
 

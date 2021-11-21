@@ -1,20 +1,22 @@
 import * as React from 'react';
-import { useTypedSelector } from '../../../common/hooks';
-import { MainTemplate } from '../../../common/templates';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import {
   OcDropdown,
   OcDropdownButton,
   OcNavigationBreadcrumbs,
 } from '@openchannel/react-common-components/dist/ui/common/molecules';
+import { FullAppData } from '@openchannel/react-common-components';
 import { OcAppShortInfo } from '@openchannel/react-common-components/dist/ui/market/molecules';
-import { useDispatch } from 'react-redux';
-import { clearMyApps, fetchMyApps } from '../../../apps/store/apps/actions';
-import { useHistory } from 'react-router-dom';
-import InfiniteScroll from 'react-infinite-scroll-component';
+
 import dots from '../../../../../public/assets/img/dots-hr-icon.svg';
 
+import { useTypedSelector } from 'features/common/hooks';
+import { MainTemplate } from 'features/common/templates';
+import { clearMyApps, fetchMyApps } from 'features/apps/store/apps';
+
 import './styles.scss';
-import { FullAppData } from '@openchannel/react-common-components';
 
 declare type Option = {
   label: string;
