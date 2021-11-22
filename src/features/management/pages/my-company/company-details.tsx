@@ -11,7 +11,7 @@ import { clearUserCompanyForm, getUserCompanyForm, saveUserCompany } from 'featu
 const CompanyDetails: React.FC = () => {
   const dispatch = useDispatch();
   const { companyForm } = useTypedSelector(({ userTypes }) => userTypes);
-  
+
   React.useEffect(() => {
     dispatch(getUserCompanyForm());
 
@@ -46,15 +46,17 @@ const CompanyDetails: React.FC = () => {
 
   const mappedFileService = {
     fileUploadRequest: fileService.uploadToOpenChannel,
-    fileDetailsRequest: fileService.downloadFileDetails
+    fileDetailsRequest: fileService.downloadFileDetails,
   } as any;
 
-  return <OcForm
-    fileService={mappedFileService}
-    formJsonData={trimmedForm as AppFormModel}
-    onSubmit={handleSubmit}
-    service={apps}
-  />;
+  return (
+    <OcForm
+      fileService={mappedFileService}
+      formJsonData={trimmedForm as AppFormModel}
+      onSubmit={handleSubmit}
+      service={apps}
+    />
+  );
 };
 
 export default CompanyDetails;
