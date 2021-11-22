@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { apps } from '@openchannel/react-common-services';
+import { apps, fileService } from '@openchannel/react-common-services';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { AppFormModel } from '@openchannel/react-common-components/dist/ui/form/models';
 import { OcForm, OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components/dist/ui/form/organisms';
@@ -11,7 +11,7 @@ import { clearUserCompanyForm, getUserCompanyForm, saveUserCompany } from 'featu
 const CompanyDetails: React.FC = () => {
   const dispatch = useDispatch();
   const { companyForm } = useTypedSelector(({ userTypes }) => userTypes);
-
+  
   React.useEffect(() => {
     dispatch(getUserCompanyForm());
 
@@ -44,7 +44,17 @@ const CompanyDetails: React.FC = () => {
     fields: companyForm.fields!.filter((f) => f.type !== 'datetime' && f.type !== 'date'),
   };
 
-  return <OcForm formJsonData={trimmedForm as AppFormModel} onSubmit={handleSubmit} service={apps} />;
+  const mappedFileService = {
+    fileUploadRequest: fileService.uploadToOpenChannel,
+    fileDetailsRequest: fileService.downloadFileDetails
+  } as any;
+
+  return <OcForm
+    fileService={mappedFileService}
+    formJsonData={trimmedForm as AppFormModel}
+    onSubmit={handleSubmit}
+    service={apps}
+  />;
 };
 
 export default CompanyDetails;
