@@ -6,10 +6,11 @@ import { OcProfileNavbar } from '@openchannel/react-common-components/dist/ui/co
 
 import { useMedia, useTypedSelector } from '../../hooks';
 import { hasCompanyPermission, isSSO, checkIncludesUrl } from './utils';
-import { logout } from '../../store/session/actions';
-import './style.scss';
+import { logout } from '../../store/session';
 import logo from '../../../../../public/assets/img/logo-company.png';
 import { ReactComponent as ButtonDown } from '../../../../../public/assets/img/select-down.svg';
+
+import './style.scss';
 
 // eslint-disable-next-line
 export const Header = ({ cmsData }: any): JSX.Element => {

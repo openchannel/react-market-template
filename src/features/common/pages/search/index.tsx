@@ -30,11 +30,12 @@ const BROWSE = 'browse';
 const COLLECTIONS = 'collections';
 
 export const SearchPage: React.FC = () => {
+  const { searchStr } = useTypedSelector(({ apps }) => apps.selectedFilters);
   const history = useHistory();
   const isMobile = useMedia();
   const dispatch = useDispatch();
   const [collapsed, changeCollapseStatus] = React.useState(false);
-  const [searchText, setSearchText] = React.useState('');
+  const [searchText, setSearchText] = React.useState(searchStr);
   const { filters, selectedFilters, filteredApps } = useTypedSelector(({ apps }) => apps);
 
   // read values from URL
