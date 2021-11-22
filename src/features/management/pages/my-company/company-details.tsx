@@ -47,6 +47,7 @@ const CompanyDetails: React.FC = () => {
   const mappedFileService = {
     fileUploadRequest: fileService.uploadToOpenChannel,
     fileDetailsRequest: fileService.downloadFileDetails,
+    // eslint-disable-next-line
   } as any;
 
   return (
