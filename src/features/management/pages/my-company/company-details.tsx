@@ -38,21 +38,16 @@ const CompanyDetails: React.FC = () => {
     return null;
   }
 
-  // todo: temporary disable render 'date' and 'datetime' fields
-  const trimmedForm = {
-    ...companyForm,
-    fields: companyForm.fields!.filter((f) => f.type !== 'datetime' && f.type !== 'date'),
-  };
-
   const mappedFileService = {
     fileUploadRequest: fileService.uploadToOpenChannel,
     fileDetailsRequest: fileService.downloadFileDetails,
+    // eslint-disable-next-line
   } as any;
 
   return (
     <OcForm
       fileService={mappedFileService}
-      formJsonData={trimmedForm as AppFormModel}
+      formJsonData={companyForm as AppFormModel}
       onSubmit={handleSubmit}
       service={apps}
     />
