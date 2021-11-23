@@ -11,12 +11,7 @@ import { clearUserCompanyForm, getUserCompanyForm, saveUserCompany } from 'featu
 const CompanyDetails: React.FC = () => {
   const dispatch = useDispatch();
   const { companyForm } = useTypedSelector(({ userTypes }) => userTypes);
-  const companyFormWithDefDates = {
-    ...companyForm,
-    fields: companyForm?.fields?.map((field) =>
-      field.type.includes('date') ? { ...field, defaultValue: new Date() } : field,
-    ),
-  };
+
   React.useEffect(() => {
     dispatch(getUserCompanyForm());
 
@@ -52,7 +47,7 @@ const CompanyDetails: React.FC = () => {
   return (
     <OcForm
       fileService={mappedFileService}
-      formJsonData={companyFormWithDefDates as AppFormModel}
+      formJsonData={companyForm as AppFormModel}
       onSubmit={handleSubmit}
       service={apps}
     />

@@ -154,12 +154,12 @@ export const getUserCompanyForm = () => async (dispatch: Dispatch) => {
     try {
       if (company.type != null) {
         const { data: typeDefinition } = await users.getUserTypeDefinition(company.type);
-        formConfig = { ...TypeMapperUtils.createFormConfig(typeDefinition, company), formId: company.userId };
+        formConfig = TypeMapperUtils.createFormConfig(typeDefinition, company);
       } else {
-        formConfig = { ...TypeMapperUtils.createFormConfig(defaultFormConfig, company), formId: company.userId };
+        formConfig = TypeMapperUtils.createFormConfig(defaultFormConfig, company);
       }
     } catch (e) {
-      formConfig = { ...TypeMapperUtils.createFormConfig(defaultFormConfig, company), formId: company.userId };
+      formConfig = TypeMapperUtils.createFormConfig(defaultFormConfig, company);
     }
 
     // Assign formId as required key for the formJsonData
