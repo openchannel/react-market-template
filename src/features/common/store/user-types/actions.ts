@@ -154,12 +154,12 @@ export const getUserCompanyForm = () => async (dispatch: Dispatch) => {
     try {
       if (company.type != null) {
         const { data: typeDefinition } = await users.getUserTypeDefinition(company.type);
-        formConfig = TypeMapperUtils.createFormConfig(typeDefinition, company);
+        formConfig = { ...TypeMapperUtils.createFormConfig(typeDefinition, company), formId: company.userId };
       } else {
-        formConfig = TypeMapperUtils.createFormConfig(defaultFormConfig, company);
+        formConfig = { ...TypeMapperUtils.createFormConfig(defaultFormConfig, company), formId: company.userId };
       }
     } catch (e) {
-      formConfig = TypeMapperUtils.createFormConfig(defaultFormConfig, company);
+      formConfig = { ...TypeMapperUtils.createFormConfig(defaultFormConfig, company), formId: company.userId };
     }
 
     dispatch(saveCompanyForm(formConfig));

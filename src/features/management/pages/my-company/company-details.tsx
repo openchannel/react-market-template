@@ -11,7 +11,12 @@ import { clearUserCompanyForm, getUserCompanyForm, saveUserCompany } from 'featu
 const CompanyDetails: React.FC = () => {
   const dispatch = useDispatch();
   const { companyForm } = useTypedSelector(({ userTypes }) => userTypes);
-
+  const companyFormWithDefDates = {
+    ...companyForm,
+    fields: companyForm?.fields?.map((field) =>
+      field.type.includes('date') ? { ...field, defaultValue: new Date() } : field,
+    ),
+  };
   React.useEffect(() => {
     dispatch(getUserCompanyForm());
 
@@ -38,13 +43,7 @@ const CompanyDetails: React.FC = () => {
     return null;
   }
 
-  // todo: temporary disable render 'date' and 'datetime' fields
-  const trimmedForm = {
-    ...companyForm,
-    fields: companyForm.fields!.filter((f) => f.type !== 'datetime' && f.type !== 'date'),
-  };
-
-  return <OcForm formJsonData={trimmedForm as AppFormModel} onSubmit={handleSubmit} service={apps} />;
+  return <OcForm formJsonData={companyFormWithDefDates as AppFormModel} onSubmit={handleSubmit} service={apps} />;
 };
 
 export default CompanyDetails;
