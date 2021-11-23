@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Modal } from '@openchannel/react-common-components/dist/ui/common/organisms';
 import { notify, OcButtonComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
-import { fileService, statisticService } from '@openchannel/react-common-services';
+import { apps, fileService, statisticService } from '@openchannel/react-common-services';
 import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { ButtonAction, DownloadButtonAction, FormButtonAction, OwnershipButtonAction, ViewData } from './types';
 import { getForm, installApplication, submitForm, uninstallApplication } from '../../../apps/store/apps/actions';
@@ -169,6 +169,12 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
     }
   };
 
+  const mappedFileService = {
+    fileUploadRequest: fileService.uploadToOpenChannel,
+    fileDetailsRequest: fileService.downloadFileDetails,
+  } as any;
+
+
   return (
     <div className="action-button">
       <OcButtonComponent
@@ -190,7 +196,12 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
             />
           </div>
           <div className="action-button_modal__modal-body">
-            <OcForm formJsonData={currentForm as AppFormModel} onSubmit={onFormSubmit} />
+            <OcForm 
+              formJsonData={currentForm as AppFormModel} 
+              onSubmit={onFormSubmit}
+              fileService={mappedFileService}
+              service={apps} 
+            />
           </div>
         </div>
       </Modal>
