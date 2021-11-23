@@ -174,7 +174,6 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
     fileDetailsRequest: fileService.downloadFileDetails,
   } as any;
 
-
   return (
     <div className="action-button">
       <OcButtonComponent
@@ -196,11 +195,11 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
             />
           </div>
           <div className="action-button_modal__modal-body">
-            <OcForm 
-              formJsonData={currentForm as AppFormModel} 
+            <OcForm
+              formJsonData={currentForm as AppFormModel}
               onSubmit={onFormSubmit}
               fileService={mappedFileService}
-              service={apps} 
+              service={apps}
             />
           </div>
         </div>

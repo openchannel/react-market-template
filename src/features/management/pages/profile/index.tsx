@@ -148,12 +148,13 @@ const Profile = (): JSX.Element => {
           </div>
           <div className="col-md-5 col-lg-4 pt-1">
             {isSelectedPage === 'changePassword' && (
-              <OcForm 
-                formJsonData={formPassword} 
-                onSubmit={handleChangePasswordSubmit} 
-                submitButtonText="Save" 
+              <OcForm
+                formJsonData={formPassword}
+                onSubmit={handleChangePasswordSubmit}
+                submitButtonText="Save"
                 fileService={mappedFileService}
-                service={apps} />
+                service={apps}
+              />
             )}
             {isSelectedPage === 'myProfile' && !isLoading && (
               <OcEditUserFormComponent
