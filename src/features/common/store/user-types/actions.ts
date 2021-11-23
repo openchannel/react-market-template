@@ -13,7 +13,7 @@ import {
   storage,
 } from '@openchannel/react-common-services';
 import { Dispatch } from 'redux';
-import { cloneDeep, keyBy, get } from 'lodash';
+import { cloneDeep, keyBy, get, uniqueId } from 'lodash';
 
 import { normalizeError } from '../utils';
 
@@ -162,6 +162,15 @@ export const getUserCompanyForm = () => async (dispatch: Dispatch) => {
       formConfig = { ...TypeMapperUtils.createFormConfig(defaultFormConfig, company), formId: company.userId };
     }
 
+    // Assign formId as required key for the formJsonData
+    // eslint-disable-next-line
+    // @ts-ignore
+    if (!formConfig.formId) {
+      // eslint-disable-next-line
+      // @ts-ignore
+      formConfig.formId = uniqueId();
+    }
+
     dispatch(saveCompanyForm(formConfig));
     dispatch(finishLoading());
   } catch (error) {
@@ -174,15 +183,10 @@ export const clearUserCompanyForm = () => (dispatch: Dispatch) => dispatch(reset
 
 // eslint-disable-next-line
 export const saveUserCompany = (value: any) => async (dispatch: Dispatch) => {
-  dispatch(startLoading());
-
   try {
     const valueForSaving = TypeMapperUtils.buildDataForSaving(value);
     await users.updateUserCompany(valueForSaving);
-    dispatch(finishLoading());
-    // eslint-disable-next-line
-  } catch (error: any) {
-    dispatch(finishLoading());
+  } catch (error) {
     throw normalizeError(error);
   }
 };

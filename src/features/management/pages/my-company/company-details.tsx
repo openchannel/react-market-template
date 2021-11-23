@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { apps } from '@openchannel/react-common-services';
+import { apps, fileService } from '@openchannel/react-common-services';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { AppFormModel } from '@openchannel/react-common-components/dist/ui/form/models';
 import { OcForm, OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components/dist/ui/form/organisms';
@@ -43,7 +43,20 @@ const CompanyDetails: React.FC = () => {
     return null;
   }
 
-  return <OcForm formJsonData={companyFormWithDefDates as AppFormModel} onSubmit={handleSubmit} service={apps} />;
+  const mappedFileService = {
+    fileUploadRequest: fileService.uploadToOpenChannel,
+    fileDetailsRequest: fileService.downloadFileDetails,
+    // eslint-disable-next-line
+  } as any;
+
+  return (
+    <OcForm
+      fileService={mappedFileService}
+      formJsonData={companyFormWithDefDates as AppFormModel}
+      onSubmit={handleSubmit}
+      service={apps}
+    />
+  );
 };
 
 export default CompanyDetails;
