@@ -25,7 +25,6 @@ export interface ErrorResponse {
   };
 }
 
-
 export interface FoundVirus {
   fileName: string;
   virusName: string;

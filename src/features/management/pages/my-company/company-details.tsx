@@ -6,7 +6,6 @@ import { AppFormModel } from '@openchannel/react-common-components/dist/ui/form/
 import { OcForm, OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { FileUploadService } from '../../../../types';
 
-
 import { useTypedSelector } from 'features/common/hooks';
 import { clearUserCompanyForm, getUserCompanyForm, saveUserCompany } from 'features/common/store/user-types/actions';
 
