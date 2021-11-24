@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-
+import { AxiosResponse } from 'axios';
 import { rootReducer } from './reducers';
 
 export type RootState = ReturnType<typeof rootReducer>;

@@ -8,6 +8,11 @@ import { OcForm, OcFormFormikHelpers, OcFormValues } from '@openchannel/react-co
 import { useTypedSelector } from 'features/common/hooks';
 import { clearUserCompanyForm, getUserCompanyForm, saveUserCompany } from 'features/common/store/user-types/actions';
 
+const mappedFileService = {
+  fileUploadRequest: fileService.uploadToOpenChannel,
+  fileDetailsRequest: fileService.downloadFileDetails,
+};
+
 const CompanyDetails: React.FC = () => {
   const dispatch = useDispatch();
   const { companyForm } = useTypedSelector(({ userTypes }) => userTypes);
@@ -37,12 +42,6 @@ const CompanyDetails: React.FC = () => {
   if (companyForm == null) {
     return null;
   }
-
-  const mappedFileService = {
-    fileUploadRequest: fileService.uploadToOpenChannel,
-    fileDetailsRequest: fileService.downloadFileDetails,
-    // eslint-disable-next-line
-  } as any;
 
   return (
     <OcForm

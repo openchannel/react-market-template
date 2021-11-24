@@ -18,6 +18,11 @@ import { formConfigsWithoutTypeData, formPassword } from './constants';
 
 import './styles.scss';
 
+const mappedFileService = {
+  fileUploadRequest: fileService.uploadToOpenChannel,
+  fileDetailsRequest: fileService.downloadFileDetails,
+};
+
 const Profile = (): JSX.Element => {
   const [isSelectedPage, setSelectedPage] = React.useState('myProfile');
   const dispatch = useDispatch();
@@ -104,11 +109,6 @@ const Profile = (): JSX.Element => {
       }, '');
     }
   }, [configs, account]);
-
-  const mappedFileService = {
-    fileUploadRequest: fileService.uploadToOpenChannel,
-    fileDetailsRequest: fileService.downloadFileDetails,
-  } as any;
 
   return (
     <MainTemplate>

@@ -7,6 +7,7 @@ import { notify, OcButtonComponent } from '@openchannel/react-common-components/
 import { apps, fileService, statisticService } from '@openchannel/react-common-services';
 import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { ButtonAction, DownloadButtonAction, FormButtonAction, OwnershipButtonAction, ViewData } from './types';
+
 import { getForm, installApplication, submitForm, uninstallApplication } from '../../../apps/store/apps/actions';
 import { useTypedSelector } from 'features/common/hooks';
 import { isUserLoggedIn } from '../header/utils';
@@ -23,6 +24,11 @@ interface IViewDataSelected {
   actionType: null | string;
   viewData: null | ViewData;
 }
+
+const mappedFileService = {
+  fileUploadRequest: fileService.uploadToOpenChannel,
+  fileDetailsRequest: fileService.downloadFileDetails,
+};
 
 export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   const { buttonAction } = props;
@@ -168,11 +174,6 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
       notify.success(viewData.viewData!.message!.success);
     }
   };
-
-  const mappedFileService = {
-    fileUploadRequest: fileService.uploadToOpenChannel,
-    fileDetailsRequest: fileService.downloadFileDetails,
-  } as any;
 
   return (
     <div className="action-button">
