@@ -8,6 +8,7 @@ import { OcEditUserFormComponent } from '@openchannel/react-common-components/di
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
 import { OcForm, OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { apps, fileService } from '@openchannel/react-common-services';
+import { FileUploadService } from '../../../../types';
 
 import { useTypedSelector } from 'features/common/hooks';
 import { MainTemplate } from 'features/common/templates';
@@ -108,7 +109,7 @@ const Profile = (): JSX.Element => {
   const mappedFileService = {
     fileUploadRequest: fileService.uploadToOpenChannel,
     fileDetailsRequest: fileService.downloadFileDetails,
-  } as any;
+  } as FileUploadService;
 
   return (
     <MainTemplate>

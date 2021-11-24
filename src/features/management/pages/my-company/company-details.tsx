@@ -4,6 +4,8 @@ import { apps, fileService } from '@openchannel/react-common-services';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { AppFormModel } from '@openchannel/react-common-components/dist/ui/form/models';
 import { OcForm, OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components/dist/ui/form/organisms';
+import { FileUploadService } from '../../../../types';
+
 
 import { useTypedSelector } from 'features/common/hooks';
 import { clearUserCompanyForm, getUserCompanyForm, saveUserCompany } from 'features/common/store/user-types/actions';
@@ -41,8 +43,7 @@ const CompanyDetails: React.FC = () => {
   const mappedFileService = {
     fileUploadRequest: fileService.uploadToOpenChannel,
     fileDetailsRequest: fileService.downloadFileDetails,
-    // eslint-disable-next-line
-  } as any;
+  } as FileUploadService;
 
   return (
     <OcForm

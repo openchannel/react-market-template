@@ -7,6 +7,8 @@ import { notify, OcButtonComponent } from '@openchannel/react-common-components/
 import { apps, fileService, statisticService } from '@openchannel/react-common-services';
 import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { ButtonAction, DownloadButtonAction, FormButtonAction, OwnershipButtonAction, ViewData } from './types';
+import { FileUploadService } from '../../../../types';
+
 import { getForm, installApplication, submitForm, uninstallApplication } from '../../../apps/store/apps/actions';
 import { useTypedSelector } from 'features/common/hooks';
 import { isUserLoggedIn } from '../header/utils';
@@ -172,7 +174,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   const mappedFileService = {
     fileUploadRequest: fileService.uploadToOpenChannel,
     fileDetailsRequest: fileService.downloadFileDetails,
-  } as any;
+  } as FileUploadService;
 
   return (
     <div className="action-button">
