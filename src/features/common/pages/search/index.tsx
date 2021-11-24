@@ -227,6 +227,11 @@ export const SearchPage: React.FC = () => {
               baseLinkForOneApp="/details"
               appNavigationParam="safeName[0]"
             />
+            {filteredApps.length === 0 && (
+              <div className="search__no-results">
+                {searchStr.length > 0 ? `There are no apps found for: ${searchStr}` : 'No results found'}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-@import 'src/assets/styles/mixins';
+@import 'src/theme';
 
 .container {
   min-height: 0;
@@ -32,6 +32,13 @@
   }
 
   .filter-container {
+    .search__no-results {
+      @include font-size-md();
+      text-align: center;
+      @include media-breakpoint-md() {
+        margin-bottom: 4rem;
+      }
+    }
     .hide-filters {
       @include media-breakpoint-sm {
         display: none;
