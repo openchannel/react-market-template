@@ -7,7 +7,6 @@ import { useTypedSelector } from '../../hooks';
 const AppList: React.FC = () => {
   const dispatch = useDispatch();
   const { galleries } = useTypedSelector(({ apps }) => apps);
-
   React.useEffect(() => {
     dispatch(fetchGalleries());
   }, []);
