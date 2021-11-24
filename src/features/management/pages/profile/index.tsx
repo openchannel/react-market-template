@@ -8,7 +8,6 @@ import { OcEditUserFormComponent } from '@openchannel/react-common-components/di
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
 import { OcForm, OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { apps, fileService } from '@openchannel/react-common-services';
-import { FileUploadService } from '../../../../types';
 
 import { useTypedSelector } from 'features/common/hooks';
 import { MainTemplate } from 'features/common/templates';
@@ -18,6 +17,11 @@ import { loadUserProfileForm, saveUserData } from 'features/common/store/user-ty
 import { formConfigsWithoutTypeData, formPassword } from './constants';
 
 import './styles.scss';
+
+const mappedFileService = {
+  fileUploadRequest: fileService.uploadToOpenChannel,
+  fileDetailsRequest: fileService.downloadFileDetails,
+};
 
 const Profile = (): JSX.Element => {
   const [isSelectedPage, setSelectedPage] = React.useState('myProfile');
@@ -105,11 +109,6 @@ const Profile = (): JSX.Element => {
       }, '');
     }
   }, [configs, account]);
-
-  const mappedFileService = {
-    fileUploadRequest: fileService.uploadToOpenChannel,
-    fileDetailsRequest: fileService.downloadFileDetails,
-  } as FileUploadService;
 
   return (
     <MainTemplate>
