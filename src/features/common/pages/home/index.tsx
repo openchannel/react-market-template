@@ -18,8 +18,6 @@ export const HomePage: React.FC = () => {
   const [searchStr, setSearchStr] = React.useState('');
   const { filters } = useTypedSelector(({ apps }) => apps);
   const isMobile = useMedia();
-  console.log('1 isMobile', isMobile);
-  
 
   React.useEffect(() => {
     setCollapsed(isMobile);
