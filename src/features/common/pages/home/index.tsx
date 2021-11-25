@@ -20,15 +20,15 @@ export const HomePage: React.FC = () => {
   const isMobile = useMedia();
 
   React.useEffect(() => {
-    const handleCollapse= () => setCollapsed(isMobile); 
-    window.addEventListener('resize', handleCollapse)
+    const handleCollapse = () => setCollapsed(isMobile);
+    window.addEventListener('resize', handleCollapse);
 
     return window.removeEventListener('resize', handleCollapse);
   });
 
   React.useEffect(() => {
-     setCollapsed(isMobile); 
-  },[isMobile]);
+    setCollapsed(isMobile);
+  }, [isMobile]);
 
   const goToSearch = React.useCallback((selectedFilter: SelectedFilter, searchStr?: string) => {
     let path = `/browse/${selectedFilter.id}/${selectedFilter.parent.id}`;
