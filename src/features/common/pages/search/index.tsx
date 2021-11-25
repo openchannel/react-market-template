@@ -128,8 +128,6 @@ export const SearchPage: React.FC = () => {
   };
 
   const handleDeleteAll = () => {
-    console.log('Cleciked');
-    
     setSearchText('');
     dispatch(setSearchPayload({ filters: [] }));
     dispatch(setSearchPayload({ searchStr: '' }));
@@ -184,7 +182,7 @@ export const SearchPage: React.FC = () => {
       dispatch(clearFilteredApps());
     };
   }, []);
-  
+
   return (
     <MainTemplate>
       <div className="container">
@@ -221,7 +219,7 @@ export const SearchPage: React.FC = () => {
               handleTagDelete={handleTagDelete}
               handleTagClick={handleTagClick}
               clearAllText="Clear All"
-            /> 
+            />
             <OcAppListGrid
               appList={filteredApps}
               defaultAppIcon={defaultAppIcon}
