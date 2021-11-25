@@ -129,8 +129,7 @@ export const SearchPage: React.FC = () => {
 
   const handleDeleteAll = () => {
     setSearchText('');
-    dispatch(setSearchPayload({ filters: [] }));
-    dispatch(setSearchPayload({ searchStr: '' }));
+    dispatch(setSearchPayload({ filters: [], searchStr: '' }));
     buildQuery({ filters: [], searchStr: '' });
   };
 
