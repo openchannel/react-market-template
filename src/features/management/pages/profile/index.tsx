@@ -7,6 +7,7 @@ import { notify } from '@openchannel/react-common-components/dist/ui/common/atom
 import { OcEditUserFormComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
 import { OcForm, OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components/dist/ui/form/organisms';
+import { apps, fileService } from '@openchannel/react-common-services';
 
 import { useTypedSelector } from 'features/common/hooks';
 import { MainTemplate } from 'features/common/templates';
@@ -16,6 +17,11 @@ import { loadUserProfileForm, saveUserData } from 'features/common/store/user-ty
 import { formConfigsWithoutTypeData, formPassword } from './constants';
 
 import './styles.scss';
+
+const mappedFileService = {
+  fileUploadRequest: fileService.uploadToOpenChannel,
+  fileDetailsRequest: fileService.downloadFileDetails,
+};
 
 const Profile = (): JSX.Element => {
   const [isSelectedPage, setSelectedPage] = React.useState('myProfile');
@@ -142,7 +148,13 @@ const Profile = (): JSX.Element => {
           </div>
           <div className="col-md-5 col-lg-4 pt-1">
             {isSelectedPage === 'changePassword' && (
-              <OcForm formJsonData={formPassword} onSubmit={handleChangePasswordSubmit} submitButtonText="Save" />
+              <OcForm
+                formJsonData={formPassword}
+                onSubmit={handleChangePasswordSubmit}
+                submitButtonText="Save"
+                fileService={mappedFileService}
+                service={apps}
+              />
             )}
             {isSelectedPage === 'myProfile' && !isLoading && (
               <OcEditUserFormComponent

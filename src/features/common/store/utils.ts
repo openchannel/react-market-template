@@ -26,7 +26,8 @@ interface NormalizedError {
   errors?: Record<string, [string]>;
 }
 
-export const normalizeError = (error: ErrorResponse): NormalizedError => {
+export const normalizeError = (e: unknown): NormalizedError => {
+  const error = e as ErrorResponse;
   const message = error.response?.data?.message || 'Unknown error';
   const validationErrors = error.response?.data?.['validation-errors'];
   if (validationErrors != null && validationErrors?.length > 0) {

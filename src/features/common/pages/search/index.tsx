@@ -18,7 +18,6 @@ import {
 import { OcAppListGrid } from '@openchannel/react-common-components/dist/ui/market/organisms';
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
 import { OcTextSearchComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
-import { OcTagElement } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { QueryUtil } from '@openchannel/react-common-services';
 import { SelectedFilter, SelectedFilters } from 'features/apps/store/apps/types';
 import defaultAppIcon from '../../../../../public/assets/img/default-app-icon.svg';
@@ -128,6 +127,12 @@ export const SearchPage: React.FC = () => {
     buildQuery({ filters: newClearedFilters, searchStr: searchText });
   };
 
+  const handleDeleteAll = () => {
+    setSearchText('');
+    dispatch(setSearchPayload({ filters: [], searchStr: '' }));
+    buildQuery({ filters: [], searchStr: '' });
+  };
+
   React.useEffect(() => {
     const queryFromSelectedFilters = QueryUtil.getAndQuery(
       selectedFilters.filters.map((filter) => filter.parent.query || '').filter(Boolean),
@@ -208,25 +213,23 @@ export const SearchPage: React.FC = () => {
               enterAction={handleSearchTextEnter}
               searchButtonText=""
               clearButtonText=""
+              selectedFilters={selectedFilters}
+              handleDeleteAll={handleDeleteAll}
+              handleTagDelete={handleTagDelete}
+              handleTagClick={handleTagClick}
+              clearAllText="Clear All"
             />
-            <div className="search-tags">
-              {selectedFilters.filters.map((filter) => (
-                <OcTagElement
-                  title={filter?.parent.label}
-                  onIconClick={() => handleTagClick(filter.parent.label)}
-                  key={filter.id + filter.parent.id}
-                />
-              ))}
-              {selectedFilters.searchStr && (
-                <OcTagElement title={selectedFilters.searchStr} onIconClick={handleTagDelete} />
-              )}
-            </div>
             <OcAppListGrid
               appList={filteredApps}
               defaultAppIcon={defaultAppIcon}
               baseLinkForOneApp="/details"
               appNavigationParam="safeName[0]"
             />
+            {filteredApps.length === 0 && (
+              <div className="search__no-results">
+                {searchStr.length > 0 ? `There are no apps found for: ${searchStr}` : 'No results found'}
+              </div>
+            )}
           </div>
         </div>
       </div>
