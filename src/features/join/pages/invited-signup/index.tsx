@@ -91,21 +91,21 @@ const InvitedSignUpPage = (): JSX.Element => {
             enablePasswordField={false}
             enableTermsCheckbox
             ordinaryTermsDescription={
-              <div className="font-s">
+              <>
                 I agree to&nbsp;
-                <a className="font-s font-med" href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noopener noreferrer">
+                <a className="content__link" href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noopener noreferrer">
                   Terms of Service
                 </a>
                 &nbsp;and&nbsp;
                 <a
-                  className="font-s font-med"
+                  className="content__link"
                   href={DATA_PROCESSING_POLICY_LINK}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Data Processing Policy
                 </a>
-              </div>
+              </>
             }
           />
         )}
