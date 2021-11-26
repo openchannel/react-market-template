@@ -174,7 +174,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
       notify.success(viewData.viewData!.message!.success);
     }
   };
-  
+
   return (
     <div className="action-button">
       <OcButtonComponent
@@ -204,7 +204,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
               buttonPosition="between"
               service={apps}
               onCancel={onModalClose}
-              cancelText="Close" 
+              cancelButtonText="Close"
             />
           </div>
         </div>
