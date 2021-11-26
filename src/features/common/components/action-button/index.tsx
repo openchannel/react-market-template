@@ -200,7 +200,11 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
               formJsonData={currentForm as AppFormModel}
               onSubmit={onFormSubmit}
               fileService={mappedFileService}
+              submitButtonText={viewData?.viewData?.button.text}
+              buttonPosition="between"
               service={apps}
+              onCancel={onModalClose}
+              cancelButtonText="Close"
             />
           </div>
         </div>
