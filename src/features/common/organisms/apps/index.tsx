@@ -17,7 +17,7 @@ const AppList: React.FC = () => {
       {galleries.map((gallery) => (
         <div key={gallery.id} className="section-wrapper">
           <OcAppGallery
-            moreAppsTitle="See All"
+            moreAppsTitle="See all"
             appsArr={gallery?.data}
             appGalleryTitle={gallery.label}
             appGalleryDescription={gallery.description}
