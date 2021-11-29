@@ -7,7 +7,6 @@ import { useTypedSelector } from '../../hooks';
 const AppList: React.FC = () => {
   const dispatch = useDispatch();
   const { galleries } = useTypedSelector(({ apps }) => apps);
-
   React.useEffect(() => {
     dispatch(fetchGalleries());
   }, []);
@@ -17,7 +16,7 @@ const AppList: React.FC = () => {
       {galleries.map((gallery) => (
         <div key={gallery.id} className="section-wrapper">
           <OcAppGallery
-            moreAppsTitle="See All"
+            moreAppsTitle="See all"
             appsArr={gallery?.data}
             appGalleryTitle={gallery.label}
             appGalleryDescription={gallery.description}

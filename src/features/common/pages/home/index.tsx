@@ -19,6 +19,10 @@ export const HomePage: React.FC = () => {
   const { filters } = useTypedSelector(({ apps }) => apps);
   const isMobile = useMedia();
 
+  React.useEffect(() => {
+    setCollapsed(isMobile);
+  }, [isMobile]);
+
   const goToSearch = React.useCallback((selectedFilter: SelectedFilter, searchStr?: string) => {
     let path = `/browse/${selectedFilter.id}/${selectedFilter.parent.id}`;
     if (searchStr && searchStr.length > 0) {
@@ -48,7 +52,7 @@ export const HomePage: React.FC = () => {
           <div className="col-md-3 filter__container" id="main-content">
             <OcTextSearchComponent
               hasMagnifier={true}
-              placeholder="Search..."
+              placeholder="Search"
               onChange={setSearchStr}
               value={searchStr}
               enterAction={handleSearchSubmit}
