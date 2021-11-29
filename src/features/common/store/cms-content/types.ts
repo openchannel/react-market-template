@@ -2,7 +2,7 @@ import type { FooterColumn } from '@openchannel/react-common-components';
 
 import { ActionTypes } from './action-types';
 
-type ContentItem = null | Record<string, any>;
+type ContentItem = null | any;
 
 type FooterContent =
   | null

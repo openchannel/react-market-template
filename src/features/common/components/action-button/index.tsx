@@ -172,6 +172,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   const mappedFileService = {
     fileUploadRequest: fileService.uploadToOpenChannel,
     fileDetailsRequest: fileService.downloadFileDetails,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any;
 
   return (
