@@ -28,6 +28,9 @@
     &-description {
       display: flex;
       flex-grow: 1;
+      .app-logo {
+        padding-left: 0;
+      }
     }
     &-support {
       &-title {
