@@ -251,14 +251,16 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
             </div>
 
             <div className="row mb-0 mb-md-8 mt-3 mt-md-8">
-              <OcAppDescription
-                appDescription={app?.customData.description as string}
-                truncateTextLength={800}
-                shortDescription={false}
-                showFullDescription={false}
-                header="About"
-                headerClass="mb-2"
-              />
+              <div className="col-md-8">
+                <OcAppDescription
+                  appDescription={app?.customData.description as string}
+                  truncateTextLength={800}
+                  shortDescription={false}
+                  showFullDescription={false}
+                  header="About"
+                  headerClass="mb-2"
+                />
+              </div>
               <div className="app-detail__data-support col-md ml-md-8 mt-3 mt-md-0">
                 <h2 className="app-detail__data-support-title mb-2 ">Support</h2>
                 <ul className="list-group list-group-flush">
