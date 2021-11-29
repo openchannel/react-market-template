@@ -48,6 +48,10 @@
   }
 }
 
+.description {
+  width: 100%;
+}
+
 .list-group.list-group-flush {
   .list-group-item {
     @include font-medium();
