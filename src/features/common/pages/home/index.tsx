@@ -52,7 +52,7 @@ export const HomePage: React.FC = () => {
           <div className="col-md-3 filter__container" id="main-content">
             <OcTextSearchComponent
               hasMagnifier={true}
-              placeholder="Search..."
+              placeholder="Search"
               onChange={setSearchStr}
               value={searchStr}
               enterAction={handleSearchSubmit}
