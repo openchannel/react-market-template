@@ -207,7 +207,7 @@ export const SearchPage: React.FC = () => {
           <div className="col-md-9">
             <OcTextSearchComponent
               hasMagnifier={true}
-              placeholder="Search..."
+              placeholder="Search"
               value={searchText}
               onChange={setSearchText}
               enterAction={handleSearchTextEnter}
