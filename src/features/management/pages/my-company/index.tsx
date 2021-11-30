@@ -49,7 +49,7 @@ const MyCompany = (): JSX.Element => {
 
   return (
     <MainTemplate>
-      <div className="bg-container height-unset">
+      <div className="bg-container height-unset management">
         <OcNavigationBreadcrumbs
           pageTitle="My company"
           navigateText="Back"

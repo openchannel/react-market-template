@@ -35,6 +35,26 @@ $category-color-mix2: #ffffff;
   border-top: 1px solid rgba(83, 124, 253, 0.2);
 }
 
+.management {
+  .main-container{
+   padding: 16px;
+   min-height: 96px;
+   @include media-breakpoint-sm {
+     padding: 16px 24px;
+     h3 {
+       margin: 0;
+     }
+   }
+   &__page-title__router-navigate {
+     margin-bottom: 8px;
+     img{
+       margin-bottom: 2px;
+     }
+   }
+ }
+
+}
+
 /** Froala Editor **/
 
 .fr-box {

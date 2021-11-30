@@ -112,7 +112,7 @@ const Profile = (): JSX.Element => {
 
   return (
     <MainTemplate>
-      <div className="bg-container height-unset">
+      <div className="bg-container height-unset management">
         <OcNavigationBreadcrumbs pageTitle="My profile" navigateText="Back" navigateClick={history.goBack} />
       </div>
 
