@@ -7,7 +7,6 @@ import { OcProfileNavbar } from '@openchannel/react-common-components/dist/ui/co
 import { useMedia, useTypedSelector } from '../../hooks';
 import { hasCompanyPermission, isSSO, checkIncludesUrl } from './utils';
 import { logout } from '../../store/session';
-import logo from '../../../../../public/assets/img/logo-company.png';
 import { ReactComponent as ButtonDown } from '../../../../../public/assets/img/select-down.svg';
 
 import './style.scss';
@@ -80,7 +79,7 @@ export const Header = ({ cmsData }: any): JSX.Element => {
       <div className="container">
         <div className="navbar-wrapper">
           <Link className="navbar-brand" to="/">
-            <img src={logo} alt="brand-logo" className="company-logo" />
+            <img src={cmsData.headerLogoURL} alt="brand-logo" className="company-logo" />
           </Link>
           <button
             className="navbar-toggler p-0"
@@ -113,13 +112,6 @@ export const Header = ({ cmsData }: any): JSX.Element => {
                     </li>
                   );
                 },
-              )}
-              {isExist && (
-                <li className="nav-item">
-                  <div className="options-wrapper">
-                    <OcProfileNavbar username="More" options={options} initials="" onSelect={onProfileNavbarClick} />
-                  </div>
-                </li>
               )}
               {isMobile && isExist && (
                 <>
@@ -168,6 +160,11 @@ export const Header = ({ cmsData }: any): JSX.Element => {
                 </>
               )}
             </ul>
+            {isExist && (
+              <div className="my-2 my-lg-0 ml-md-6 navbar-none ">
+                <OcProfileNavbar username="More" options={options} initials="" onSelect={onProfileNavbarClick} />
+              </div>
+            )}
             {!isExist && (
               <div className="d-flex my-2 my-lg-0 ml-0 ml-md-6 auth-button">
                 <Link className="btn header-login-btn header-btn" to="/login">
