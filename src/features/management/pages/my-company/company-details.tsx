@@ -49,6 +49,8 @@ const CompanyDetails: React.FC = () => {
       formJsonData={companyForm as AppFormModel}
       onSubmit={handleSubmit}
       service={apps}
+      submitButtonText="Save"
+      customSubmitClass="custom-width"
     />
   );
 };

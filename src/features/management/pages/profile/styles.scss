@@ -4,7 +4,7 @@
 
 .active-link {
     @include font-medium();
-    @include media-breakpoint-md {
+    @include media-breakpoint-lg {
         color: #333 !important;
         border-bottom: 3px solid $link-primary;
         padding-bottom: 1rem;
@@ -19,7 +19,7 @@
 }
 
 ul.list-unstyled {
-    @include media-breakpoint-md {
+    @include media-breakpoint-lg {
         display: flex;
     }
 
@@ -30,7 +30,7 @@ ul.list-unstyled {
         }
 
         & + li {
-            @include media-breakpoint-md {
+            @include media-breakpoint-lg {
                 margin-left: 30px;
             }
         }

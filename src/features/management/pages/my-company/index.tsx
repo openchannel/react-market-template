@@ -63,7 +63,7 @@ const MyCompany = (): JSX.Element => {
       </div>
       <div className="container mb-8">
         <div className="row pt-5">
-          <div className="col-md-3 col-lg-2 col-xl-3">
+          <div className="col-lg-2 col-xl-3 col-xxl-2">
             <ul className="list-unstyled">
               {filterPagesByUserType.map((elem) => (
                 <li className="py-1" key={elem.pageId}>
@@ -81,7 +81,7 @@ const MyCompany = (): JSX.Element => {
               ))}
             </ul>
           </div>
-          <div className="col-md-9 col-lg-10 col-xl-9 pt-1">
+          <div className="col-lg-10 col-xl-9 mt-3 mt-lg-0 col-xxl-10">
             {selectedPage === pageIds.company && <CompanyDetails />}
             {selectedPage === pageIds.profile && (
               <UserManagement
