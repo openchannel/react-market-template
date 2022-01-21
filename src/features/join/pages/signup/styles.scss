@@ -4,6 +4,16 @@
   display: block;
   margin: 5rem auto 0;
   width: 412px;
+  .form__buttons {
+    .form__button {
+      width: 100%;
+      .oc-button {
+        display: block;
+        margin-top: 2rem;
+        width: 100%;
+      }
+    }
+  }
 }
 
 @include media-breakpoint-sm {
