@@ -13,7 +13,7 @@ const GetStarted = () => {
   };
 
   return (
-    <div className="bg-container mt-5 py-8 min-height-auto">
+    <div className="bg-container mt-6 py-8 min-height-auto">
       <div className="container">
         <OcGetStartedComponent
           getStartedType="home"

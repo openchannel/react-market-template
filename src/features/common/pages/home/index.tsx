@@ -49,7 +49,7 @@ export const HomePage: React.FC = () => {
       <Hero />
       <div className="container">
         <div className="row mt-7">
-          <div className="col-md-3 filter__container" id="main-content">
+          <div className="col-md-3 col-xxxl-2 filter__container" id="main-content">
             <OcTextSearchComponent
               hasMagnifier={true}
               placeholder="Search"
@@ -69,7 +69,7 @@ export const HomePage: React.FC = () => {
             )}
             {!collapsed && <Sidebar items={filters} onItemClick={handleSidebarClick} />}
           </div>
-          <div className="col-md-9">
+          <div className="col-md-9 col-xxxl-10">
             <AppList />
           </div>
         </div>
