@@ -3,14 +3,37 @@
 .page-info {
   margin: 4rem 0;
 }
+.oc-sidebar__list {
+  margin-top: 3rem;
+}
+.gallery__more {
+  margin-bottom: -1rem;
+}
+#root > div.container > div > div.col-md-9.col-xxxl-10 > div:not(:first-child) > div > div.gallery__header > div > h4 {
+  margin-top: 1rem;
+}
+.get-started__info-heading {
+  font-size: 32px;
+}
+.bottom-info {
+  padding-bottom: 1rem;
+}
 
 .section-wrapper {
+  margin-bottom: 6rem;
+  .gallery__heading {
+    margin-bottom: 0;
+  }
   & + .section-wrapper {
     @include media-breakpoint-md {
       display: block;
       margin-top: 4rem;
     }
   }
+}
+
+.footer > .container {
+  padding: 48px 0 24px;
 }
 
 .filter__container {
