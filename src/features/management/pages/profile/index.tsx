@@ -6,7 +6,11 @@ import { ChangePasswordRequest } from '@openchannel/react-common-services';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcEditUserFormComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
-import { OcSingleForm, OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components/dist/ui/form/organisms';
+import {
+  OcSingleForm,
+  OcFormFormikHelpers,
+  OcFormValues,
+} from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { apps, fileService } from '@openchannel/react-common-services';
 
 import { useTypedSelector } from 'features/common/hooks';

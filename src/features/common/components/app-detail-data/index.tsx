@@ -219,11 +219,13 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                   <div className="d-flex flex-column">
                     <h1 className="mb-2 page-title-size">{app?.name}</h1>
                     {app?.customData?.categories.length > 0 && (
-                    <ul className="categories mb-1">
-                        {app.customData.categories.map((category:string) => (
-                          <li key={category} className="categories__item mb-1">{category}</li>
+                      <ul className="categories mb-1">
+                        {app.customData.categories.map((category: string) => (
+                          <li key={category} className="categories__item mb-1">
+                            {category}
+                          </li>
                         ))}
-                    </ul>
+                      </ul>
                     )}
                     <span className="app-detail__price mb-2">{(price || app.model[0]?.price) === 0 && 'Free'}</span>
                     <div className="text-secondary mb-2">{app?.customData.summary}</div>
