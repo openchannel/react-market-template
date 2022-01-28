@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { Modal } from '@openchannel/react-common-components/dist/ui/common/organisms';
 import { notify, OcButtonComponent } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { apps, fileService, statisticService } from '@openchannel/react-common-services';
-import { OcForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
+import { OcSingleForm } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { ButtonAction, DownloadButtonAction, FormButtonAction, OwnershipButtonAction, ViewData } from './types';
 
 import { getForm, installApplication, submitForm, uninstallApplication } from '../../../apps/store/apps/actions';
@@ -196,7 +196,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
             />
           </div>
           <div className="action-button_modal__modal-body">
-            <OcForm
+            <OcSingleForm
               formJsonData={currentForm as AppFormModel}
               onSubmit={onFormSubmit}
               fileService={mappedFileService}

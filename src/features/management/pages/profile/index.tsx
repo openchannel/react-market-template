@@ -6,7 +6,11 @@ import { ChangePasswordRequest } from '@openchannel/react-common-services';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcEditUserFormComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
 import { OcNavigationBreadcrumbs } from '@openchannel/react-common-components/dist/ui/common/molecules';
-import { OcForm, OcFormFormikHelpers, OcFormValues } from '@openchannel/react-common-components/dist/ui/form/organisms';
+import {
+  OcSingleForm,
+  OcFormFormikHelpers,
+  OcFormValues,
+} from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { apps, fileService } from '@openchannel/react-common-services';
 
 import { useTypedSelector } from 'features/common/hooks';
@@ -148,7 +152,7 @@ const Profile = (): JSX.Element => {
           </div>
           <div className="col-lg-4 mt-3 mt-lg-1 col-xxl-6">
             {isSelectedPage === 'changePassword' && (
-              <OcForm
+              <OcSingleForm
                 formJsonData={formPassword}
                 onSubmit={handleChangePasswordSubmit}
                 submitButtonText="Save"

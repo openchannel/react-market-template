@@ -218,10 +218,19 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                   )}
                   <div className="d-flex flex-column">
                     <h1 className="mb-2 page-title-size">{app?.name}</h1>
-                    <span className="app-detail__price">{(price || app.model[0]?.price) === 0 && 'Free'}</span>
-                    <div className="text-secondary mt-1">{app?.customData.summary}</div>
+                    {app?.customData?.categories.length > 0 && (
+                      <ul className="categories mb-1">
+                        {app.customData.categories.map((category: string) => (
+                          <li key={category} className="categories__item mb-1">
+                            {category}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <span className="app-detail__price mb-2">{(price || app.model[0]?.price) === 0 && 'Free'}</span>
+                    <div className="text-secondary mb-2">{app?.customData.summary}</div>
                     <OcRatingComponent
-                      className="mb-3"
+                      className="mb-3 mb-md-2"
                       rating={appRating}
                       reviewCount={appReviewCount}
                       label="reviews"
@@ -241,7 +250,9 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                     )}
                   </div>
                 </div>
-                {app?.video && <OcVideoComponent videoUrl={app?.video} />}
+                <div className="app-detail__video">
+                  {app?.customData?.['video-url'] && <OcVideoComponent videoUrl={app?.customData?.['video-url']} />}
+                </div>
               </div>
             </div>
           </div>
