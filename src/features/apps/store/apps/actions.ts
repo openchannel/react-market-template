@@ -9,7 +9,7 @@ import {
   CreateOwnershipModel,
   ReqHeaders,
   AppFormModelResponse,
-  AppVersionService,
+  appVersion,
 } from '@openchannel/react-common-services';
 import { Filter, FullAppData } from '@openchannel/react-common-components';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
@@ -271,7 +271,7 @@ export const uninstallApplication =
 export const getAppByVersion = (appId: string, version: number) => async (dispatch: Dispatch) => {
   dispatch(startLoading());
   try {
-    const { data } = await AppVersionService.getAppByVersion(appId, version);
+    const { data } = await appVersion.getAppByVersion(appId, version);
     dispatch(setAppByVersion(data));
     dispatch(finishLoading());
     return data;
