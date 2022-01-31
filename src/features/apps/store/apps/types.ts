@@ -25,6 +25,7 @@ export interface Apps {
   recommendedApps: null | FullAppData[];
   currentForm: null | AppFormModelResponse;
   featured: FullAppData[];
+  categoryLinks: { [key: string]: string };
 }
 
 export type Action =
@@ -56,7 +57,7 @@ export type Action =
       payload: FullAppData[];
     }
   | {
-      type: ActionTypes.SET_FILTERS;
+      type: ActionTypes.SET_FILTERS | ActionTypes.SET_CATEGORY_LINK;
       payload: Filter[];
     }
   | {

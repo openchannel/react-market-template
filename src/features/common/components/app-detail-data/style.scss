@@ -69,6 +69,11 @@
             cursor: auto;
             pointer-events: none;
           }
+          a {
+            @include font-size-md();
+            line-height: 16px;
+            color: #333;
+          }
         }
       }
       .text-secondary {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { find } from 'lodash';
 
 import {
@@ -23,7 +23,12 @@ import InternetIcon from '../../../../../public/assets/img/internet.svg';
 import PadlockIcon from '../../../../../public/assets/img/padlock.svg';
 import EmailIcon from '../../../../../public/assets/img/icon-email.svg';
 import BubbleIcon from '../../../../../public/assets/img/speech-bubble.svg';
-import { fetchRecommendedApps, fetchSelectedApp, statVisitApp } from '../../../apps/store/apps/actions';
+import {
+  fetchRecommendedApps,
+  fetchSelectedApp,
+  statVisitApp,
+  fetchCategories,
+} from '../../../apps/store/apps/actions';
 import DotsIcon from '../../../../../public/assets/img/dots-hr-icon.svg';
 import {
   fetchReviewByAppId,
@@ -74,9 +79,10 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   React.useEffect(() => {
     if (selectedApp !== null) {
       dispatch(statVisitApp(selectedApp.appId));
+      dispatch(fetchCategories());
     }
   }, []);
-  const { recommendedApps, selectedApp, isLoaded } = useTypedSelector(({ apps }) => apps);
+  const { recommendedApps, selectedApp, isLoaded, categoryLinks } = useTypedSelector(({ apps }) => apps);
   const { reviewsByApp, sorts } = useTypedSelector(({ reviews }) => reviews);
   const { userId, isExist } = useTypedSelector(({ session }) => session);
   const [isWritingReview, setIsWritingReview] = React.useState(false);
@@ -222,7 +228,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                       <ul className="categories mb-1">
                         {app.customData.categories.map((category: string) => (
                           <li key={category} className="categories__item mb-1">
-                            {category}
+                            <Link to={categoryLinks[category]}>{category}</Link>
                           </li>
                         ))}
                       </ul>
