@@ -17,6 +17,7 @@ const initialState = {
     filters: [],
     searchStr: '',
   },
+  categoryLinks:{},
   filteredApps: [],
   selectedApp: null,
   appByVersion: null,
@@ -82,6 +83,20 @@ export const appsReducer = (state: Apps = initialState, action: Action): Apps =>
         ...state,
         filters: action.payload,
       };
+    }
+
+    case ActionTypes.SET_CATEGORY_LINK: {
+      const listCategories = action.payload.find((filterValue) => filterValue.id === 'categories');
+      const categoryLinks:{ [key: string]: string} = {};
+
+      listCategories?.values.forEach((category) => {
+        categoryLinks[category.label] = `/browse/categories/${category.id}`;
+      })
+
+      return {
+        ...state,
+        categoryLinks,
+      }
     }
 
     case ActionTypes.SET_SELECTED_FILTERS: {

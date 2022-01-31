@@ -280,3 +280,17 @@ export const getAppByVersion = (appId: string, version: number) => async (dispat
     throw error;
   }
 };
+
+export const goToCategory = () => async (dispatch: Dispatch) => {
+  dispatch(startLoading());
+  try {
+    const { data } = await frontend.getFilters();
+    dispatch(({ type: ActionTypes.SET_CATEGORY_LINK, payload: data.list }));
+
+    dispatch(finishLoading());
+  } catch (error) {
+    dispatch(finishLoading());
+
+    throw error;
+  }
+};
