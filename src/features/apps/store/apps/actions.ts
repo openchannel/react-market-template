@@ -285,7 +285,7 @@ export const goToCategory = () => async (dispatch: Dispatch) => {
   dispatch(startLoading());
   try {
     const { data } = await frontend.getFilters();
-    dispatch(({ type: ActionTypes.SET_CATEGORY_LINK, payload: data.list }));
+    dispatch({ type: ActionTypes.SET_CATEGORY_LINK, payload: data.list });
 
     dispatch(finishLoading());
   } catch (error) {

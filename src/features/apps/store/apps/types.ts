@@ -25,7 +25,7 @@ export interface Apps {
   recommendedApps: null | FullAppData[];
   currentForm: null | AppFormModelResponse;
   featured: FullAppData[];
-  categoryLinks: { [key: string]: string};
+  categoryLinks: { [key: string]: string };
 }
 
 export type Action =
