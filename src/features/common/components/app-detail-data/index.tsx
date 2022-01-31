@@ -15,7 +15,7 @@ import { OcRatingComponent } from '@openchannel/react-common-components/dist/ui/
 import { OcOverallRating } from '@openchannel/react-common-components/dist/ui/market/organisms';
 import { OcRecommendedAppsComponent } from '@openchannel/react-common-components/dist/ui/common/organisms';
 import { FullAppData } from '@openchannel/react-common-components';
-import { CreateReviewRequest, ReviewResponse, Review } from '@openchannel/react-common-services';
+import { CreateReviewRequest, ReviewResponse, Review, frontend } from '@openchannel/react-common-services';
 import { ActionButton } from '../action-button';
 
 import HelpIcon from '../../../../../public/assets/img/icon-help.svg';
@@ -38,6 +38,7 @@ import { ButtonAction } from '../action-button/types';
 import { useTypedSelector } from 'features/common/hooks';
 
 import './style.scss';
+import { notifyErrorResp } from 'features/common/libs/helpers';
 
 export interface AppDetailsProps {
   app: FullAppData;
@@ -198,6 +199,23 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
     dispatch(fetchReviewByAppId(app.appId));
   };
 
+  const goToCategory = async (categoryLabel: string) => {
+    try {
+      const { data } = await frontend.getFilters();
+
+      for (const filter of data.list) {
+        const selectedFilterValue = filter.values.find(filterValue => filterValue.label === categoryLabel);
+  
+        if (selectedFilterValue) {
+            history.push(`/browse/${filter.id}/${selectedFilterValue.id}`);
+            return;
+        }
+      }
+    } catch(e) {
+      notifyErrorResp(e);
+    }
+  };
+
   return (
     <>
       {isLoaded && (
@@ -222,7 +240,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
                       <ul className="categories mb-1">
                         {app.customData.categories.map((category: string) => (
                           <li key={category} className="categories__item mb-1">
-                            {category}
+                            <button onClick={() => goToCategory(category)}>{category}</button>
                           </li>
                         ))}
                       </ul>

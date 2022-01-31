@@ -69,6 +69,10 @@
             cursor: auto;
             pointer-events: none;
           }
+          button {
+            border: unset;
+            background: unset;
+          }
         }
       }
       .text-secondary {
