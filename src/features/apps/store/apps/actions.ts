@@ -20,6 +20,7 @@ import { ActionTypes } from './action-types';
 import { SelectedFilters } from './types';
 import { RootState } from '../../../../types';
 import { FormButtonAction } from 'features/common/components/action-button/types';
+import { notifyErrorResp } from 'features/common/libs/helpers';
 
 export interface CreateFormSubmissionModel {
   formId: string;
@@ -281,16 +282,11 @@ export const getAppByVersion = (appId: string, version: number) => async (dispat
   }
 };
 
-export const goToCategory = () => async (dispatch: Dispatch) => {
-  dispatch(startLoading());
+export const fetchCategories = () => async (dispatch: Dispatch) => {
   try {
     const { data } = await frontend.getFilters();
     dispatch({ type: ActionTypes.SET_CATEGORY_LINK, payload: data.list });
-
-    dispatch(finishLoading());
   } catch (error) {
-    dispatch(finishLoading());
-
-    throw error;
+    notifyErrorResp(error);
   }
 };

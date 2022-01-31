@@ -70,7 +70,7 @@
             pointer-events: none;
           }
           a {
-            font-size: 14px;
+            @include font-size-md();
             line-height: 16px;
             color: #333;
           }

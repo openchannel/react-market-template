@@ -23,7 +23,7 @@ import InternetIcon from '../../../../../public/assets/img/internet.svg';
 import PadlockIcon from '../../../../../public/assets/img/padlock.svg';
 import EmailIcon from '../../../../../public/assets/img/icon-email.svg';
 import BubbleIcon from '../../../../../public/assets/img/speech-bubble.svg';
-import { fetchRecommendedApps, fetchSelectedApp, statVisitApp, goToCategory } from '../../../apps/store/apps/actions';
+import { fetchRecommendedApps, fetchSelectedApp, statVisitApp, fetchCategories } from '../../../apps/store/apps/actions';
 import DotsIcon from '../../../../../public/assets/img/dots-hr-icon.svg';
 import {
   fetchReviewByAppId,
@@ -74,7 +74,7 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
   React.useEffect(() => {
     if (selectedApp !== null) {
       dispatch(statVisitApp(selectedApp.appId));
-      dispatch(goToCategory());
+      dispatch(fetchCategories());
     }
   }, []);
   const { recommendedApps, selectedApp, isLoaded, categoryLinks } = useTypedSelector(({ apps }) => apps);
