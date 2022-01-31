@@ -204,14 +204,14 @@ export const AppDetails: React.FC<AppDetailsProps> = (props) => {
       const { data } = await frontend.getFilters();
 
       for (const filter of data.list) {
-        const selectedFilterValue = filter.values.find(filterValue => filterValue.label === categoryLabel);
-  
+        const selectedFilterValue = filter.values.find((filterValue) => filterValue.label === categoryLabel);
+
         if (selectedFilterValue) {
-            history.push(`/browse/${filter.id}/${selectedFilterValue.id}`);
-            return;
+          history.push(`/browse/${filter.id}/${selectedFilterValue.id}`);
+          return;
         }
       }
-    } catch(e) {
+    } catch (e) {
       notifyErrorResp(e);
     }
   };
