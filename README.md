@@ -189,15 +189,11 @@ sudo npm run start-with-host my-custom-domain.com
 - Install [Moesif](https://chrome.google.com/webstore/detail/moesif-origin-cors-change/digfbfaphojjndkpccljibejjbppifbc/related) CORS plugin for Chrome
 - Submit your work email address there
 - Open advanced settings
-- Fill in the 'Access-Control-Allow-Credentials'<br>
-  `true`
-- Fill in the 'Response headers' field: <br>
-  `http://localhost:4200`
-- Fill in the 'Request Headers' field:<br>
-  (Note: this domain can be invalid, because used only in 'Origin' headers.)
-  `https://my-custom-domain.com`
-- Then start project with command:<br>
-  `npm run start`<br>
+- Fill in the 'Access-Control-Allow-Credentials' `true`
+- Fill in the 'Response headers' field: `http://localhost:4200`
+- Fill in the 'Request Headers' field:
+  (Note: this domain can be invalid, because used only in 'Origin' headers.) `https://my-custom-domain.com`
+- Then start project with command: `npm run start`
 
 ## Search engine discoverability
 
