@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { notify } from '@openchannel/react-common-components/dist/ui/common/atoms';
 import { OcLoginComponent } from '@openchannel/react-common-components/dist/ui/auth/organisms';
-
+import { useTypedSelector } from 'features/common/hooks';
 import { ErrorResponse } from 'types';
 import { nativeLogin } from 'features/common/store/session';
 import { getSearchParams } from 'features/common/libs/helpers';
@@ -18,6 +18,13 @@ const LoginPage = (): JSX.Element => {
   const [serverErrorValidation, setServerErrorValidation] = React.useState(false);
   const [isUnverifiedEmail, setIsUnverifiedEmail] = React.useState(false);
   const searchParams = React.useMemo(() => getSearchParams(window.location.search), []);
+  const { config, isSamlLogin } = useTypedSelector(({ oidc }) => oidc);
+  React.useEffect(() => {
+    if (isSamlLogin) {
+      searchParams?.return && localStorage.setItem('redirectUrl', searchParams.return);
+      window.open(`${config?.singleSignOnUrl}?RelayState=${window.location.origin}`, '_blank');
+    }
+  }, []);
 
   const onActivationLinkClick = React.useCallback((email) => {
     dispatch(sendActivationCode(email));
@@ -57,15 +64,17 @@ const LoginPage = (): JSX.Element => {
   return (
     <div className="bg-container pt-sm-5">
       <div className="login-position">
-        <OcLoginComponent
-          signupUrl="/signup"
-          forgotPwdUrl="/forgot-password"
-          handleSubmit={onSubmit}
-          onActivationLinkClick={onActivationLinkClick}
-          companyLogoUrl={companyLogo}
-          isIncorrectEmail={serverErrorValidation}
-          isUnverifiedEmail={isUnverifiedEmail}
-        />
+        {!isSamlLogin && (
+          <OcLoginComponent
+            signupUrl="/signup"
+            forgotPwdUrl="/forgot-password"
+            handleSubmit={onSubmit}
+            onActivationLinkClick={onActivationLinkClick}
+            companyLogoUrl={companyLogo}
+            isIncorrectEmail={serverErrorValidation}
+            isUnverifiedEmail={isUnverifiedEmail}
+          />
+        )}
       </div>
     </div>
   );

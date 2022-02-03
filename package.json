@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@openchannel/react-common-components": "^0.1.145",
+    "@openchannel/react-common-components": "^0.1.146",
     "@openchannel/react-common-services": "^0.1.130",
     "lodash.isempty": "^4.4.0",
     "oidc-client": "^1.11.5",
@@ -30,7 +30,7 @@
     "eject": "react-scripts eject",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier src/**/*.{ts,tsx,js,jsx} --write",
+    "format": "prettier src/**/*.{ts,tsx,js} --write",
     "prepare": "husky install",
     "update-openchannel-pkgs": "npm i @openchannel/react-common-components@latest @openchannel/react-common-services@latest"
   },
