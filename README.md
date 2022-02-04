@@ -1,7 +1,7 @@
 # Template React Market
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=openchannel_react-market-template&metric=alert_status&token=09ecb76af06050dd9ee59a4ada98a9e937517fbf)](https://sonarcloud.io/dashboard?id=openchannel_react-market-template)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=openchannel_react-market-template&metric=coverage&token=09ecb76af06050dd9ee59a4ada98a9e937517fbf)](https://sonarcloud.io/dashboard?id=openchannel_react-market-template)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=openchannel_react-market-template&metric=alert_status&token=87fa8424fca9d20e3dffb9bc27bf69d6832e7413)](https://sonarcloud.io/dashboard?id=openchannel_react-market-template)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=openchannel_react-market-template&metric=coverage&token=87fa8424fca9d20e3dffb9bc27bf69d6832e7413)](https://sonarcloud.io/dashboard?id=openchannel_react-market-template)
 
 ## Table of Contents
 
