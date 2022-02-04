@@ -38,6 +38,13 @@ definitions:
           - export AWS_S3="`aws ssm get-parameter --region $REGION --with-decryption --name /ECS-CLUSTER/$CLUSTER_NAME/${APP_NAME}/AWS_S3 --output text --query Parameter.Value`"
           - aws s3 sync --delete build/ s3://$AWS_S3
           - aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths /index.html "/assets*"
+    - step: &push-to-github
+        name: Push to GitHub
+        script:
+          - git remote set-url origin git@github.com:openchannel/react-market-template.git
+          - git remote -v
+          - git push origin master:main
+          - git push origin --force --tags
 
 pipelines:
   custom:
@@ -49,3 +56,7 @@ pipelines:
       - step:
           <<: *build-app-and-deploy
           deployment: stage1
+  branches:
+    master:
+      - step: 
+          <<: *push-to-github
