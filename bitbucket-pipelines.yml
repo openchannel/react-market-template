@@ -58,5 +58,4 @@ pipelines:
           deployment: stage1
   branches:
     master:
-      - step: 
-          <<: *push-to-github
+      - step: *push-to-github
