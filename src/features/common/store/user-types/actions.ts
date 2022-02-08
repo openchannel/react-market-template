@@ -22,6 +22,7 @@ import { normalizeError } from '../utils';
 
 import { ActionTypes } from './action-types';
 import { defaultFormConfig } from './constants';
+import { notifyErrorResp } from 'features/common/libs/helpers';
 
 const EMPTY_TYPE_RESPONSE = {
   list: [],
@@ -213,6 +214,6 @@ export const loadTransactionsList = (sort: number) => async (dispach: Dispatch) 
       payload: { transactionList: data?.list, appData: appResult?.data },
     });
   } catch (error) {
-    throw normalizeError(error);
+    notifyErrorResp(error);
   }
 };

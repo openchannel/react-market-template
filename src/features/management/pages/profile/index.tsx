@@ -51,6 +51,7 @@ const Profile = (): JSX.Element => {
 
   React.useEffect(() => {
     dispatch(loadUserProfileForm(formConfigsWithoutTypeData, false, true));
+    dispatch(loadTransactionsList(-1));
   }, []);
 
   React.useEffect(() => {
@@ -65,7 +66,6 @@ const Profile = (): JSX.Element => {
         page = 'changePassword';
         break;
       case '/my-profile/billing-history':
-        dispatch(loadTransactionsList(-1));
         page = 'billingHistory';
         break;
     }

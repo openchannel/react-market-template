@@ -9,12 +9,6 @@ import { useDispatch } from 'react-redux';
 import { AppListMenuAction } from '@openchannel/react-common-components/dist/ui/portal/models';
 import { appsTransaction } from './types';
 
-const BillingHistory = (): JSX.Element => {
-  const { transactionList } = useTypedSelector(({ userTypes }) => userTypes);
-  const [appListData, setAppListData] = React.useState(AppListing);
-  const [accessing, setAccessing] = React.useState(true);
-  const dispatch = useDispatch();
-
   const nameHeaderCell = () => <span className="app-name ml-2">App name</span>;
   const nameRowCell = (app: appsTransaction) => {
     return (
@@ -31,7 +25,7 @@ const BillingHistory = (): JSX.Element => {
     );
   };
 
-  const dateHeaderCell = () => {
+  const dateHeaderCell = (accessing:boolean, handleSortDate: () => void) => {
     return (
       <div onMouseDown={handleSortDate} role="button" tabIndex={0}>
         <span className="app-date pr-1">Date</span>
@@ -51,9 +45,22 @@ const BillingHistory = (): JSX.Element => {
   const statusHeaderCell = () => <span className="app-amount">Status</span>;
   const statusRowCell = (app: appsTransaction) => <span className="status-row">{app.status}</span>;
 
+
+  const BillingHistory = (): JSX.Element => {
+
+  const { transactionList } = useTypedSelector(({ userTypes }) => userTypes);
+  const [appListData, setAppListData] = React.useState(AppListing);
+  const [accessing, setAccessing] = React.useState(true);
+  const dispatch = useDispatch();
+
+  const handleSortDate = () => {
+    setAccessing(!accessing);
+    dispatch(loadTransactionsList(accessing ? 1 : -1));
+  };
+
   const modifyColumns = {
     'app-name': { headerCell: nameHeaderCell, rowCell: nameRowCell },
-    date: { headerCell: dateHeaderCell, rowCell: dateRowCell },
+    date: { headerCell: () => dateHeaderCell(accessing, handleSortDate), rowCell: dateRowCell },
     amount: { headerCell: amountHeaderCell, rowCell: amountnRowCell },
     'app-status': { headerCell: statusHeaderCell, rowCell: statusRowCell },
   };
@@ -81,10 +88,6 @@ const BillingHistory = (): JSX.Element => {
     }
   };
 
-  const handleSortDate = () => {
-    setAccessing(!accessing);
-    dispatch(loadTransactionsList(accessing ? 1 : -1));
-  };
 
   return (
     appListData && (
