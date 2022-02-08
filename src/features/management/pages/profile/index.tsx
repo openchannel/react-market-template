@@ -53,7 +53,6 @@ const Profile = (): JSX.Element => {
     dispatch(loadUserProfileForm(formConfigsWithoutTypeData, false, true));
   }, []);
 
-
   React.useEffect(() => {
     let page = 'myProfile';
 
@@ -174,34 +173,34 @@ const Profile = (): JSX.Element => {
               </li>
             </ul>
           </div>
-            {isSelectedPage === 'changePassword' && (
-              <div className="col-lg-4 mt-3 mt-lg-1 col-xxl-6">
-                <OcSingleForm
-                  formJsonData={formPassword}
-                  onSubmit={handleChangePasswordSubmit}
-                  submitButtonText="Save"
-                  fileService={mappedFileService}
-                  service={apps}
-                  customSubmitClass="full-width"
-                />
-              </div>
-            )}
-            {isSelectedPage === 'myProfile' && !isLoading && (
-              <div className="col-lg-4 mt-3 mt-lg-1 col-xxl-6">
-                <OcEditUserFormComponent
-                  formConfigs={configs}
-                  defaultFormType={defaultProfileFormType}
-                  onSubmit={handleMyProfileSubmit}
-                  submitButtonText="Save"
-                  customSubmitClass="full-width"
-                />
-              </div>
-            )}
-            {isSelectedPage === 'billingHistory' && !isLoading && (
-              <div className="col-md-12 col-lg-5 col-xxl-6 mt-3 mt-lg-1 col-lg-9 col-xxl-10 billing-history">
-                <BillingHistory />
-              </div>
-            )}
+          {isSelectedPage === 'changePassword' && (
+            <div className="col-lg-4 mt-3 mt-lg-1 col-xxl-6">
+              <OcSingleForm
+                formJsonData={formPassword}
+                onSubmit={handleChangePasswordSubmit}
+                submitButtonText="Save"
+                fileService={mappedFileService}
+                service={apps}
+                customSubmitClass="full-width"
+              />
+            </div>
+          )}
+          {isSelectedPage === 'myProfile' && !isLoading && (
+            <div className="col-lg-4 mt-3 mt-lg-1 col-xxl-6">
+              <OcEditUserFormComponent
+                formConfigs={configs}
+                defaultFormType={defaultProfileFormType}
+                onSubmit={handleMyProfileSubmit}
+                submitButtonText="Save"
+                customSubmitClass="full-width"
+              />
+            </div>
+          )}
+          {isSelectedPage === 'billingHistory' && !isLoading && (
+            <div className="col-md-12 col-lg-5 col-xxl-6 mt-3 mt-lg-1 col-lg-9 col-xxl-10 billing-history">
+              <BillingHistory />
+            </div>
+          )}
         </div>
       </div>
     </MainTemplate>

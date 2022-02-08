@@ -36,7 +36,7 @@ export type Action =
       type: ActionTypes.GET_TRANSACTIONS_LIST;
       payload: {
         transactionList: Transaction[];
-        appData:any;
+        appData: any;
       };
     }
   | {
