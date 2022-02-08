@@ -5,4 +5,5 @@ export enum ActionTypes {
   GET_USER_CONFIG = '@user-types/GET_USER_CONFIG',
   GET_USER_COMPANY_FORM = '@user-types/GET_USER_COMPANY_FORM',
   RESET_USER_COMPANY_FORM = '@user-types/RESET_USER_COMPANY_FORM',
+  GET_TRANSACTIONS_LIST = '@billing-history/GET_TRANSACTIONS_LIST',
 }

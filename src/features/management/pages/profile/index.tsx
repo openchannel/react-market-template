@@ -12,12 +12,11 @@ import {
   OcFormValues,
 } from '@openchannel/react-common-components/dist/ui/form/organisms';
 import { apps, fileService } from '@openchannel/react-common-services';
-
+import BillingHistory from './billing-history';
 import { useTypedSelector } from 'features/common/hooks';
 import { MainTemplate } from 'features/common/templates';
 import { changePassword } from 'features/common/store/session';
-import { loadUserProfileForm, saveUserData } from 'features/common/store/user-types';
-
+import { loadUserProfileForm, saveUserData, loadTransactionsList } from 'features/common/store/user-types';
 import { formConfigsWithoutTypeData, formPassword } from './constants';
 
 import './styles.scss';
@@ -28,7 +27,7 @@ const mappedFileService = {
 };
 
 const Profile = (): JSX.Element => {
-  const [isSelectedPage, setSelectedPage] = React.useState('myProfile');
+  const [isSelectedPage, setSelectedPage] = React.useState<string>();
   const dispatch = useDispatch();
   const history = useHistory();
   const { configs, account, isLoading } = useTypedSelector(({ userTypes }) => userTypes);
@@ -41,6 +40,9 @@ const Profile = (): JSX.Element => {
       case 'changePassword':
         history.replace('/my-profile/password');
         break;
+      case 'billingHistory':
+        history.replace('/my-profile/billing-history');
+        break;
       default:
         break;
     }
@@ -49,17 +51,27 @@ const Profile = (): JSX.Element => {
 
   React.useEffect(() => {
     dispatch(loadUserProfileForm(formConfigsWithoutTypeData, false, true));
-    switch (isSelectedPage) {
-      case 'myProfile':
-        history.replace('/my-profile/profile-details');
+  }, []);
+
+
+  React.useEffect(() => {
+    let page = 'myProfile';
+
+    switch (history.location.pathname) {
+      case '/my-profile':
+      case '/my-profile/profile-details':
+        page = 'myProfile';
         break;
-      case 'changePassword':
-        history.replace('/my-profile/password');
+      case '/my-profile/password':
+        page = 'changePassword';
         break;
-      default:
+      case '/my-profile/billing-history':
+        dispatch(loadTransactionsList(-1));
+        page = 'billingHistory';
         break;
     }
-  }, []);
+    setSelectedPage(page);
+  }, [history.location.pathname]);
 
   const handleChangePasswordSubmit = async (value: OcFormValues, { resetForm, setErrors }: OcFormFormikHelpers) => {
     try {
@@ -148,29 +160,48 @@ const Profile = (): JSX.Element => {
                   Password
                 </span>
               </li>
+              <li>
+                <span
+                  className={`font-m ${isSelectedPage === 'billingHistory' ? 'active-link' : ''}`}
+                  role="button"
+                  tabIndex={0}
+                  data-link="billingHistory"
+                  onClick={onClickPass}
+                  onKeyDown={onClickPass}
+                >
+                  Billing History
+                </span>
+              </li>
             </ul>
           </div>
-          <div className="col-lg-4 mt-3 mt-lg-1 col-xxl-6">
             {isSelectedPage === 'changePassword' && (
-              <OcSingleForm
-                formJsonData={formPassword}
-                onSubmit={handleChangePasswordSubmit}
-                submitButtonText="Save"
-                fileService={mappedFileService}
-                service={apps}
-                customSubmitClass="full-width"
-              />
+              <div className="col-lg-4 mt-3 mt-lg-1 col-xxl-6">
+                <OcSingleForm
+                  formJsonData={formPassword}
+                  onSubmit={handleChangePasswordSubmit}
+                  submitButtonText="Save"
+                  fileService={mappedFileService}
+                  service={apps}
+                  customSubmitClass="full-width"
+                />
+              </div>
             )}
             {isSelectedPage === 'myProfile' && !isLoading && (
-              <OcEditUserFormComponent
-                formConfigs={configs}
-                defaultFormType={defaultProfileFormType}
-                onSubmit={handleMyProfileSubmit}
-                submitButtonText="Save"
-                customSubmitClass="full-width"
-              />
+              <div className="col-lg-4 mt-3 mt-lg-1 col-xxl-6">
+                <OcEditUserFormComponent
+                  formConfigs={configs}
+                  defaultFormType={defaultProfileFormType}
+                  onSubmit={handleMyProfileSubmit}
+                  submitButtonText="Save"
+                  customSubmitClass="full-width"
+                />
+              </div>
             )}
-          </div>
+            {isSelectedPage === 'billingHistory' && !isLoading && (
+              <div className="col-md-12 col-lg-5 col-xxl-6 mt-3 mt-lg-1 col-lg-9 col-xxl-10 billing-history">
+                <BillingHistory />
+              </div>
+            )}
         </div>
       </div>
     </MainTemplate>

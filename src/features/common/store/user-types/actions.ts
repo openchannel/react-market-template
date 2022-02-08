@@ -11,6 +11,9 @@ import {
   userAccountTypes,
   users,
   storage,
+  TransactionsService,
+  apps,
+  Transaction,
 } from '@openchannel/react-common-services';
 import { Dispatch } from 'redux';
 import { cloneDeep, keyBy, get, uniqueId } from 'lodash';
@@ -186,6 +189,24 @@ export const saveUserCompany = (value: any) => async (dispatch: Dispatch) => {
   try {
     const valueForSaving = TypeMapperUtils.buildDataForSaving(value);
     await users.updateUserCompany(valueForSaving);
+  } catch (error) {
+    throw normalizeError(error);
+  }
+};
+
+export const loadTransactionsList = (sort:number) => async (dispach: Dispatch) => {
+  try {
+    const { data } = await TransactionsService.getTransactionsList(1, 20, {date:sort});
+    const appIds =  data?.list?.map((item:Transaction) => {
+      return item.appId;
+    });
+
+    const query = { appId: {
+      "$in":appIds
+    }};
+
+    const appResult = await apps.getApps(1, 100, '', JSON.stringify(query));
+    dispach({ type: ActionTypes.GET_TRANSACTIONS_LIST, payload: { transactionList: data?.list, appData: appResult?.data } });
   } catch (error) {
     throw normalizeError(error);
   }

@@ -56,3 +56,22 @@ export const formConfigsWithoutTypeData: OcEditUserFormConfig[] = [
     },
   },
 ];
+
+export const AppListing = {
+  layout: 'table',
+  data: {
+      pages: 1,
+      pageNumber: 1,
+      list: [],
+      count: 1,
+  },
+  options: ['View receipt', 'Download invoice'],
+};
+
+export const activeColumns = [
+  'app-name',
+  'date',
+  'amount',
+  'app-status',
+  'app-options',
+];
