@@ -1,12 +1,13 @@
 import { ActionTypes } from './action-types';
 import { OcEditUserFormConfig, OcEditUserResult } from '@openchannel/react-common-components';
-import { TypeFieldModel, TypeModel } from '@openchannel/react-common-services';
+import { Transaction, TypeFieldModel, TypeModel } from '@openchannel/react-common-services';
 
 export interface UserTypes {
   configs: OcEditUserFormConfig[];
   account: OcEditUserResult;
   companyForm: TypeModel<TypeFieldModel> | null;
   isLoading: boolean;
+  transactionList: any;
 }
 
 export type Action =
@@ -30,6 +31,13 @@ export type Action =
     }
   | {
       type: ActionTypes.RESET_USER_COMPANY_FORM;
+    }
+  | {
+      type: ActionTypes.GET_TRANSACTIONS_LIST;
+      payload: {
+        transactionList: Transaction[];
+        appData: any;
+      };
     }
   | {
       type: ActionTypes.START_LOADING;
