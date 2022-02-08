@@ -22,8 +22,7 @@ const LoginPage = (): JSX.Element => {
   React.useEffect(() => {
     if (isSamlLogin) {
       searchParams?.return && localStorage.setItem('redirectUrl', searchParams.return);
-      // window.open(`${config?.singleSignOnUrl}?RelayState=${window.location.origin}`, '_blank');
-      window.open(`${config?.singleSignOnUrl}?RelayState=https://stage1-market.netlify.app`, '_blank');
+      window.open(`${config?.singleSignOnUrl}?RelayState=${window.location.origin}`, '_blank');
     }
   }, []);
 
