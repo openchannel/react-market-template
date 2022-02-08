@@ -9,45 +9,43 @@ import { useDispatch } from 'react-redux';
 import { AppListMenuAction } from '@openchannel/react-common-components/dist/ui/portal/models';
 import { appsTransaction } from './types';
 
-  const nameHeaderCell = () => <span className="app-name ml-2">App name</span>;
-  const nameRowCell = (app: appsTransaction) => {
-    return (
-      <div className="app-grid-table__row__cell-name-content ml-2">
-        <img
-          className="app-grid-table__row__cell-name-content-icon"
-          src={get(app, 'customData.icon', '/assets/img/app-icon.svg')}
-          alt={app.name}
-        />
-        <div className="app-grid-table__row__cell-name-content-text">
-          <span className="app-grid-table__row__cell-name-content-text-title">{app.name}</span>
-        </div>
+const nameHeaderCell = () => <span className="app-name ml-2">App name</span>;
+const nameRowCell = (app: appsTransaction) => {
+  return (
+    <div className="app-grid-table__row__cell-name-content ml-2">
+      <img
+        className="app-grid-table__row__cell-name-content-icon"
+        src={get(app, 'customData.icon', '/assets/img/app-icon.svg')}
+        alt={app.name}
+      />
+      <div className="app-grid-table__row__cell-name-content-text">
+        <span className="app-grid-table__row__cell-name-content-text-title">{app.name}</span>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
-  const dateHeaderCell = (accessing:boolean, handleSortDate: () => void) => {
-    return (
-      <div onMouseDown={handleSortDate} role="button" tabIndex={0}>
-        <span className="app-date pr-1">Date</span>
-        <img
-          src={'/assets/img/dropdown-down.svg'}
-          className={accessing ? 'oc-table__icon-up' : 'oc-table__icon-down'}
-          alt="Sort by"
-        />
-      </div>
-    );
-  };
-  const dateRowCell = (app: appsTransaction) => <span className="date-row">{app.date}</span>;
+const dateHeaderCell = (accessing: boolean, handleSortDate: () => void) => {
+  return (
+    <div onMouseDown={handleSortDate} role="button" tabIndex={0}>
+      <span className="app-date pr-1">Date</span>
+      <img
+        src={'/assets/img/dropdown-down.svg'}
+        className={accessing ? 'oc-table__icon-up' : 'oc-table__icon-down'}
+        alt="Sort by"
+      />
+    </div>
+  );
+};
+const dateRowCell = (app: appsTransaction) => <span className="date-row">{app.date}</span>;
 
-  const amountHeaderCell = () => <span className="app-amount">Amount</span>;
-  const amountnRowCell = (app: appsTransaction) => <span className="amount-row">{app.amount}</span>;
+const amountHeaderCell = () => <span className="app-amount">Amount</span>;
+const amountnRowCell = (app: appsTransaction) => <span className="amount-row">{app.amount}</span>;
 
-  const statusHeaderCell = () => <span className="app-amount">Status</span>;
-  const statusRowCell = (app: appsTransaction) => <span className="status-row">{app.status}</span>;
+const statusHeaderCell = () => <span className="app-amount">Status</span>;
+const statusRowCell = (app: appsTransaction) => <span className="status-row">{app.status}</span>;
 
-
-  const BillingHistory = (): JSX.Element => {
-
+const BillingHistory = (): JSX.Element => {
   const { transactionList } = useTypedSelector(({ userTypes }) => userTypes);
   const [appListData, setAppListData] = React.useState(AppListing);
   const [accessing, setAccessing] = React.useState(true);
@@ -87,7 +85,6 @@ import { appsTransaction } from './types';
       }
     }
   };
-
 
   return (
     appListData && (
