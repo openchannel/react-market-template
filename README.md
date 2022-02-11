@@ -166,6 +166,16 @@ Step 5. Configure site authorization type SSO or Native login.
 
 #### Run project with the remote site configs:
 
+- In order to use diffent endpoints, need to create .env files, for example .env.dev1 or .env.stage1, each file should contain enviroments variables:
+
+```
+REACT_APP_API_URL
+REACT_APP_API_URL_DEVELOPMENT
+REACT_APP_MARKETPLACE_NAME
+PORT
+REACT_APP_ENABLE_CMS
+```
+
 - Open file:
 
 ```
