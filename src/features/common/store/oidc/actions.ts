@@ -8,7 +8,7 @@ import { ActionTypes } from './action-types';
 const startLoading = () => ({ type: ActionTypes.START_LOADING });
 const finishLoading = () => ({ type: ActionTypes.FINISH_LOADING });
 
-const setUserManager = (config?: ConfigObject,  type?: string) => {
+const setUserManager = (config?: ConfigObject, type?: string) => {
   if (!config) {
     return {
       type: ActionTypes.SET_USER_MANAGER,

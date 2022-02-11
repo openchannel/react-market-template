@@ -43,6 +43,13 @@ definitions:
           - aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths /index.html "/assets*"
           - pipe: sonarsource/sonarcloud-scan:1.2.1
           - pipe: sonarsource/sonarcloud-quality-gate:0.1.4
+    - step: &push-to-github
+        name: Push to GitHub
+        script:
+          - git remote set-url origin git@github.com:openchannel/react-market-template.git
+          - git remote -v
+          - git push origin master:main
+          - git push origin --force --tags
 
 pipelines:
   custom:
@@ -54,3 +61,6 @@ pipelines:
       - step:
           <<: *build-app-and-deploy
           deployment: stage1
+  branches:
+    master:
+      - step: *push-to-github
