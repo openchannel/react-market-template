@@ -41,8 +41,7 @@ definitions:
           - export AWS_S3="`aws ssm get-parameter --region $REGION --with-decryption --name /ECS-CLUSTER/$CLUSTER_NAME/${APP_NAME}/AWS_S3 --output text --query Parameter.Value`"
           - aws s3 sync --delete build/ s3://$AWS_S3
           - aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths /index.html "/assets*"
-          - pipe: sonarsource/sonarcloud-scan:1.2.1
-          - pipe: sonarsource/sonarcloud-quality-gate:0.1.4
+
     - step: &push-to-github
         name: Push to GitHub
         script:
@@ -50,6 +49,13 @@ definitions:
           - git remote -v
           - git push origin master:main
           - git push origin --force --tags
+          
+    - step: &sonarcloud
+        name: "Sonarcloud"
+        image: python:3.7.7-stretch
+        script:
+          - pipe: sonarsource/sonarcloud-scan:1.2.1
+          - pipe: sonarsource/sonarcloud-quality-gate:0.1.4
 
 pipelines:
   custom:
@@ -61,6 +67,8 @@ pipelines:
       - step:
           <<: *build-app-and-deploy
           deployment: stage1
+    Analyze sonarcloud:
+      - step: *sonarcloud
   branches:
     master:
       - step: *push-to-github
